@@ -1,0 +1,205 @@
+<mxfile host="65bd71144e">
+    <diagram id="Datpu9LUP-kLUccN0KaQ" name="ページ1">
+        <mxGraphModel dx="2000" dy="1055" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="100" width="820" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="100" width="140" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="940" width="680" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;div&gt;Brainbase&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=20;verticalAlign=top;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="115" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="ログイン" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=16;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="630" y="115" width="110" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="新規登録" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=16;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="115" width="110" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="&lt;div&gt;アプリの説明&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;fontSize=36;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="180" width="660" height="610" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="940" width="1180" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="940" width="140" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="940" width="140" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="940" width="1040" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="&lt;div&gt;試合一覧&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=20;verticalAlign=top;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="1080" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="ホーム" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="1109" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="選手管理" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="1160" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="試合管理" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="1210" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="成績記録" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="1260" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="スケジュール" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="1310" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="選手追加" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="1360" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="890" y="100" width="820" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="&lt;div&gt;Brainbase&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=20;verticalAlign=top;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1041" y="119" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="ログイン" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=16;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1500" y="115" width="110" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="新規登録" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=16;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1590" y="115" width="110" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="890" y="100" width="140" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="1030" y="100" width="680" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="&lt;div&gt;新規会員登録&lt;/div&gt;" style="whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontSize=19;verticalAlign=middle;horizontal=1;" parent="1" vertex="1">
+                    <mxGeometry x="1050" y="210" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="&lt;div&gt;名前&lt;/div&gt;" style="whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontSize=16;verticalAlign=middle;horizontal=1;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="270" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="　baseball@example.com" style="whiteSpace=wrap;html=1;fontSize=16;verticalAlign=middle;horizontal=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="320" width="560" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="&lt;div&gt;メールアドレス&lt;/div&gt;" style="whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontSize=16;verticalAlign=middle;horizontal=1;" parent="1" vertex="1">
+                    <mxGeometry x="1090" y="350" width="130" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="　baseball@example.com" style="whiteSpace=wrap;html=1;fontSize=16;verticalAlign=middle;horizontal=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="400" width="560" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="&lt;div&gt;パスワード&lt;/div&gt;" style="whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontSize=16;verticalAlign=middle;horizontal=1;" parent="1" vertex="1">
+                    <mxGeometry x="1090" y="430" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="　password" style="whiteSpace=wrap;html=1;fontSize=16;verticalAlign=middle;horizontal=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="480" width="560" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="　password" style="whiteSpace=wrap;html=1;fontSize=16;verticalAlign=middle;horizontal=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="560" width="560" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="&lt;div&gt;パスワード確認&lt;/div&gt;" style="whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontSize=16;verticalAlign=middle;horizontal=1;" parent="1" vertex="1">
+                    <mxGeometry x="1095" y="510" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="&lt;div&gt;招待コード&lt;/div&gt;" style="whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontSize=16;verticalAlign=middle;horizontal=1;" parent="1" vertex="1">
+                    <mxGeometry x="1095" y="590" width="90" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="" style="whiteSpace=wrap;html=1;fontSize=16;verticalAlign=middle;horizontal=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="640" width="560" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="登録する" style="whiteSpace=wrap;html=1;fontSize=16;verticalAlign=middle;horizontal=1;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1290" y="710" width="190" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" value="&lt;div&gt;新規登録&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=20;verticalAlign=top;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="1050" y="1050" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="170" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="1280" y="940" width="820" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="171" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="170" vertex="1">
+                    <mxGeometry x="-10" y="-10" width="820" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="172" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="170" vertex="1">
+                    <mxGeometry x="130" y="-10" width="680" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="173" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="170" vertex="1">
+                    <mxGeometry x="-10" y="-10" width="140" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="175" value="ホーム" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="170" vertex="1">
+                    <mxGeometry y="180" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="176" value="選手管理" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="170" vertex="1">
+                    <mxGeometry y="231" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="177" value="試合管理" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="170" vertex="1">
+                    <mxGeometry y="281" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="178" value="成績記録" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="170" vertex="1">
+                    <mxGeometry y="331" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="179" value="スケジュール" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="170" vertex="1">
+                    <mxGeometry y="381" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="180" value="選手追加" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;" parent="170" vertex="1">
+                    <mxGeometry y="431" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="200" value="2025/07/29(月)" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;align=left;" vertex="1" parent="170">
+                    <mxGeometry x="250" y="140" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="201" value="大会名：○○○○" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;align=left;" vertex="1" parent="170">
+                    <mxGeometry x="170" y="180" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="202" value="公式戦" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;align=left;" vertex="1" parent="170">
+                    <mxGeometry x="170" y="140" width="80" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="203" value="&lt;div&gt;編集&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=20;verticalAlign=top;align=center;" vertex="1" parent="170">
+                    <mxGeometry x="660" y="115" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="207" value="自チーム：3点" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;align=left;" vertex="1" parent="170">
+                    <mxGeometry x="170" y="221" width="590" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="214" value="メモ" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;align=left;" vertex="1" parent="170">
+                    <mxGeometry x="170" y="300" width="590" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="234" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;テスト&lt;/span&gt;" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;align=left;" vertex="1" parent="170">
+                    <mxGeometry x="170" y="340" width="590" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="237" value="相手チーム：2点" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=19;align=left;" vertex="1" parent="170">
+                    <mxGeometry x="170" y="260" width="590" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="169" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="2540" y="115" width="820" height="710" as="geometry"/>
+                </mxCell>
+                <mxCell id="51" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="169" vertex="1">
+                    <mxGeometry width="820" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="169" vertex="1">
+                    <mxGeometry x="140" width="680" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="174" style="edgeStyle=none;html=1;" parent="169" source="53" target="51" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;" parent="169" vertex="1">
+                    <mxGeometry width="140" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="181" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;2025/07/29 (月)&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;大会名：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;試合種類：公式戦&lt;/div&gt;&lt;div&gt;スコア：○○高校 1 - 5 □□高校&lt;/div&gt;&lt;div&gt;メモ：初回の失点が響いた&lt;/div&gt;&lt;div&gt;[詳細を見る]&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=default;fontSize=20;verticalAlign=top;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="1130" width="460" height="155" as="geometry"/>
+                </mxCell>
+                <mxCell id="184" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;2025/07/29 (月)&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;大会名：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;試合種類：公式戦&lt;/div&gt;&lt;div&gt;スコア：○○高校 1 - 5 □□高校&lt;/div&gt;&lt;div&gt;メモ：初回の失点が響いた&lt;/div&gt;&lt;div&gt;[詳細を見る]&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=default;fontSize=20;verticalAlign=top;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="700" y="1130" width="460" height="155" as="geometry"/>
+                </mxCell>
+                <mxCell id="187" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;2025/07/29 (月)&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;大会名：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;試合種類：公式戦&lt;/div&gt;&lt;div&gt;スコア：○○高校 1 - 5 □□高校&lt;/div&gt;&lt;div&gt;メモ：初回の失点が響いた&lt;/div&gt;&lt;div&gt;[詳細を見る]&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=default;fontSize=20;verticalAlign=top;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="700" y="1330" width="460" height="155" as="geometry"/>
+                </mxCell>
+                <mxCell id="188" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;2025/07/29 (月)&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;大会名：&lt;/span&gt;&lt;/div&gt;&lt;div&gt;試合種類：公式戦&lt;/div&gt;&lt;div&gt;スコア：○○高校 1 - 5 □□高校&lt;/div&gt;&lt;div&gt;メモ：初回の失点が響いた&lt;/div&gt;&lt;div&gt;[詳細を見る]&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=default;fontSize=20;verticalAlign=top;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="200" y="1330" width="460" height="155" as="geometry"/>
+                </mxCell>
+                <mxCell id="189" value="&lt;div&gt;Brainbase&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=20;verticalAlign=top;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="180" y="967.5" width="140" height="45" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
