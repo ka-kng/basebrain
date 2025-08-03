@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="Datpu9LUP-kLUccN0KaQ" name="ページ1">
-        <mxGraphModel dx="3570" dy="2978" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2198" dy="2073" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -1942,7 +1942,7 @@
                     <mxGeometry y="70" width="1180" height="1760" as="geometry"/>
                 </mxCell>
                 <mxCell id="1791" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;container=0;" vertex="1" parent="1790">
-                    <mxGeometry x="-30" y="-10" width="1180" height="1750" as="geometry"/>
+                    <mxGeometry x="-30" y="-10" width="1180" height="1770" as="geometry"/>
                 </mxCell>
                 <mxCell id="1797" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;container=0;" vertex="1" parent="1790">
                     <mxGeometry x="-30" y="-10" width="200" height="1770" as="geometry"/>
@@ -1978,7 +1978,7 @@
                     <mxGeometry x="411" y="520" width="309" height="210" as="geometry"/>
                 </mxCell>
                 <mxCell id="1872" value="&lt;div&gt;&lt;div&gt;📅 日付：2025/08/15（金）&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;【予定の入力】&lt;/div&gt;&lt;div&gt;📌 種類：［練習｜試合｜ミーティング］（セレクト）&lt;/div&gt;&lt;div&gt;🕘 時間：［10:00〜］&lt;/div&gt;&lt;div&gt;🏟 場所：［○○高校グラウンド］&lt;/div&gt;&lt;div&gt;📝 メモ：［集合9:00 / 昼食持参］&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;[ 保存する ]&amp;nbsp; [ キャンセル ]&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;strokeColor=none;fontSize=20;verticalAlign=top;align=left;container=0;" vertex="1" parent="1790">
-                    <mxGeometry x="411" y="750" width="309" height="290" as="geometry"/>
+                    <mxGeometry x="411" y="750" width="519" height="290" as="geometry"/>
                 </mxCell>
                 <mxCell id="1825" value="" style="shape=table;startSize=0;container=1;collapsible=0;childLayout=tableLayout;fontSize=16;" vertex="1" parent="1873">
                     <mxGeometry x="443" y="352" width="539" height="200" as="geometry"/>
