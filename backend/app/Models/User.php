@@ -47,4 +47,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+     // リレーション：ユーザーは1つのチームに属する
+     public function team()
+     {
+        return $this->belongsTo(Team::class);
+     }
 }
