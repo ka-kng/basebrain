@@ -88,6 +88,7 @@ export default function LoginForm() {
               placeholder='example@example.com'
               className='w-full border p-2'
             />
+            {errors.email && <p className='text-red-500'>{errors.email}</p>}
           </div>
 
           <div>
@@ -103,10 +104,12 @@ export default function LoginForm() {
               placeholder='パスワード'
               className='w-full border p-2'
             />
-            {errors.email && <p className='text-red-500'>{errors.email}</p>}
+            {errors.password && <p className='text-red-500'>{errors.password}</p>}
 
           </div>
 
+          {errors.emailPass && <p className='text-red-500'>{errors.emailPass}</p>}
+          
           <button type="submit" className="mt-5 mx-auto w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
             ログイン
           </button>
