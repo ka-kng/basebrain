@@ -2,8 +2,6 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL = '/';
 
 export default function LoginForm() {
   const [form, setForm] = useState({
@@ -20,7 +18,7 @@ export default function LoginForm() {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setErrors({});
 
@@ -46,8 +44,15 @@ export default function LoginForm() {
 
     try {
 
-      await axios.get('/sanctum/csrf-cookie'); // CSRFトークン取得
       const res = await axios.post('api/login', form);
+
+      const token = res.data.access_token;
+
+      // トークンを保存（localStorageなど）
+      localStorage.setItem('access_token', token);
+
+      // axiosにデフォルトヘッダーとして設定
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
       navigate('/dashboard');
 
@@ -73,7 +78,7 @@ export default function LoginForm() {
       <div className='space-y-4 w-full max-w-3xl bg-white shadow-md rounded-lg p-8'>
         <h1 className='mb-10 text-left text-2xl'>ログイン</h1>
 
-        <form onSubmit={handleSubmit} className='mt-10 text-left flex flex-col gap-5'>
+        <form onSubmit={handleLogin} className='mt-10 text-left flex flex-col gap-5'>
 
           <div>
 
@@ -109,7 +114,7 @@ export default function LoginForm() {
           </div>
 
           {errors.emailPass && <p className='text-red-500'>{errors.emailPass}</p>}
-          
+
           <button type="submit" className="mt-5 mx-auto w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
             ログイン
           </button>
