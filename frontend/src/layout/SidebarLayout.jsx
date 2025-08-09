@@ -10,7 +10,7 @@ export default function SidebarLayout() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <Sidebar role={user?.role || 'player'} />
-      
+
       <main className="flex-1 p-4 bg-gray-50">
         <Outlet />
       </main>
