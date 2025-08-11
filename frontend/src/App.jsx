@@ -5,7 +5,8 @@ import RegisterForm from './Auth/RegisterForm';
 import LoginForm from './Auth/LoginForm';
 import { useAuth } from './contexts/AuthContext';
 import SidebarLayout from './layout/SidebarLayout';
-import Records from './Records/GameRecordForm';
+import GameRecordForm from './Records/GameRecordForm';
+import BattingRecordForm from './Records/BattingRecordForm';
 import Dashboard from './pages/Dashboard';
 
 
@@ -23,7 +24,8 @@ function App() {
       {/* ログイン後 (Sidebar含めたレイアウト) */}
       <Route path="/" element={<SidebarLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="records" element={<Records />} />
+        <Route path="/records/game" element={<GameRecordForm  />} />
+        <Route path="/records/batting" element={<BattingRecordForm />} />
         {/* <Route path="ranking" element={<Ranking />} /> */}
         {/* <Route path="schedule" element={<Schedule />} /> */}
         {/* <Route path="mypage" element={<Mypage />} /> */}

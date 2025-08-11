@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -45,8 +45,9 @@ export default function GameRecordForm() {
 
     try {
 
-      await axios.post('/api/game', form);
-      alert('登録成功');
+      await axios.post('/api/records/games', form);
+
+      navigate('/records/batting');
 
     } catch (err) {
 
@@ -59,7 +60,7 @@ export default function GameRecordForm() {
     <div className="px-10 pt-10 pb-20">
       <button className="block text-left text-xl" onClick={handleBack}>戻る</button>
       <h1 className="text-2xl mt-10">試合結果</h1>
-      <form onSubmit={handleSubmit} className="">
+      <form onSubmit={handleSubmit}>
 
         {/* 試合日 */}
         <div className="flex mt-10 justify-between items-center">
@@ -70,7 +71,7 @@ export default function GameRecordForm() {
             name="date"
             value={form.date}
             onChange={handleChange}
-            className="border p-2 md:px-10" />
+            className="border p-2 md:w-40" />
         </div>
         {errors.date && <p className="text-red-600 mt-1 text-right">{errors.date}</p>}
 
@@ -115,21 +116,9 @@ export default function GameRecordForm() {
             name="tournament"
             value={form.tournament}
             onChange={handleChange}
-            className="border p-2 md:px-10" />
+            className="border p-2 md:w-80" />
         </div>
         {errors.tournament && <p className="text-red-600 mt-1 text-right">{errors.tournament}</p>}
-
-        {/* 自チーム名 */}
-        <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="">自チーム名</label>
-          <input
-            id=""
-            type="text"
-            name=""
-            value={form.opponent}
-            onChange={handleChange}
-            className="border p-2 md:px-10" />
-        </div>
 
         {/* 相手チーム名 */}
         <div className="flex mt-10 justify-between items-center">
@@ -140,7 +129,7 @@ export default function GameRecordForm() {
             name="opponent"
             value={form.opponent}
             onChange={handleChange}
-            className="border p-2 md:px-10" />
+            className="border p-2 md:w-80" />
         </div>
         {errors.opponent && <p className="text-red-600 mt-1 text-right">{errors.opponent}</p>}
 
