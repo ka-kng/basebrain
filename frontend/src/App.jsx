@@ -7,8 +7,8 @@ import { useAuth } from './contexts/AuthContext';
 import SidebarLayout from './layout/SidebarLayout';
 import GameRecordForm from './Records/GameRecordForm';
 import BattingRecordForm from './Records/BattingRecordForm';
+import PitchingRecordForm from './Records/PitchingRecordForm';
 import Dashboard from './pages/Dashboard';
-
 
 function App() {
   const { user, loading } = useAuth();
@@ -26,6 +26,7 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="/records/game" element={<GameRecordForm  />} />
         <Route path="/records/batting" element={<BattingRecordForm />} />
+        <Route path="/records/pitching" element={<PitchingRecordForm />} />
         {/* <Route path="ranking" element={<Ranking />} /> */}
         {/* <Route path="schedule" element={<Schedule />} /> */}
         {/* <Route path="mypage" element={<Mypage />} /> */}

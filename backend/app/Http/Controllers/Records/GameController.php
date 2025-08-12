@@ -12,7 +12,6 @@ class GameController extends Controller
     // 一覧取得(GET /api/games)
     public function index()
     {
-
         $game = Game::with('team')->orderBy('date', 'desc')->get();
         return response()->json($game);
     }

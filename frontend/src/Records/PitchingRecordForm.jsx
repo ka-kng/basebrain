@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
-export default function BattingRecordForm() {
+export default function PitchingRecordForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const [errors, setErrors] = useState({});
@@ -99,7 +99,7 @@ export default function BattingRecordForm() {
 
       await axios.post('/api/records/batting', form);
 
-      fetchRegisteredUserIds();
+       fetchRegisteredUserIds();
 
       if (action === 'continue') {
         // フォームだけクリアして同ページに留まる
@@ -121,7 +121,7 @@ export default function BattingRecordForm() {
 
       } else if (action === 'pitching') {
         // 投手登録ページへ遷移
-        navigate('/records/pitching', { state: { game_id: form.game_id } });
+        navigate('/records/pitching', { state: { game_id: gameId } });
 
       }
 
@@ -140,7 +140,7 @@ export default function BattingRecordForm() {
   return (
     <div className="px-10 pt-10 pb-20">
       <button className="block text-left text-xl" onClick={handleBack}>戻る</button>
-      <h1 className="text-2xl mt-10">打者結果</h1>
+      <h1 className="text-2xl mt-10">投手結果</h1>
       <form>
 
         {/* 選手名 */}
@@ -443,22 +443,8 @@ export default function BattingRecordForm() {
             投手登録へ
           </button>
         </div>
+
       </form>
-
-      <div className="mt-10 text-left">
-        <h2 className="text-xl font-semibold">登録済み選手一覧</h2>
-        {registeredUserIds.length === 0 ? (
-          <p>まだ登録されていません</p>
-        ) : (
-          <ul className="mt-3 list-disc list-inside text-lg">
-            {registeredUserIds.map(id => {
-              const user = users.find(u => u.id === id);
-              return user ? <li key={id}>{user.name}</li> : null;
-            })}
-          </ul>
-        )}
-      </div>
-
     </div>
   );
 

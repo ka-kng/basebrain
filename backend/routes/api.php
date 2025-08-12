@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Records\BattingController;
 use App\Http\Controllers\Records\GameController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,9 +15,15 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/games', [GameController::class, 'index']);
-    Route::post('/games', [GameController::class, 'store']);
-    Route::get('/games/{id}', [GameController::class, 'show']);
-    Route::put('/games/{id}', [GameController::class, 'update']);
-    Route::delete('/games/{id}', [GameController::class, 'destory']);
+    Route::get('/records/games', [GameController::class, 'index']);
+    Route::post('/records/games', [GameController::class, 'store']);
+    Route::get('/records/games/{id}', [GameController::class, 'show']);
+    Route::put('/records/games/{id}', [GameController::class, 'update']);
+    Route::delete('/records/games/{id}', [GameController::class, 'destroy']);
+
+    Route::get('/users', [BattingController::class, 'users']);
+    Route::get('/records/batting/registered-users', [BattingController::class, 'registeredUsers']);
+
+    Route::get('/records/batting', [BattingController::class, 'index']);
+    Route::post('/records/batting', [BattingController::class, 'store']);
 });

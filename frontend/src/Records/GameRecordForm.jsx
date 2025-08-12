@@ -44,10 +44,9 @@ export default function GameRecordForm() {
     setErrors({});
 
     try {
-
-      await axios.post('/api/records/games', form);
-
-      navigate('/records/batting');
+      const res = await axios.post('/api/records/games', form);
+      const gameId = res.data.id;
+      navigate('/records/batting', { state: { game_id: gameId } });
 
     } catch (err) {
 

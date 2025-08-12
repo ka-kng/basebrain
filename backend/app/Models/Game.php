@@ -29,4 +29,8 @@ class Game extends Model
         return $this->belongsTo(Team::class);
     }
 
+    public function battingRecords()
+    {
+        return $this->hasMany(BattingRecord::class);
+    }
 }
