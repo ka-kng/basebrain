@@ -33,4 +33,9 @@ class Game extends Model
     {
         return $this->hasMany(BattingRecord::class);
     }
+
+    public function pitching()
+    {
+        return $this->hasMany(PitchingRecord::class);
+    }
 }

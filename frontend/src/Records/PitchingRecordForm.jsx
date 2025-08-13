@@ -6,7 +6,7 @@ export default function PitchingRecordForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const [errors, setErrors] = useState({});
-  const [registeredUserIds, setRegisteredUserIds] = useState([]);
+  const [registeredPitchers, setRegisteredPitchers] = useState([]);
 
   const handleBack = () => {
     navigate(-1);
@@ -15,26 +15,24 @@ export default function PitchingRecordForm() {
   const [form, setForm] = useState({
     game_id: '',
     user_id: '',
-    order_no: '',
-    position: '',
-    at_bats: '',
-    hits: '',
-    rbis: '',
-    runs: '',
-    walks: '',
+    result: '',
+    pitching_innings_outs: '',
+    pitches: '',
     strikeouts: '',
-    steals: '',
-    caught_stealing: '',
-    errors: '',
+    hits_allowed: '',
+    hr_allowed: '',
+    walks_given: '',
+    runs_allowed: '',
+    earned_runs: '',
   });
 
   const [users, setUsers] = useState([]);
 
   const fetchRegisteredUserIds = () => {
     if (!form.game_id) return;
-    axios.get(`/api/records/batting/registered-users?game_id=${form.game_id}`)
-      .then(res => setRegisteredUserIds(res.data))
-      .catch(() => setRegisteredUserIds([]));
+    axios.get(`/api/records/pitching/registered-users?game_id=${form.game_id}`)
+      .then(res => setRegisteredPitchers(res.data))
+      .catch(() => setRegisteredPitchers([]));
   };
 
   useEffect(() => {
@@ -74,18 +72,21 @@ export default function PitchingRecordForm() {
     const newErrors = {};
 
     if (!form.user_id) newErrors.user_id = '選手を選択してください';
+    if (!form.result) newErrors.result = '勝敗を選択してください';
+    if (!form.pitching_innings_outs) newErrors.pitching_innings_outs = '投球回数を選択してください';
+    if (!form.pitches) newErrors.pitches = '投球数を入力してください';
+    if (!form.strikeouts) newErrors.strikeouts = '奪三振数を入力してください';
+    if (!form.hits_allowed) newErrors.hits_allowed = '被安打数を入力してください';
+    if (!form.hr_allowed) newErrors.hr_allowed = '被本塁打数を入力してください';
+    if (!form.walks_given) newErrors.walks_given = '四死球数を入力してください';
+    if (!form.runs_allowed) newErrors.runs_allowed = '失点数を入力してください';
+    if (!form.earned_runs) newErrors.earned_runs = '盗塁死を入力してください';
 
-    if (!form.position) newErrors.position = '守備位置を選択してください';
-
-    if (!form.order_no) newErrors.order_no = '打順を選択してください';
-
-    const numFields = ['at_bats', 'hits', 'rbis', 'runs', 'walks', 'strikeouts', 'steals', 'caught_stealing', 'errors'];
+    const numFields = ['pitches', 'strikeouts', 'hits_allowed', 'hr_allowed', 'walks_given', 'runs_allowed', 'earned_runs'];
 
     numFields.forEach(field => {
-      if (form[field] === '') {
+      if (isNaN(form[field])) {
         newErrors[field] = '数字を入力してください';
-      } else if (isNaN(form[field])) {
-        newErrors[field] = '数字を入力してください'
       }
     });
 
@@ -97,31 +98,29 @@ export default function PitchingRecordForm() {
 
     try {
 
-      await axios.post('/api/records/batting', form);
+      await axios.post('/api/records/pitching', form);
 
-       fetchRegisteredUserIds();
+      fetchRegisteredUserIds();
 
       if (action === 'continue') {
         // フォームだけクリアして同ページに留まる
         setForm(prev => ({
           ...prev,
           user_id: '',
-          order_no: '',
-          position: '',
-          at_bats: '',
-          hits: '',
-          rbis: '',
-          runs: '',
-          walks: '',
+          result: '',
+          pitching_innings_outs: '',
+          pitches: '',
           strikeouts: '',
-          steals: '',
-          caught_stealing: '',
-          errors: '',
+          hits_allowed: '',
+          hr_allowed: '',
+          walks_given: '',
+          runs_allowed: '',
+          steearned_runsals: '',
         }));
 
-      } else if (action === 'pitching') {
-        // 投手登録ページへ遷移
-        navigate('/records/pitching', { state: { game_id: gameId } });
+      } else if (action === 'summary') {
+        // 結果まとめページへ遷移
+        navigate('/records/summary', { state: { game_id: form.game_id } });
 
       }
 
@@ -135,11 +134,25 @@ export default function PitchingRecordForm() {
     }
   };
 
-  const selectableUsers = users.filter(user => !registeredUserIds.includes(user.id));
+  const selectableUsers = users.filter(user => !registeredPitchers.includes(user.id));
+  const allPlayersRegistered = selectableUsers.length === 1;
 
   return (
     <div className="px-10 pt-10 pb-20">
-      <button className="block text-left text-xl" onClick={handleBack}>戻る</button>
+      <div className="flex justify-between">
+        <button className="block text-left text-xl" onClick={handleBack}>戻る</button>
+        {registeredPitchers.length > 0 && (
+          <div className="mb-5 text-right">
+            <button
+              type="button"
+              onClick={() => navigate('/records/sammary', { state: { game_id: form.game_id } })}
+              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+            >
+              次へ
+            </button>
+          </div>
+        )}
+      </div>
       <h1 className="text-2xl mt-10">投手結果</h1>
       <form>
 
@@ -162,180 +175,80 @@ export default function PitchingRecordForm() {
         </div>
         {errors.user_id && <p className="text-red-600 mt-1 text-right">{errors.user_id}</p>}
 
-        {/* 守備位置 */}
+        {/* 打席数 */}
         <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="position">守備位置</label>
+          <label htmlFor="result">勝敗</label>
           <select
-            id="position"
-            name="position"
+            id="result"
+            name="result"
             type="text"
-            value={form.position}
+            value={form.result}
             onChange={handleChange}
-            className="border p-2 md:w-80"
+            className="border p-2 w-24"
           >
-            <option value="">守備位置を選択してください</option>
-            <option value="投手">投手</option>
-            <option value="捕手">捕手</option>
-            <option value="一塁手">一塁手</option>
-            <option value="二塁手">二塁手</option>
-            <option value="三塁手">三塁手</option>
-            <option value="遊撃手">遊撃手</option>
-            <option value="左翼手">左翼手</option>
-            <option value="中堅手">中堅手</option>
-            <option value="右翼手">右翼手</option>
-            <option value="DH">DH</option>
-            <option value="代打">代打</option>
+            <option value="">選択</option>
+            <option value="勝利">勝利</option>
+            <option value="敗北">敗北</option>
+
           </select>
         </div>
-        {errors.position && <p className="text-red-600 mt-1 text-right">{errors.position}</p>}
+        {errors.result && <p className="text-red-600 mt-1 text-right">{errors.result}</p>}
 
-        {/* 打順 */}
+        {/* 投球回数 */}
         <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="order_no">打順</label>
+          <label htmlFor="pitching_innings_outs">投球回数</label>
+
           <select
-            id="order_no"
-            name="order_no"
-            value={form.order_no}
+            id="pitching_innings_outs"
+            name="pitching_innings_outs"
+            type="text"
+            value={form.pitching_innings_outs}
             onChange={handleChange}
-            className="border p-2 md:w-20"
+            className="border p-2 w-24"
           >
-            <option value="">打順</option>
-            <option value="1">1番</option>
-            <option value="2">2番</option>
-            <option value="3">3番</option>
-            <option value="4">4番</option>
-            <option value="5">5番</option>
-            <option value="6">6番</option>
-            <option value="7">7番</option>
-            <option value="8">8番</option>
-            <option value="9">9番</option>
+            <option value="">選択</option>
+            <option value="1">1回</option>
+            <option value="2">2回</option>
+            <option value="3">3回</option>
+            <option value="4">4回</option>
+            <option value="5">5回</option>
+            <option value="6">6回</option>
+            <option value="7">7回</option>
+            <option value="8">8回</option>
+            <option value="9">9回</option>
+
           </select>
-        </div>
-        {errors.order_no && <p className="text-red-600 mt-1 text-right">{errors.order_no}</p>}
 
-        {/* 打席数 */}
+        </div>
+        {errors.pitching_innings_outs && <p className="text-red-600 mt-1 text-right">{errors.pitching_innings_outs}</p>}
+
+        {/* 投球数 */}
         <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="at_bats">打席数</label>
+          <label htmlFor="pitches">投球数</label>
           <div className=" items-center flex gap-3">
 
             <div className="items-center">
               <input
-                id="at_bats"
-                name="at_bats"
+                id="pitches"
+                name="pitches"
                 min={0}
                 type="number"
-                value={form.at_bats}
+                value={form.pitches}
                 onChange={handleChange}
-                className="border p-2 w-12 text-center" />
+                className="border p-2 w-16 text-center" />
             </div>
 
             <div>
-              <p>打数</p>
+              <p>球</p>
             </div>
 
           </div>
         </div>
-        {errors.at_bats && <p className="text-red-600 mt-1 text-right">{errors.at_bats}</p>}
+        {errors.pitches && <p className="text-red-600 mt-1 text-right">{errors.pitches}</p>}
 
-        {/* 打席数 */}
+        {/* 奪三振 */}
         <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="hits">安打数</label>
-          <div className=" items-center flex gap-3">
-
-            <div className="items-center">
-              <input
-                id="hits"
-                name="hits"
-                min={0}
-                type="number"
-                value={form.hits}
-                onChange={handleChange}
-                className="border p-2 w-12 text-center" />
-            </div>
-
-            <div>
-              <p>安打</p>
-            </div>
-
-          </div>
-        </div>
-        {errors.hits && <p className="text-red-600 mt-1 text-right">{errors.hits}</p>}
-
-        {/* 打点 */}
-        <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="rbis">打点</label>
-          <div className=" items-center flex gap-3">
-
-            <div className="items-center">
-              <input
-                id="rbis"
-                name="rbis"
-                min={0}
-                type="number"
-                value={form.rbis}
-                onChange={handleChange}
-                className="border p-2 w-12 text-center" />
-            </div>
-
-            <div>
-              <p>打点</p>
-            </div>
-
-          </div>
-        </div>
-        {errors.rbis && <p className="text-red-600 mt-1 text-right">{errors.rbis}</p>}
-
-        {/* 得点 */}
-        <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="runs">得点</label>
-          <div className=" items-center flex gap-3">
-
-            <div className="items-center">
-              <input
-                id="runs"
-                name="runs"
-                min={0}
-                type="number"
-                value={form.runs}
-                onChange={handleChange}
-                className="border p-2 w-12 text-center" />
-            </div>
-
-            <div>
-              <p>得点</p>
-            </div>
-
-          </div>
-        </div>
-        {errors.runs && <p className="text-red-600 mt-1 text-right">{errors.runs}</p>}
-
-        {/* 四死球 */}
-        <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="walks">四死球</label>
-          <div className=" items-center flex gap-3">
-
-            <div className="items-center">
-              <input
-                id="walks"
-                name="walks"
-                min={0}
-                type="number"
-                value={form.walks}
-                onChange={handleChange}
-                className="border p-2 w-12 text-center" />
-            </div>
-
-            <div>
-              <p>四死球</p>
-            </div>
-
-          </div>
-        </div>
-        {errors.walks && <p className="text-red-600 mt-1 text-right">{errors.walks}</p>}
-
-        {/* 三振 */}
-        <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="strikeouts">三振</label>
+          <label htmlFor="strikeouts">奪三振</label>
           <div className=" items-center flex gap-3">
 
             <div className="items-center">
@@ -346,105 +259,171 @@ export default function PitchingRecordForm() {
                 type="number"
                 value={form.strikeouts}
                 onChange={handleChange}
-                className="border p-2 w-12 text-center" />
+                className="border p-2 w-16 text-center" />
             </div>
 
             <div>
-              <p>三振</p>
+              <p>奪三振</p>
             </div>
 
           </div>
         </div>
         {errors.strikeouts && <p className="text-red-600 mt-1 text-right">{errors.strikeouts}</p>}
 
-        {/* 盗塁 */}
+        {/* 被安打 */}
         <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="steals">盗塁</label>
+          <label htmlFor="hits_allowed">被安打</label>
           <div className=" items-center flex gap-3">
 
             <div className="items-center">
               <input
-                id="steals"
-                name="steals"
+                id="hits_allowed"
+                name="hits_allowed"
                 min={0}
                 type="number"
-                value={form.steals}
+                value={form.hits_allowed}
                 onChange={handleChange}
-                className="border p-2 w-12 text-center" />
+                className="border p-2 w-16 text-center" />
             </div>
 
             <div>
-              <p>盗塁</p>
+              <p>本</p>
             </div>
 
           </div>
         </div>
-        {errors.steals && <p className="text-red-600 mt-1 text-right">{errors.steals}</p>}
+        {errors.hits_allowed && <p className="text-red-600 mt-1 text-right">{errors.hits_allowed}</p>}
 
-        {/* 盗塁死 */}
+        {/* 被本塁打 */}
         <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="caught_stealing">盗塁死</label>
+          <label htmlFor="hr_allowed">被本塁打</label>
           <div className=" items-center flex gap-3">
 
             <div className="items-center">
               <input
-                id="caught_stealing"
-                name="caught_stealing"
+                id="hr_allowed"
+                name="hr_allowed"
                 min={0}
                 type="number"
-                value={form.caught_stealing}
+                value={form.hr_allowed}
                 onChange={handleChange}
-                className="border p-2 w-12 text-center" />
+                className="border p-2 w-16 text-center" />
             </div>
 
             <div>
-              <p>盗塁死</p>
+              <p>本</p>
             </div>
 
           </div>
         </div>
-        {errors.caught_stealing && <p className="text-red-600 mt-1 text-right">{errors.caught_stealing}</p>}
+        {errors.hr_allowed && <p className="text-red-600 mt-1 text-right">{errors.hr_allowed}</p>}
 
-        {/* 失策 */}
+        {/* 四死球 */}
         <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="errors">失策</label>
+          <label htmlFor="walks_given">四死球</label>
           <div className=" items-center flex gap-3">
 
             <div className="items-center">
               <input
-                id="errors"
-                name="errors"
+                id="walks_given"
+                name="walks_given"
                 min={0}
                 type="number"
-                value={form.errors}
+                value={form.walks_given}
                 onChange={handleChange}
-                className="border p-2 w-12 text-center" />
+                className="border p-2 w-16 text-center" />
             </div>
 
             <div>
-              <p>失策</p>
+              <p>四死球</p>
             </div>
 
           </div>
         </div>
-        {errors.errors && <p className="text-red-600 mt-1 text-right">{errors.errors}</p>}
+        {errors.walks_given && <p className="text-red-600 mt-1 text-right">{errors.walks_given}</p>}
+
+        {/* 失点 */}
+        <div className="flex mt-10 justify-between items-center">
+          <label htmlFor="runs_allowed">失点</label>
+          <div className=" items-center flex gap-3">
+
+            <div className="items-center">
+              <input
+                id="runs_allowed"
+                name="runs_allowed"
+                min={0}
+                type="number"
+                value={form.runs_allowed}
+                onChange={handleChange}
+                className="border p-2 w-16 text-center" />
+            </div>
+
+            <div>
+              <p>失点</p>
+            </div>
+
+          </div>
+        </div>
+        {errors.runs_allowed && <p className="text-red-600 mt-1 text-right">{errors.runs_allowed}</p>}
+
+        {/* 自責点 */}
+        <div className="flex mt-10 justify-between items-center">
+          <label htmlFor="earned_runs">自責点</label>
+          <div className=" items-center flex gap-3">
+
+            <div className="items-center">
+              <input
+                id="earned_runs"
+                name="earned_runs"
+                min={0}
+                type="number"
+                value={form.earned_runs}
+                onChange={handleChange}
+                className="border p-2 w-16 text-center" />
+            </div>
+
+            <div>
+              <p>点</p>
+            </div>
+
+          </div>
+        </div>
+        {errors.earned_runs && <p className="text-red-600 mt-1 text-right">{errors.earned_runs}</p>}
 
         <div className="flex justify-end md:mt-10 mt-5 flex gap-5">
+          {!allPlayersRegistered && (
+            <button
+              type="button"
+              onClick={(e) => handleSubmit(e, 'continue')}
+              className="mt-5 w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition"
+            >
+              続けて登録
+            </button>
+          )}
           <button
             type="button"
-            onClick={(e) => handleSubmit(e, 'continue')}
+            onClick={(e) => handleSubmit(e, 'summary')}
             className="mt-5 w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
-            続けて登録
-          </button>
-          <button
-            type="button"
-            onClick={(e) => handleSubmit(e, 'pitching')}
-            className="mt-5 w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
-            投手登録へ
+            結果まとめへ
           </button>
         </div>
 
       </form>
+
+      <div className="mt-10 text-left">
+        <h2 className="text-xl font-semibold">登録済み選手一覧</h2>
+        {registeredPitchers.length === 0 ? (
+          <p className="mt-3">まだ登録されていません</p>
+        ) : (
+          <ul className="mt-3 list-disc list-inside text-lg">
+            {registeredPitchers.map(id => {
+              const user = users.find(u => u.id === id);
+              return user ? <li key={id}>{user.name}</li> : null;
+            })}
+          </ul>
+        )}
+      </div>
+
     </div>
   );
 

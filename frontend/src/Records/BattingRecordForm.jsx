@@ -6,7 +6,7 @@ export default function BattingRecordForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const [errors, setErrors] = useState({});
-  const [registeredUserIds, setRegisteredUserIds] = useState([]);
+  const [registeredBatters, setRegisteredBatters] = useState([]);
 
   const handleBack = () => {
     navigate(-1);
@@ -33,8 +33,8 @@ export default function BattingRecordForm() {
   const fetchRegisteredUserIds = () => {
     if (!form.game_id) return;
     axios.get(`/api/records/batting/registered-users?game_id=${form.game_id}`)
-      .then(res => setRegisteredUserIds(res.data))
-      .catch(() => setRegisteredUserIds([]));
+      .then(res => setRegisteredBatters(res.data))
+      .catch(() => setRegisteredBatters([]));
   };
 
   useEffect(() => {
@@ -135,11 +135,25 @@ export default function BattingRecordForm() {
     }
   };
 
-  const selectableUsers = users.filter(user => !registeredUserIds.includes(user.id));
+  const selectableUsers = users.filter(user => !registeredBatters.includes(user.id));
+  const allPlayersRegistered = selectableUsers.length === 1;
 
   return (
     <div className="px-10 pt-10 pb-20">
-      <button className="block text-left text-xl" onClick={handleBack}>戻る</button>
+      <div className="flex justify-between">
+        <button className="block text-left text-xl" onClick={handleBack}>戻る</button>
+        {registeredBatters.length > 0 && (
+          <div className="mb-5 text-right">
+            <button
+              type="button"
+              onClick={() => navigate('/records/pitching', { state: { game_id: form.game_id } })}
+              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+            >
+              次へ
+            </button>
+          </div>
+        )}
+      </div>
       <h1 className="text-2xl mt-10">打者結果</h1>
       <form>
 
@@ -430,12 +444,15 @@ export default function BattingRecordForm() {
         {errors.errors && <p className="text-red-600 mt-1 text-right">{errors.errors}</p>}
 
         <div className="flex justify-end md:mt-10 mt-5 flex gap-5">
-          <button
-            type="button"
-            onClick={(e) => handleSubmit(e, 'continue')}
-            className="mt-5 w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
-            続けて登録
-          </button>
+          {!allPlayersRegistered && (
+            <button
+              type="button"
+              onClick={(e) => handleSubmit(e, 'continue')}
+              className="mt-5 w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition"
+            >
+              続けて登録
+            </button>
+          )}
           <button
             type="button"
             onClick={(e) => handleSubmit(e, 'pitching')}
@@ -447,11 +464,11 @@ export default function BattingRecordForm() {
 
       <div className="mt-10 text-left">
         <h2 className="text-xl font-semibold">登録済み選手一覧</h2>
-        {registeredUserIds.length === 0 ? (
-          <p>まだ登録されていません</p>
+        {registeredBatters.length === 0 ? (
+          <p className="mt-3">まだ登録されていません</p>
         ) : (
           <ul className="mt-3 list-disc list-inside text-lg">
-            {registeredUserIds.map(id => {
+            {registeredBatters.map(id => {
               const user = users.find(u => u.id === id);
               return user ? <li key={id}>{user.name}</li> : null;
             })}

@@ -54,4 +54,14 @@ class User extends Authenticatable
      {
         return $this->belongsTo(Team::class);
      }
+
+     public function battingRecords()
+     {
+        return $this->hasMany(BattingRecord::class);
+     }
+
+     public function pitchingRecords()
+     {
+        return $this->hasMany(PitchingRecord::class);
+     }
 }

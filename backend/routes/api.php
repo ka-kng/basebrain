@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Records\BattingController;
 use App\Http\Controllers\Records\GameController;
+use App\Http\Controllers\Records\PitchingController;
+use App\Models\PitchingRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,8 +24,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/records/games/{id}', [GameController::class, 'destroy']);
 
     Route::get('/users', [BattingController::class, 'users']);
-    Route::get('/records/batting/registered-users', [BattingController::class, 'registeredUsers']);
+    Route::get('/records/batting/registered-users', [BattingController::class, 'registeredBatters']);
 
     Route::get('/records/batting', [BattingController::class, 'index']);
     Route::post('/records/batting', [BattingController::class, 'store']);
+
+    Route::get('/users', [PitchingController::class, 'users']);
+    Route::get('/records/pitching/registered-users', [PitchingController::class, 'registeredPitchers']);
+
+    Route::get('/records/pitching', [PitchingController::class, 'index']);
+    Route::post('/records/pitching', [PitchingController::class, 'store']);
 });
