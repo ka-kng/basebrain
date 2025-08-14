@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Records\BattingController;
 use App\Http\Controllers\Records\GameController;
 use App\Http\Controllers\Records\PitchingController;
+use App\Http\Controllers\Records\SummaryController;
 use App\Models\PitchingRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,4 +35,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/records/pitching', [PitchingController::class, 'index']);
     Route::post('/records/pitching', [PitchingController::class, 'store']);
+
+    Route::get('/records/summary', [SummaryController::class, 'summaryResult']);
 });

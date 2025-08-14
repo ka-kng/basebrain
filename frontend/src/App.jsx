@@ -10,6 +10,7 @@ import BattingRecordForm from './Records/BattingRecordForm';
 import PitchingRecordForm from './Records/PitchingRecordForm';
 import Dashboard from './pages/Dashboard';
 import SummaryRecord from './Records/SummaryRecord';
+import GameList from './pages/GameList';
 
 function App() {
   const { user, loading } = useAuth();
@@ -29,6 +30,7 @@ function App() {
         <Route path="/records/batting" element={<BattingRecordForm />} />
         <Route path="/records/pitching" element={<PitchingRecordForm />} />
         <Route path="/records/summary" element={<SummaryRecord />} />
+        <Route path="/game/list" element={<GameList />} />
         {/* <Route path="ranking" element={<Ranking />} /> */}
         {/* <Route path="schedule" element={<Schedule />} /> */}
         {/* <Route path="mypage" element={<Mypage />} /> */}

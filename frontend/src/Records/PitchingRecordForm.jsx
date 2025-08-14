@@ -80,7 +80,7 @@ export default function PitchingRecordForm() {
     if (!form.hr_allowed) newErrors.hr_allowed = '被本塁打数を入力してください';
     if (!form.walks_given) newErrors.walks_given = '四死球数を入力してください';
     if (!form.runs_allowed) newErrors.runs_allowed = '失点数を入力してください';
-    if (!form.earned_runs) newErrors.earned_runs = '盗塁死を入力してください';
+    if (!form.earned_runs) newErrors.earned_runs = '自責点を入力してください';
 
     const numFields = ['pitches', 'strikeouts', 'hits_allowed', 'hr_allowed', 'walks_given', 'runs_allowed', 'earned_runs'];
 
@@ -115,7 +115,7 @@ export default function PitchingRecordForm() {
           hr_allowed: '',
           walks_given: '',
           runs_allowed: '',
-          steearned_runsals: '',
+          earned_runs: '',
         }));
 
       } else if (action === 'summary') {
@@ -145,7 +145,7 @@ export default function PitchingRecordForm() {
           <div className="mb-5 text-right">
             <button
               type="button"
-              onClick={() => navigate('/records/sammary', { state: { game_id: form.game_id } })}
+              onClick={() => navigate(`/records/summary`, { state: { game_id: form.game_id } })}
               className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
             >
               次へ
@@ -170,7 +170,7 @@ export default function PitchingRecordForm() {
             <option value="">選手を選択してください</option>
             {selectableUsers.map(user => (
               <option key={user.id} value={user.id}>{user.name}</option>
-            ))};
+            ))}
           </select>
         </div>
         {errors.user_id && <p className="text-red-600 mt-1 text-right">{errors.user_id}</p>}
