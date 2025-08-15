@@ -21,8 +21,17 @@ class Game extends Model
     ];
 
     protected $casts = [
-        'date' => 'date',
+        'date' => 'datetime',
     ];
+
+    protected $appends = ['formatted_date'];
+
+    public function getFormattedDateAttribute()
+    {
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $weekday = $weekdays[$this->date->dayOfWeek];
+        return $this->date->format('Y-m-d') . "({$weekday})";
+    }
 
     public function team()
     {

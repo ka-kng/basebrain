@@ -18,7 +18,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/records/games', [GameController::class, 'index']);
+    Route::get('/list/games', [GameController::class, 'index']);
     Route::post('/records/games', [GameController::class, 'store']);
     Route::get('/records/games/{id}', [GameController::class, 'show']);
     Route::put('/records/games/{id}', [GameController::class, 'update']);
