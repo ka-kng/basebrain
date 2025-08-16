@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 const menuItems = {
   coach: [
     { label: 'ダッシュボード', path: '/dashboard' },
-    { label: '記録', path: '/game/list' },
+    { label: '記録', path: '/games/list' },
     { label: 'スケジュール', path: '/schedule' },
     { label: 'マイページ', path: '/mypage' },
   ],

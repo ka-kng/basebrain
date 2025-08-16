@@ -11,6 +11,7 @@ import PitchingRecordForm from './Records/PitchingRecordForm';
 import Dashboard from './pages/Dashboard';
 import SummaryRecord from './Records/SummaryRecord';
 import GameList from './pages/GameList';
+import GameDetail from './pages/GameDetail';
 
 function App() {
   const { user, loading } = useAuth();
@@ -26,11 +27,13 @@ function App() {
       {/* ログイン後 (Sidebar含めたレイアウト) */}
       <Route path="/" element={<SidebarLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="/records/game" element={<GameRecordForm  />} />
-        <Route path="/records/batting" element={<BattingRecordForm />} />
-        <Route path="/records/pitching" element={<PitchingRecordForm />} />
-        <Route path="/records/summary" element={<SummaryRecord />} />
-        <Route path="/game/list" element={<GameList />} />
+        <Route path="records/game" element={<GameRecordForm  />} />
+        <Route path="records/batting" element={<BattingRecordForm />} />
+        <Route path="records/pitching" element={<PitchingRecordForm />} />
+        <Route path="records/summary" element={<SummaryRecord />} />
+        
+        <Route path="games/list" element={<GameList />} />
+        <Route path="games/:id" element={<GameDetail />} />
         {/* <Route path="ranking" element={<Ranking />} /> */}
         {/* <Route path="schedule" element={<Schedule />} /> */}
         {/* <Route path="mypage" element={<Mypage />} /> */}

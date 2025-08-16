@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
-    // 一覧取得(GET /api/games)
+    // 一覧取得(GET /api/games/list)
     public function index()
     {
         $games = Game::with('team')->orderBy('id', 'desc')->get();
@@ -39,8 +39,12 @@ class GameController extends Controller
     // 詳細取得(GET /api/games/{id})
     public function show(string $id)
     {
-        $game = Game::with('team')->findOrFail($id);
-        return response()->json($game);
+        $gameDetail = Game::with([
+            'team',
+            'battingRecords.user',
+            'pitchingRecords.user'
+        ])->findOrFail($id);
+        return response()->json($gameDetail);
     }
 
     // 更新(PUT /api/games/{id})

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import GameRecordForm from "../Records/GameRecordForm";
 
 export default function GameList() {
   const [games, setGames] = useState([]);
@@ -12,13 +11,13 @@ export default function GameList() {
   };
 
   useEffect(() => {
-    axios.get("/api/list/games")
+    axios.get("/api/games/list")
       .then(res => setGames(res.data))
       .catch(err => console.error(err));
   }, []);
 
   return (
-    <div className="p-4">
+    <div className="p-4 mx-auto max-w-screen-lg">
       <div className="flex justify-end ">
           <div className="mb-5 text-right">
             <button
