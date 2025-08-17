@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function BattingRecordForm() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id } = useParams();
   const [errors, setErrors] = useState({});
   const [registeredBatters, setRegisteredBatters] = useState([]);
+  const isEdit = id;
 
   const handleBack = () => {
     navigate(-1);
@@ -30,43 +32,73 @@ export default function BattingRecordForm() {
 
   const [users, setUsers] = useState([]);
 
-  const fetchRegisteredUserIds = () => {
-    if (!form.game_id) return;
-    axios.get(`/api/records/batting/registered-users?game_id=${form.game_id}`)
+  const fetchRegisteredUserIds = (gameId = form.game_id) => {
+    if (!gameId) return;
+    axios.get(`/api/records/batting/registered-users?game_id=${gameId}`)
       .then(res => setRegisteredBatters(res.data))
       .catch(() => setRegisteredBatters([]));
   };
 
-  useEffect(() => {
-    if (location.state && location.state.game_id) {
-      setForm(prev => ({ ...prev, game_id: location.state.game_id }));
-    }
-  }, [location.state]);
-
-  useEffect(() => {
-    if (!location.state || !location.state.game_id) {
-      navigate('/records/game');
-      setForm(prev => ({ ...prev, game_id: location.state.game_id }));
-    }
-  }, [location.state, navigate]);
-
-  useEffect(() => {
-    axios.get('/api/users')
-      .then(res => {
-        setUsers(res.data);
-      })
-      .catch(() => {
-        setUsers([]);
-      });
-  }, []);
-
-  useEffect(() => {
-    fetchRegisteredUserIds();
-  }, [form.game_id]);
 
   const handleChange = (e) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
   };
+
+  // ユーザー一覧取得
+  useEffect(() => {
+    axios.get('/api/users') // 適切なAPIに置き換えてください
+      .then(res => setUsers(res.data))
+      .catch(() => setUsers([]));
+  }, []);
+
+  // game_id の初期セットと新規登録用登録済み選手取得
+  useEffect(() => {
+    // 新規登録時のみ location.state から game_id を取得
+    const gameIdFromState = location.state?.game_id;
+
+    if (!isEdit && !gameIdFromState) {
+      // 新規登録で game_id がない場合のみゲーム一覧へ
+      navigate('/records/game');
+      return;
+    }
+
+    // 編集モードの場合は game_id は編集データ取得時にセットされる
+    if (gameIdFromState) {
+      setForm(prev => ({ ...prev, game_id: gameIdFromState }));
+      fetchRegisteredUserIds(gameIdFromState);
+    }
+  }, [location.state, navigate, isEdit]);
+
+
+
+  // 編集モードの既存データ取得
+  useEffect(() => {
+    if (!isEdit || !id) return;
+
+    axios.get(`/api/records/batting/${id}`)
+      .then(res => {
+        setForm({
+          game_id: res.data.game_id,
+          user_id: res.data.user_id,
+          position: res.data.position,
+          order_no: res.data.order_no,
+          at_bats: res.data.at_bats,
+          hits: res.data.hits,
+          rbis: res.data.rbis,
+          runs: res.data.runs,
+          walks: res.data.walks,
+          strikeouts: res.data.strikeouts,
+          steals: res.data.steals,
+          caught_stealing: res.data.caught_stealing,
+          errors: res.data.errors,
+        });
+        fetchRegisteredUserIds(res.data.game_id);
+      })
+      .catch(() => alert('データの取得に失敗しました'));
+  }, [id, isEdit]);
+
+
 
   const handleSubmit = async (e, action) => {
     e.preventDefault();
@@ -96,57 +128,58 @@ export default function BattingRecordForm() {
     setErrors({});
 
     try {
-
-      await axios.post('/api/records/batting', form);
-
-      fetchRegisteredUserIds();
-
-      if (action === 'continue') {
-        // フォームだけクリアして同ページに留まる
-        setForm(prev => ({
-          ...prev,
-          user_id: '',
-          order_no: '',
-          position: '',
-          at_bats: '',
-          hits: '',
-          rbis: '',
-          runs: '',
-          walks: '',
-          strikeouts: '',
-          steals: '',
-          caught_stealing: '',
-          errors: '',
-        }));
-
-      } else if (action === 'pitching') {
-        // 投手登録ページへ遷移
-        navigate('/records/pitching', { state: { game_id: form.game_id } });
-
-      }
-
-    } catch (err) {
-
-      if (err.response && err.response.status === 422) {
-        setErrors(err.response.data.errors || { general: '入力に誤りがあります' });
+      if (isEdit) {
+        await axios.put(`/api/records/batting/${id}`, form);
+        // 編集後は詳細ページに戻す
+        navigate(`/games/${form.game_id}`);
       } else {
-        setErrors({ general: '通信エラーが発生しました' });
+        const res = await axios.post('/api/records/batting', form);
+        const newId = res.data.id;
+        if (action === 'continue') {
+          setForm({
+            ...form,
+            user_id: '',
+            order_no: '',
+            position: '',
+            at_bats: '',
+            hits: '',
+            rbis: '',
+            runs: '',
+            walks: '',
+            strikeouts: '',
+            steals: '',
+            caught_stealing: '',
+            errors: '',
+          });
+          fetchRegisteredUserIds();
+        } else if (action === 'pitching') {
+          navigate('/records/pitching', { state: { game_id: form.game_id } });
+        }
       }
+    } catch (err) {
+      console.log(err);
     }
   };
 
-  const selectableUsers = users.filter(user => !registeredBatters.includes(user.id));
+  const selectableUsers = users.filter(user => {
+    // 編集モードなら現在の選手を必ず表示
+    if (isEdit && user.id === form.user_id) return true;
+    return !registeredBatters.includes(user.id);
+  });
+
+
   const allPlayersRegistered = selectableUsers.length === 1;
 
   return (
     <div className="px-10 pt-10 pb-20">
       <div className="flex justify-between">
         <button className="block text-left text-xl" onClick={handleBack}>戻る</button>
-        {registeredBatters.length > 0 && (
+        {/* 編集モードでなければ次へ表示 */}
+        {!isEdit && registeredBatters.length > 0 && (
           <div className="mb-5 text-right">
             <button
               type="button"
-              onClick={() => navigate('/records/pitching', { state: { game_id: form.game_id } })}
+              onClick={() => navigate('/records/pitching', { state: { game_id: game.id } })}
               className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
             >
               次へ
@@ -154,7 +187,7 @@ export default function BattingRecordForm() {
           </div>
         )}
       </div>
-      <h1 className="text-2xl mt-10">打者結果</h1>
+      <h1 className="text-2xl mt-10">打撃成績</h1>
       <form>
 
         {/* 選手名 */}
@@ -444,7 +477,7 @@ export default function BattingRecordForm() {
         {errors.errors && <p className="text-red-600 mt-1 text-right">{errors.errors}</p>}
 
         <div className="flex justify-end md:mt-10 mt-5 flex gap-5">
-          {!allPlayersRegistered && (
+          {!isEdit && !allPlayersRegistered && (
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'continue')}
@@ -457,25 +490,26 @@ export default function BattingRecordForm() {
             type="button"
             onClick={(e) => handleSubmit(e, 'pitching')}
             className="mt-5 w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
-            投手登録へ
+            {isEdit ? '更新する' : '投手登録へ'}
           </button>
         </div>
       </form>
 
-      <div className="mt-10 text-left">
-        <h2 className="text-xl font-semibold">登録済み選手一覧</h2>
-        {registeredBatters.length === 0 ? (
-          <p className="mt-3">まだ登録されていません</p>
-        ) : (
-          <ul className="mt-3 list-disc list-inside text-lg">
-            {registeredBatters.map(id => {
-              const user = users.find(u => u.id === id);
-              return user ? <li key={id}>{user.name}</li> : null;
-            })}
-          </ul>
-        )}
-      </div>
-
+      {!isEdit && (
+        <div className="mt-10 text-left">
+          <h2 className="text-xl font-semibold">登録済み選手一覧</h2>
+          {registeredBatters.length === 0 ? (
+            <p className="mt-3">まだ登録されていません</p>
+          ) : (
+            <ul className="mt-3 list-disc list-inside text-lg">
+              {registeredBatters.map(id => {
+                const user = users.find(u => u.id === id);
+                return user ? <li key={id}>{user.name}</li> : null;
+              })}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 

@@ -38,7 +38,7 @@ export default function SummaryRecord() {
         <div className="mb-5 text-right">
           <button
             type="button"
-            onClick={() => navigate('/game/list')}
+            onClick={() => navigate('/games/list')}
             className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
           >
             試合一覧へ

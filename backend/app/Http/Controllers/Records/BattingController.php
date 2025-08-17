@@ -64,20 +64,44 @@ class BattingController extends Controller
         return response()->json($record, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $record = BattingRecord::find($id);
+
+        if (!$record) {
+            return response()->json(['error' => 'データが見つかりません'], 404);
+        }
+
+        return response()->json($record);
     }
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $record = BattingRecord::findOrFail($id);
+
+        $validated = $request->validate([
+            'game_id' => 'required|integer|exists:games,id',
+            'user_id' => 'required|exists:users,id',
+            'order_no' => 'required|integer|min:1|max:9',
+            'position' => 'required|string|max:20',
+            'at_bats' => 'required|integer|min:0',
+            'hits' => 'required|integer|min:0',
+            'rbis' => 'required|integer|min:0',
+            'runs' => 'required|integer|min:0',
+            'walks' => 'required|integer|min:0',
+            'strikeouts' => 'required|integer|min:0',
+            'steals' => 'required|integer|min:0',
+            'caught_stealing' => 'required|integer|min:0',
+            'errors' => 'required|integer|min:0',
+        ]);
+
+        $record->update($validated);
+
+        return response()->json($record);
     }
 
     /**

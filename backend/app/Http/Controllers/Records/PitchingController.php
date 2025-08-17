@@ -26,7 +26,7 @@ class PitchingController extends Controller
         $registeredUserIds = PitchingRecord::where('game_id', $request->game_id)
             ->pluck('user_id');
 
-            return response()->json($registeredUserIds);
+        return response()->json($registeredUserIds);
     }
 
     public function index()
@@ -63,20 +63,50 @@ class PitchingController extends Controller
         return response()->json($record, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // 投手レコード取得（編集用）
+    public function show($id)
     {
-        //
+        $record = PitchingRecord::findOrFail($id);
+
+        if (!$record) {
+            return response()->json(['error' => 'データが見つかりません'], 404);
+        }
+
+        return response()->json($record);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // 投手レコード更新
+    public function update(Request $request, $id)
     {
-        //
+        $record = PitchingRecord::findOrFail($id);
+
+        $validated = $request->validate([
+            'game_id' => 'required|integer|exists:games,id',
+            'user_id' => 'required|exists:users,id',
+            'result' => 'required|string|max:10',
+            'pitching_innings_outs' => 'required|integer|min:0',
+            'pitches' => 'required|integer|min:0',
+            'strikeouts' => 'required|integer|min:0',
+            'hits_allowed' => 'required|integer|min:0',
+            'hr_allowed' => 'required|integer|min:0',
+            'walks_given' => 'required|integer|min:0',
+            'runs_allowed' => 'required|integer|min:0',
+            'earned_runs' => 'required|integer|min:0',
+        ]);
+
+        // ここに重複登録チェックを入れるとより安全
+        $exists = PitchingRecord::where('game_id', $validated['game_id'])
+            ->where('user_id', $validated['user_id'])
+            ->where('id', '!=', $id) // 自分以外
+            ->exists();
+
+        if ($exists) {
+            return response()->json(['error' => 'この選手は既に登録されています'], 422);
+        }
+
+        $record->update($validated);
+
+        return response()->json($record);
     }
 
     /**

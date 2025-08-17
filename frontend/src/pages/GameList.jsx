@@ -17,7 +17,7 @@ export default function GameList() {
   }, []);
 
   return (
-    <div className="p-4 mx-auto max-w-screen-lg">
+    <div className="p-4 pb-16 mx-auto max-w-screen-lg">
       <div className="flex justify-end ">
           <div className="mb-5 text-right">
             <button

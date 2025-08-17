@@ -21,6 +21,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/games/list', [GameController::class, 'index']);
     Route::post('/records/games', [GameController::class, 'store']);
     Route::get('/games/{id}', [GameController::class, 'show']);
+    Route::delete('/games/{id}', [GameController::class, 'destroy']);
     Route::put('/records/games/{id}', [GameController::class, 'update']);
     Route::delete('/records/games/{id}', [GameController::class, 'destroy']);
 
@@ -29,12 +30,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/records/batting', [BattingController::class, 'index']);
     Route::post('/records/batting', [BattingController::class, 'store']);
+    Route::get('/records/batting/{id}', [BattingController::class, 'show']);
+    Route::put('/records/batting/{id}', [BattingController::class, 'update']);
 
     Route::get('/users', [PitchingController::class, 'users']);
     Route::get('/records/pitching/registered-users', [PitchingController::class, 'registeredPitchers']);
 
     Route::get('/records/pitching', [PitchingController::class, 'index']);
     Route::post('/records/pitching', [PitchingController::class, 'store']);
+    Route::get('/records/pitching/{id}', [PitchingController::class, 'show']);
+    Route::put('/records/pitching/{id}', [PitchingController::class, 'update']);
 
     Route::get('/records/summary', [SummaryController::class, 'summaryResult']);
 });

@@ -28,10 +28,13 @@ function App() {
       <Route path="/" element={<SidebarLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="records/game" element={<GameRecordForm  />} />
+        <Route path="records/game/:id/edit" element={<GameRecordForm />} />
         <Route path="records/batting" element={<BattingRecordForm />} />
+        <Route path="records/batting/:id/edit" element={<BattingRecordForm />} />
         <Route path="records/pitching" element={<PitchingRecordForm />} />
+        <Route path="records/pitching/:id/edit" element={<PitchingRecordForm />} />
         <Route path="records/summary" element={<SummaryRecord />} />
-        
+
         <Route path="games/list" element={<GameList />} />
         <Route path="games/:id" element={<GameDetail />} />
         {/* <Route path="ranking" element={<Ranking />} /> */}

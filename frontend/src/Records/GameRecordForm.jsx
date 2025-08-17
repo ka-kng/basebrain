@@ -1,10 +1,35 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function GameRecordForm() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (id) {
+      setLoading(true);
+      axios.get(`api/games/${id}`)
+        .then(res => {
+          setForm({
+            date: res.data.date ? res.data.date.split('T')[0] : '',
+            game_type: res.data.game_type,
+            tournament: res.data.tournament,
+            opponent: res.data.opponent,
+            team_score: res.data.team_score,
+            opponent_score: res.data.opponent_score,
+            memo: res.data.memo,
+          });
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error(err);
+          setLoading(false);
+        });
+    }
+  }, [id]);
 
   const handleBack = () => {
     navigate(-1);
@@ -44,9 +69,15 @@ export default function GameRecordForm() {
     setErrors({});
 
     try {
-      const res = await axios.post('/api/records/games', form);
-      const gameId = res.data.id;
-      navigate('/records/batting', { state: { game_id: gameId } });
+      let res;
+      if (id) {
+        res = await axios.put(`/api/records/games/${id}`, form);
+        navigate(`/games/${id}`);
+      } else {
+        res = await axios.post('/api/records/games', form);
+        const gameId = id || res.data.id;
+        navigate('/records/batting', { state: { game_id: gameId } });
+      }
 
     } catch (err) {
 
@@ -58,7 +89,7 @@ export default function GameRecordForm() {
   return (
     <div className="px-10 pt-10 pb-20">
       <button className="block text-left text-xl" onClick={handleBack}>戻る</button>
-      <h1 className="text-2xl mt-10">試合結果</h1>
+      <h1 className="text-2xl mt-10">{id ? '試合結果編集' : '試合結果登録'}</h1>
       <form onSubmit={handleSubmit}>
 
         {/* 試合日 */}
@@ -180,7 +211,7 @@ export default function GameRecordForm() {
 
         <div className="text-right md:mt-10">
           <button type="submit" className="mt-5 mx-auto w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
-            打撃登録へ
+            {id ? '更新する' : '打撃登録へ'}
           </button>
         </div>
 
