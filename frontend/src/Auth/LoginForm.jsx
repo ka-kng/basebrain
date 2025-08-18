@@ -54,7 +54,7 @@ export default function LoginForm() {
       // axiosにデフォルトヘッダーとして設定
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      navigate('/dashboard');
+      navigate('/');
 
     } catch (err) {
 

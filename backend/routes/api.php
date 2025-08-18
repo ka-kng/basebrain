@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Pages\DashboardController;
 use App\Http\Controllers\Records\BattingController;
 use App\Http\Controllers\Records\GameController;
 use App\Http\Controllers\Records\PitchingController;
@@ -18,6 +19,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/dashboard/manager', [DashboardController::class, 'index']);
+    Route::get('/dashboard/player', [DashboardController::class, 'playerDashboard']);
+
     Route::get('/games/list', [GameController::class, 'index']);
     Route::post('/records/games', [GameController::class, 'store']);
     Route::get('/games/{id}', [GameController::class, 'show']);

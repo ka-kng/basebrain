@@ -89,7 +89,7 @@ export default function GameRecordForm() {
   return (
     <div className="px-10 pt-10 pb-20">
       <button className="block text-left text-xl" onClick={handleBack}>戻る</button>
-      <h1 className="text-2xl mt-10">{id ? '試合結果編集' : '試合結果登録'}</h1>
+      <h1 className="text-2xl mt-10">試合結果</h1>
       <form onSubmit={handleSubmit}>
 
         {/* 試合日 */}

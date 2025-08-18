@@ -131,7 +131,7 @@ export default function GameDetail() {
             onClick={() => navigate(`/records/game/${game.id}/edit`)}
             className="block text-left text-xl"
           >
-            試合詳細の編集
+            試合の編集
           </button>
         </div>
       </div>
@@ -224,7 +224,7 @@ export default function GameDetail() {
       </div>
 
       {/* 投手成績 */}
-      <div className="text-left mt-10">
+      <div className="text-left mt-5">
         <h2 className="text-xl font-bold">投手成績</h2>
 
         {game && game.pitching_records.length > 0 ? (

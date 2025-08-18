@@ -2,13 +2,14 @@ import { NavLink } from "react-router-dom";
 
 const menuItems = {
   coach: [
-    { label: 'ダッシュボード', path: '/dashboard' },
+    { label: 'ダッシュボード', path: '/dashboard/manager' },
+    { label: 'ランキング', path: '/ranking' },
     { label: '記録', path: '/games/list' },
     { label: 'スケジュール', path: '/schedule' },
     { label: 'マイページ', path: '/mypage' },
   ],
   player: [
-    { label: 'ダッシュボード', path: '/dashboard' },
+    { label: 'ダッシュボード', path: '/dashboard/player' },
     { label: 'ランキング', path: '/ranking' },
     { label: 'スケジュール', path: '/schedule' },
     { label: 'マイページ', path: '/mypage' },

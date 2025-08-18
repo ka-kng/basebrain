@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
+import ProtectedRoute from './components/ProtectedRoute';
 import RegisterForm from './Auth/RegisterForm';
 import LoginForm from './Auth/LoginForm';
 import { useAuth } from './contexts/AuthContext';
@@ -8,10 +9,11 @@ import SidebarLayout from './layout/SidebarLayout';
 import GameRecordForm from './Records/GameRecordForm';
 import BattingRecordForm from './Records/BattingRecordForm';
 import PitchingRecordForm from './Records/PitchingRecordForm';
-import Dashboard from './pages/Dashboard';
+import ManagerDashboard from './pages/ManagerDashboard';
 import SummaryRecord from './Records/SummaryRecord';
 import GameList from './pages/GameList';
 import GameDetail from './pages/GameDetail';
+import PlayerDashboard from './pages/PlayerDashboard';
 
 function App() {
   const { user, loading } = useAuth();
@@ -26,8 +28,23 @@ function App() {
 
       {/* ログイン後 (Sidebar含めたレイアウト) */}
       <Route path="/" element={<SidebarLayout />}>
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="records/game" element={<GameRecordForm  />} />
+        <Route
+          path="/dashboard/manager"
+          element={
+            <ProtectedRoute user={user} allowedRoles={['coach']}>
+              <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/player"
+          element={
+            <ProtectedRoute user={user} allowedRoles={['player']}>
+              <PlayerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="records/game" element={<GameRecordForm />} />
         <Route path="records/game/:id/edit" element={<GameRecordForm />} />
         <Route path="records/batting" element={<BattingRecordForm />} />
         <Route path="records/batting/:id/edit" element={<BattingRecordForm />} />
