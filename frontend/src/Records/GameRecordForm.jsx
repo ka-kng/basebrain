@@ -7,6 +7,16 @@ export default function GameRecordForm() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [form, setForm] = useState({
+    date: '',
+    game_type: '',
+    tournament: '',
+    opponent: '',
+    team_score: '',
+    opponent_score: '',
+    memo: '',
+    result: '',
+  });
 
   useEffect(() => {
     if (id) {
@@ -21,6 +31,7 @@ export default function GameRecordForm() {
             team_score: res.data.team_score,
             opponent_score: res.data.opponent_score,
             memo: res.data.memo,
+            result: res.data.result,
           });
           setLoading(false);
         })
@@ -31,19 +42,29 @@ export default function GameRecordForm() {
     }
   }, [id]);
 
+  useEffect(() => {
+  if (form.team_score !== "" && form.opponent_score !== "") {
+    const team = parseInt(form.team_score, 10);
+    const opponent = parseInt(form.opponent_score, 10);
+
+    if (!isNaN(team) && !isNaN(opponent)) {
+      let result = "";
+      if (team > opponent) result = "勝利";
+      else if (team < opponent) result = "敗北";
+      else result = "引き分け";
+      setForm(prev => ({ ...prev, result }));
+    }
+  }
+}, [form.team_score, form.opponent_score]);
+
+
+
+
   const handleBack = () => {
     navigate(-1);
   };
 
-  const [form, setForm] = useState({
-    date: '',
-    game_type: '',
-    tournament: '',
-    opponent: '',
-    team_score: '',
-    opponent_score: '',
-    memo: '',
-  });
+
 
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -195,6 +216,14 @@ export default function GameRecordForm() {
         </div>
         {errors.team_score && <p className="text-red-600 mt-1 text-right">{errors.team_score}</p>}
         {errors.opponent_score && <p className="text-red-600 mt-1 text-right">{errors.opponent_score}</p>}
+
+        {/* 勝敗（自動判定のみ） */}
+        <div className="flex mt-10 justify-between items-center">
+          <label>試合結果</label>
+          <p className="p-2 border md:w-40 text-center">
+            {form.result ? (form.result === '勝利' ? '勝利' : form.result === '敗北' ? '敗北' : '引き分け') : '-'}
+          </p>
+        </div>
 
         {/* メモ */}
         <div className="flex flex-col mt-10 justify-between text-left gap-2">

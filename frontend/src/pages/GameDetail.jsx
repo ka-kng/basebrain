@@ -7,17 +7,10 @@ export default function GameDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [game, setGame] = useState(null);
-  const [openPlayerId, setOpenPlayerId] = useState(null);
+  const [openBatterId, setOpenBatterId] = useState(null);
+  const [openPitcherId, setOpenPitcherId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [users, setUsers] = useState([]);
-
-  // useEffect(() => {
-  //   axios.get('/api/users')
-  //     .then(res => setUsers(res.data))
-  //     .catch(() => setUsers([]));
-  // }, []);
-
 
   useEffect(() => {
     axios.get(`/api/games/${id}`)
@@ -30,14 +23,6 @@ export default function GameDetail() {
         setLoading(false);
       });
   }, [id]);
-
-  const unregisteredBatters = users.filter(u =>
-    !game.batting_records.some(b => b.user.id === u.id)
-  );
-
-  const unregisteredPitchers = users.filter(u =>
-    !game.pitching_records.some(p => p.user.id === u.id)
-  );
 
   const handleDelete = () => {
     if (!window.confirm('本当に削除しますか？')) return;
@@ -146,6 +131,7 @@ export default function GameDetail() {
       <h1 className="font-bold text-2xl mt-10 text-left">試合詳細</h1>
       <div className="mt-10 text-left text-xl space-y-3">
         <p>{game.game_type}：{game.formatted_date}</p>
+        <p>試合結果：{game.result}</p>
         <p>{game.team?.name}：{game.team_score}点</p>
         <p>{game.opponent}：{game.opponent_score}点</p>
         <div>
@@ -188,11 +174,11 @@ export default function GameDetail() {
                 <div className="mt-5 flex flex-col text-left space-y-3">
                   <button
                     className="text-left text-sm text-blue-600 hover:underline"
-                    onClick={() => setOpenPlayerId(openPlayerId === batter.id ? null : batter.id)}
+                    onClick={() => setOpenBatterId(openBatterId === batter.id ? null : batter.id)}
                   >
-                    {openPlayerId === batter.id ? "詳細を閉じる" : "詳細を見る"}
+                    {openBatterId === batter.id ? "詳細を閉じる" : "詳細を見る"}
                   </button>
-                  {openPlayerId === batter.id && (
+                  {openBatterId === batter.id && (
                     <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-3">
                       <p className="text-xl">打席数： 【{batter.at_bats}】 打数</p>
                       <p className="text-xl">安打数： 【{batter.hits}】 安打</p>
@@ -228,54 +214,54 @@ export default function GameDetail() {
         <h2 className="text-xl font-bold">投手成績</h2>
 
         {game && game.pitching_records.length > 0 ? (
-            game.pitching_records.map((pitcher) => (
-              <div key={pitcher.id} className="py-2 flex flex-col gap-10  border-b border-gray-500">
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/records/pitching/${pitcher.id}/edit`)}
-                    className="text-left text-sm text-blue-600 hover:underline"
-                  >
-                    編集する
-                  </button>
-                  <p className="mt-3 font-semibold text-lg">選手名：{pitcher.user.name}</p>
-                  <p className="mt-3 font-semibold text-lg">守備位置：{pitcher.result}</p>
-                  <p className="mt-3 font-semibold text-lg">投球イニング：{formatInnings(pitcher.pitching_innings_outs)}回</p>
-                  <div className="flex flex-col">
-                    <p className="mt-3 font-semibold text-lg xl:text-xl">
-                      防御率：{calcERA(pitcher.earned_runs, pitcher.pitching_innings_outs)}
-                    </p>
-                    <p className="mt-3 font-semibold text-lg xl:text-xl">
-                      奪三振率：{calcK9(pitcher.strikeouts, pitcher.pitching_innings_outs)}
-                    </p>
-                    <p className="mt-3 font-semibold text-lg xl:text-xl">
-                      与四死球率：{calcBB9(pitcher.walks_given, pitcher.pitching_innings_outs)}
-                    </p>
-                  </div>
+          game.pitching_records.map((pitcher) => (
+            <div key={pitcher.id} className="py-2 flex flex-col gap-10  border-b border-gray-500">
+              <div>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/records/pitching/${pitcher.id}/edit`)}
+                  className="text-left text-sm text-blue-600 hover:underline"
+                >
+                  編集する
+                </button>
+                <p className="mt-3 font-semibold text-lg">選手名：{pitcher.user.name}</p>
+                <p className="mt-3 font-semibold text-lg">守備位置：{pitcher.result}</p>
+                <p className="mt-3 font-semibold text-lg">投球イニング：{formatInnings(pitcher.pitching_innings_outs)}回</p>
+                <div className="flex flex-col">
+                  <p className="mt-3 font-semibold text-lg xl:text-xl">
+                    防御率：{calcERA(pitcher.earned_runs, pitcher.pitching_innings_outs)}
+                  </p>
+                  <p className="mt-3 font-semibold text-lg xl:text-xl">
+                    奪三振率：{calcK9(pitcher.strikeouts, pitcher.pitching_innings_outs)}
+                  </p>
+                  <p className="mt-3 font-semibold text-lg xl:text-xl">
+                    与四死球率：{calcBB9(pitcher.walks_given, pitcher.pitching_innings_outs)}
+                  </p>
+                </div>
 
-                  {/* スマホ用詳細表示 */}
-                  <div className="mt-5 flex flex-col text-left space-y-3">
-                    <button
-                      className="text-left text-sm text-blue-600 hover:underline"
-                      onClick={() => setOpenPlayerId(openPlayerId === pitcher.id ? null : pitcher.id)}
-                    >
-                      {openPlayerId === pitcher.id ? "詳細を閉じる" : "詳細を見る"}
-                    </button>
-                    {openPlayerId === pitcher.id && (
-                      <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-3">
-                        <p className="text-xl">投球数： 【{pitcher.pitches}】 球</p>
-                        <p className="text-xl">奪三振数： 【{pitcher.strikeouts}】 回</p>
-                        <p className="text-xl">被安打数： 【{pitcher.hits_allowed}】 本</p>
-                        <p className="text-xl">被本塁打数： 【{pitcher.hr_allowed}】 本</p>
-                        <p className="text-xl">四死球数： 【{pitcher.walks_given}】 回</p>
-                        <p className="text-xl">失点数： 【{pitcher.earned_runs}】 点</p>
-                        <p className="text-xl">自責点数： 【{pitcher.runs_allowed}】 点</p>
-                      </div>
-                    )}
-                  </div>
+                {/* スマホ用詳細表示 */}
+                <div className="mt-5 flex flex-col text-left space-y-3">
+                  <button
+                    className="text-left text-sm text-blue-600 hover:underline"
+                    onClick={() => setOpenPitcherId(openPitcherId === pitcher.id ? null : pitcher.id)}
+                  >
+                    {openPitcherId === pitcher.id ? "詳細を閉じる" : "詳細を見る"}
+                  </button>
+                  {openPitcherId === pitcher.id && (
+                    <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-3">
+                      <p className="text-xl">投球数： 【{pitcher.pitches}】 球</p>
+                      <p className="text-xl">奪三振数： 【{pitcher.strikeouts}】 回</p>
+                      <p className="text-xl">被安打数： 【{pitcher.hits_allowed}】 本</p>
+                      <p className="text-xl">被本塁打数： 【{pitcher.hr_allowed}】 本</p>
+                      <p className="text-xl">四死球数： 【{pitcher.walks_given}】 回</p>
+                      <p className="text-xl">失点数： 【{pitcher.earned_runs}】 点</p>
+                      <p className="text-xl">自責点数： 【{pitcher.runs_allowed}】 点</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            ))
+            </div>
+          ))
         ) : (
           <button
             type="button"

@@ -21,6 +21,9 @@ export default function BattingRecordForm() {
     position: '',
     at_bats: '',
     hits: '',
+    doubles: '',
+    triples: '',
+    home_runs: '',
     rbis: '',
     runs: '',
     walks: '',
@@ -47,7 +50,7 @@ export default function BattingRecordForm() {
 
   // ユーザー一覧取得
   useEffect(() => {
-    axios.get('/api/users') // 適切なAPIに置き換えてください
+    axios.get('/api/users/batter') // 適切なAPIに置き換えてください
       .then(res => setUsers(res.data))
       .catch(() => setUsers([]));
   }, []);
@@ -85,6 +88,9 @@ export default function BattingRecordForm() {
           order_no: res.data.order_no,
           at_bats: res.data.at_bats,
           hits: res.data.hits,
+          doubles: res.data.doubles,
+          triples: res.data.triples,
+          home_runs: res.data.home_runs,
           rbis: res.data.rbis,
           runs: res.data.runs,
           walks: res.data.walks,
@@ -111,7 +117,7 @@ export default function BattingRecordForm() {
 
     if (!form.order_no) newErrors.order_no = '打順を選択してください';
 
-    const numFields = ['at_bats', 'hits', 'rbis', 'runs', 'walks', 'strikeouts', 'steals', 'caught_stealing', 'errors'];
+    const numFields = ['at_bats', 'hits', 'doubles', 'triples', 'home_runs', 'rbis', 'runs', 'walks', 'strikeouts', 'steals', 'caught_stealing', 'errors'];
 
     numFields.forEach(field => {
       if (form[field] === '') {
@@ -179,7 +185,7 @@ export default function BattingRecordForm() {
           <div className="mb-5 text-right">
             <button
               type="button"
-              onClick={() => navigate('/records/pitching', { state: { game_id: game.id } })}
+              onClick={() => navigate('/records/pitching', { state: { game_id: form.game_id } })}
               className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
             >
               次へ
@@ -284,7 +290,7 @@ export default function BattingRecordForm() {
         </div>
         {errors.at_bats && <p className="text-red-600 mt-1 text-right">{errors.at_bats}</p>}
 
-        {/* 打席数 */}
+        {/* 安打数 */}
         <div className="flex mt-10 justify-between items-center">
           <label htmlFor="hits">安打数</label>
           <div className=" items-center flex gap-3">
@@ -307,6 +313,78 @@ export default function BattingRecordForm() {
           </div>
         </div>
         {errors.hits && <p className="text-red-600 mt-1 text-right">{errors.hits}</p>}
+
+        {/* 二塁打 */}
+        <div className="flex mt-10 justify-between items-center">
+          <label htmlFor="doubles">二塁打</label>
+          <div className=" items-center flex gap-3">
+
+            <div className="items-center">
+              <input
+                id="doubles"
+                name="doubles"
+                min={0}
+                type="number"
+                value={form.doubles}
+                onChange={handleChange}
+                className="border p-2 w-12 text-center" />
+            </div>
+
+            <div>
+              <p>本</p>
+            </div>
+
+          </div>
+        </div>
+        {errors.doubles && <p className="text-red-600 mt-1 text-right">{errors.doubles}</p>}
+
+        {/* 三塁打 */}
+        <div className="flex mt-10 justify-between items-center">
+          <label htmlFor="triples">三塁打</label>
+          <div className=" items-center flex gap-3">
+
+            <div className="items-center">
+              <input
+                id="triples"
+                name="triples"
+                min={0}
+                type="number"
+                value={form.triples}
+                onChange={handleChange}
+                className="border p-2 w-12 text-center" />
+            </div>
+
+            <div>
+              <p>三塁打</p>
+            </div>
+
+          </div>
+        </div>
+        {errors.triples && <p className="text-red-600 mt-1 text-right">{errors.triples}</p>}
+
+        {/* 本塁打 */}
+        <div className="flex mt-10 justify-between items-center">
+          <label htmlFor="home_runs">本塁打</label>
+          <div className=" items-center flex gap-3">
+
+            <div className="items-center">
+              <input
+                id="home_runs"
+                name="home_runs"
+                min={0}
+                type="number"
+                value={form.home_runs}
+                onChange={handleChange}
+                className="border p-2 w-12 text-center" />
+            </div>
+
+            <div>
+              <p>本塁打</p>
+            </div>
+
+          </div>
+        </div>
+        {errors.home_runs && <p className="text-red-600 mt-1 text-right">{errors.home_runs}</p>}
 
         {/* 打点 */}
         <div className="flex mt-10 justify-between items-center">

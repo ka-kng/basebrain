@@ -25,6 +25,7 @@ class GameController extends Controller
             'opponent' => 'required|string|max:255',
             'date' => 'required|date',
             'team_score' => 'required|integer',
+            'result' => 'required|string',
             'opponent_score' => 'required|integer',
             'memo' => 'nullable|string',
         ]);
@@ -60,6 +61,7 @@ class GameController extends Controller
             'opponent' => 'required|string|max:255',
             'date' => 'required|date',
             'team_score' => 'required|integer',
+            'result' => 'required|string',
             'opponent_score' => 'required|integer',
             'memo' => 'nullable|string',
         ]);

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('date');
             $table->unsignedTinyInteger('team_score');
             $table->unsignedTinyInteger('opponent_score');
+            $table->string('result', 10)->default('引き分け');
             $table->text('memo')->nullable();
             $table->timestamps();
         });

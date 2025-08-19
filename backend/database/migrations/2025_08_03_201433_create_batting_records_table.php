@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('position', 20)->nullable();
             $table->unsignedTinyInteger('at_bats')->default(0);
             $table->unsignedTinyInteger('hits')->default(0);
+            $table->unsignedTinyInteger('doubles')->default(0);
+            $table->unsignedTinyInteger('triples')->default(0);
+            $table->unsignedTinyInteger('home_runs')->default(0);
             $table->unsignedTinyInteger('rbis')->default(0);
             $table->unsignedTinyInteger('runs')->default(0);
             $table->unsignedTinyInteger('walks')->default(0);

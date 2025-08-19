@@ -16,6 +16,7 @@ class Game extends Model
         'opponent',
         'date',
         'team_score',
+        'result',
         'opponent_score',
         'memo',
     ];

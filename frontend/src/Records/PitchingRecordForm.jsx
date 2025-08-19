@@ -38,7 +38,7 @@ export default function PitchingRecordForm() {
   };
 
   useEffect(() => {
-    axios.get("/api/users")
+    axios.get("/api/users/pitcher")
       .then(res => setUsers(res.data))
       .catch(() => setUsers([]));
   }, []);
@@ -172,7 +172,7 @@ export default function PitchingRecordForm() {
           <div className="mb-5 text-right">
             <button
               type="button"
-              onClick={() => navigate('/records/summary', { state: { game_id: game.id } })}
+              onClick={() => navigate('/records/summary', { state: { game_id: form.game_id } })}
               className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
             >
               次へ
