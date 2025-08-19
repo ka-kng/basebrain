@@ -41,7 +41,33 @@ class ScheduleController extends Controller
         $schedules = Schedule::create(array_merge($validated, ['team_id' => $user->team_id]));
 
         return response()->json($schedules, 201);
-
     }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'type' => 'required|string|max:255',
+            'time' => 'nullable|string|max:50',
+            'location' => 'nullable|string|max:255',
+            'note' => 'nullable|string',
+        ]);
+
+        $schedule = Schedule::findOrFail($id);
+        $schedule->update([
+            'type' => $request->type,
+            'time' => $request->time,
+            'location' => $request->location,
+            'note' => $request->note,
+        ]);
+
+        return response()->json($schedule);
+    }
+
+    public function destroy($id)
+    {
+        $schedule = Schedule::findOrFail($id);
+        $schedule->delete();
+
+        return response()->json(['message' => 'Deleted successfully']);
+    }
 }

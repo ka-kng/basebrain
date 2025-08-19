@@ -52,5 +52,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/records/summary', [SummaryController::class, 'summaryResult']);
 
     Route::get('/schedules', [ScheduleController::class, 'index']);
-    Route::get('/schedules', [ScheduleController::class, 'store']);
+    Route::post('/schedules', [ScheduleController::class, 'store']);
+    Route::put('/schedules/{id}', [ScheduleController::class, 'update']);
+    Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy']);
 });
