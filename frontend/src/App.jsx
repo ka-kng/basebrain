@@ -16,6 +16,7 @@ import GameDetail from './pages/GameDetail';
 import PlayerDashboard from './pages/PlayerDashboard';
 import PlayerRanking from './pages/PlayerRanking';
 import Schedule from './pages/Schedule';
+import Mypage from './pages/Mypage';
 
 function App() {
   const { user, loading } = useAuth();
@@ -59,7 +60,7 @@ function App() {
 
         <Route path="ranking" element={<PlayerRanking />} />
         <Route path="schedule" element={<Schedule />} />
-        {/* <Route path="mypage" element={<Mypage />} /> */}
+        <Route path="mypage" element={<Mypage />} />
       </Route>
     </Routes>
   );

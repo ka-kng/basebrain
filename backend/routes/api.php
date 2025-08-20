@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Pages\DashboardController;
 use App\Http\Controllers\Pages\PlayerRankingController;
 use App\Http\Controllers\Pages\ScheduleController;
+use App\Http\Controllers\Pages\UserController;
 use App\Http\Controllers\Records\BattingController;
 use App\Http\Controllers\Records\GameController;
 use App\Http\Controllers\Records\PitchingController;
@@ -21,6 +22,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/mypage', [UserController::class, 'show']);
+    Route::put('/mypage/{id}', [UserController::class, 'update']);
+    Route::delete('/mypage/{id}', [UserController::class, 'destroy']);
+
     Route::get('/dashboard/manager', [DashboardController::class, 'index']);
     Route::get('/dashboard/player', [DashboardController::class, 'playerDashboard']);
 

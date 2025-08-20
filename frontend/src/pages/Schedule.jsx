@@ -1,287 +1,183 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import axios from "axios";
 
-// モーダルコンポーネント
 function Modal({ children, onClose }) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
-      <div className="bg-white p-5 rounded-lg shadow-lg w-full max-w-xs sm:max-w-sm">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-xl shadow-lg w-96">
         {children}
-        <button
-          onClick={onClose}
-          className="mt-4 w-full bg-gray-300 hover:bg-gray-400 px-5 py-3 rounded-lg text-lg font-medium"
-        >
-          閉じる
-        </button>
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+          >
+            閉じる
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
-// 時間補正関数
-const formatTime = (t) => {
-  if (!t) return "";
-  const times = t.split("~").map((part) => {
-    const s = part.trim();
-    if (/^\d{1,2}$/.test(s)) return s.padStart(2, "0") + ":00";
-    if (/^\d{1,2}:\d{1,2}$/.test(s)) {
-      const [h, m] = s.split(":");
-      return h.padStart(2, "0") + ":" + m.padStart(2, "0");
-    }
-    if (/^\d{3,4}$/.test(s)) {
-      const h = s.length === 3 ? s.slice(0, 1) : s.slice(0, 2);
-      const m = s.length === 3 ? s.slice(1) : s.slice(2);
-      return h.padStart(2, "0") + ":" + m.padStart(2, "0");
-    }
-    return s;
-  });
-  return times.join("~");
-};
+// 時間を「9:00」形式に変換する関数
+function formatTime(time) {
+  if (!time) return "";
+  const [hour, minute] = time.split(":"); // "09:00:00" → ["09","00","00"]
+  return `${parseInt(hour, 10)}:${minute}`;
+}
 
-// スケジュールコンポーネント
 export default function Schedule() {
-  const [userRole, setUserRole] = useState("");
   const [events, setEvents] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [role, setRole] = useState("coach"); // ← ロール。ここを "player" にすると登録ボタン非表示
+  const [form, setForm] = useState({
+    time: "",
+    type: "",
+    location: "",
+    note: "",
+  });
 
-  const [type, setType] = useState("");
-  const [time, setTime] = useState("");
-  const [location, setLocation] = useState("");
-  const [note, setNote] = useState("");
-
-  const isCoach = userRole?.toLowerCase() === "coach";
-
-  // ユーザー情報取得
+  // 初回読み込み時にイベント取得
   useEffect(() => {
-    axios.get("/api/user")
-      .then(res => setUserRole(res.data.role))
-      .catch(err => console.error(err));
+    axios.get("/api/schedules").then((res) => {
+      setEvents(
+        res.data.map((s) => ({
+          id: s.id,
+          title: `${formatTime(s.time) || "時間未設定"}~集合  ${
+            s.location || "場所未設定"
+          }`,
+          start: s.date,
+          extendedProps: {
+            type: s.type,
+            note: s.note,
+            location: s.location,
+            time: s.time,
+          },
+        }))
+      );
+    });
   }, []);
 
-  // スケジュール取得
-  useEffect(() => {
-    axios.get("/api/schedules")
-      .then(res => {
-        const loadedEvents = res.data.map(s => {
-          let start = s.date;
-          let end = s.date;
-          if (s.time) {
-            const times = formatTime(s.time).split("~");
-            start += "T" + times[0];
-            end += "T" + (times[1] || times[0]);
-          }
-          return {
-            id: s.id,
-            title: `${s.type || "内容未設定"} @ ${s.location || "場所未設定"}`,
-            start,
-            end,
-            extendedProps: {
-              type: s.type,
-              time: formatTime(s.time),
-              location: s.location,
-              note: s.note,
-            },
-          };
-        });
-        setEvents(loadedEvents);
-      })
-      .catch(err => console.error(err));
-  }, []);
-
-  // 日付クリック（新規）
-  const handleDateClick = (info) => {
-    setSelectedDate(info.dateStr);
-    setSelectedEvent(null);
-    setType("");
-    setTime("");
-    setLocation("");
-    setNote("");
-    setShowModal(true);
+  // 日付クリック時
+  const handleDateClick = (arg) => {
+    setSelectedDate(arg.dateStr);
+    setModalOpen(true);
   };
 
-  // イベントクリック（既存）
-  const handleEventClick = (clickInfo) => {
-    const ev = clickInfo.event;
-    setSelectedEvent(ev);
-    setSelectedDate(ev.startStr.slice(0, 10));
-    setType(ev.extendedProps.type || "");
-    setTime(ev.extendedProps.time || "");
-    setLocation(ev.extendedProps.location || "");
-    setNote(ev.extendedProps.note || "");
-    setShowModal(true);
+  // 入力フォーム変更時
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 保存（新規 or 更新）
-  const handleSave = async (e) => {
-    e.preventDefault();
-    const correctedTime = formatTime(time);
-
-    if (selectedEvent) {
-      // 更新
-      try {
-        const res = await axios.put(`/api/schedules/${selectedEvent.id}`, {
-          type, time: correctedTime, location, note
-        });
-        setEvents(events.map(ev =>
-          ev.id === res.data.id
-            ? {
-                ...ev,
-                title: `${res.data.type} @ ${res.data.location || "場所未設定"}`,
-                extendedProps: {
-                  type: res.data.type,
-                  time: formatTime(res.data.time),
-                  location: res.data.location,
-                  note: res.data.note,
-                },
-              }
-            : ev
-        ));
-        setShowModal(false);
-      } catch (err) {
-        console.error(err);
-      }
-    } else {
-      // 新規作成
-      try {
-        const res = await axios.post("/api/schedules", {
-          date: selectedDate,
-          type, time: correctedTime, location, note
-        });
-        const times = correctedTime.split("~");
-        setEvents([
-          ...events,
-          {
-            id: res.data.id,
-            title: `${res.data.type} @ ${res.data.location || "場所未設定"}`,
-            start: res.data.date + (times[0] ? "T" + times[0] : ""),
-            end: res.data.date + (times[1] ? "T" + times[1] : ""),
-            extendedProps: {
-              type: res.data.type,
-              time: correctedTime,
-              location: res.data.location,
-              note: res.data.note,
-            },
-          }
-        ]);
-        setShowModal(false);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    setSelectedEvent(null);
-    setType("");
-    setTime("");
-    setLocation("");
-    setNote("");
+  // 登録処理（コーチのみ）
+  const handleRegister = () => {
+    axios
+      .post("/api/schedules", { date: selectedDate, ...form })
+      .then((res) => {
+        const newEvent = {
+          id: res.data.id,
+          title: `${formatTime(res.data.time) || "時間未設定"} @ ${
+            res.data.location || "場所未設定"
+          }`,
+          start: res.data.date,
+          extendedProps: {
+            type: res.data.type,
+            note: res.data.note,
+            location: res.data.location,
+            time: res.data.time,
+          },
+        };
+        setEvents([...events, newEvent]);
+        setForm({ time: "", type: "", location: "", note: "" });
+        setModalOpen(false);
+      });
   };
-
-  // 削除
-  const handleDelete = async () => {
-  if (!selectedEvent) return;
-  try {
-    await axios.delete(`/api/schedules/${selectedEvent.id}`);
-
-    // FullCalendar のイベント自体を削除
-    selectedEvent.remove();
-
-    // React state も更新
-    setEvents(prev => prev.filter(ev => ev.id !== selectedEvent.id));
-
-    setShowModal(false);
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-  if (!userRole) return null;
 
   return (
-    <div className="p-5 max-w-screen-lg mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">スケジュール</h1>
-
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">スケジュール</h2>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        initialDate="2025-08-01"
-        headerToolbar={{ left: "prev,next today", center: "title", right: "" }}
+        initialDate={new Date().toISOString().split("T")[0]} // ← 今日の日付をセット
         events={events}
         dateClick={handleDateClick}
-        eventClick={handleEventClick}
-        height="auto"
       />
 
-      {showModal && (
-        <Modal onClose={() => setShowModal(false)}>
-          <h2 className="text-2xl font-bold mb-4">
-            {isCoach ? (selectedEvent ? "予定更新" : "予定登録") : "予定詳細"}
-          </h2>
-          <p className="text-lg mb-3">日付：{selectedDate}</p>
+      {modalOpen && (
+        <Modal onClose={() => setModalOpen(false)}>
+          <h3 className="text-xl font-bold mb-2">
+            {selectedDate} の予定
+          </h3>
 
-          {isCoach ? (
-            <form onSubmit={handleSave} className="flex flex-col gap-3">
+          {/* 予定表示部分 */}
+          <ul className="mb-4">
+            {events
+              .filter((ev) => ev.start === selectedDate)
+              .map((ev) => (
+                <li key={ev.id} className="border p-2 mb-1 rounded">
+                  <p>
+                    <strong>時間:</strong> {formatTime(ev.extendedProps.time)}
+                  </p>
+                  <p>
+                    <strong>内容:</strong> {ev.extendedProps.type || "未設定"}
+                  </p>
+                  <p>
+                    <strong>場所:</strong>{" "}
+                    {ev.extendedProps.location || "未設定"}
+                  </p>
+                  <p>
+                    <strong>メモ:</strong> {ev.extendedProps.note || "なし"}
+                  </p>
+                </li>
+              ))}
+          </ul>
+
+          {/* コーチのみ登録フォーム表示 */}
+          {role === "coach" && (
+            <>
               <input
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-                placeholder="内容 例: 練習試合 vs ○○高校"
-                className="border rounded-lg p-3 text-lg"
-                required
+                type="time"
+                name="time"
+                value={form.time}
+                onChange={handleChange}
+                className="border p-2 w-full mb-2"
               />
               <input
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                placeholder="時間 例: 10:00~12:00"
-                className="border rounded-lg p-3 text-lg"
-                onBlur={() => setTime(formatTime(time))}
+                type="text"
+                name="type"
+                placeholder="内容"
+                value={form.type}
+                onChange={handleChange}
+                className="border p-2 w-full mb-2"
               />
               <input
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="場所 例: ○○球場"
-                className="border rounded-lg p-3 text-lg"
+                type="text"
+                name="location"
+                placeholder="場所"
+                value={form.location}
+                onChange={handleChange}
+                className="border p-2 w-full mb-2"
               />
               <textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="メモ 例: 試合開始30分前集合"
-                className="border rounded-lg p-3 text-lg"
-              />
-              <div className="flex gap-3">
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white text-lg font-bold py-3 rounded-lg mt-3 flex-1"
-                >
-                  {selectedEvent ? "更新" : "登録"}
-                </button>
-                {selectedEvent && (
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    className="bg-red-600 text-white text-lg font-bold py-3 rounded-lg mt-3 flex-1"
-                  >
-                    削除
-                  </button>
-                )}
-              </div>
-            </form>
-          ) : (
-            <div className="flex flex-col gap-3 text-left">
-              {selectedEvent ? (
-                <div className="border rounded-lg p-3 bg-gray-50 shadow-sm text-lg">
-                  <p>時間：{selectedEvent.extendedProps.time || "-"}</p>
-                  <p>内容：{selectedEvent.extendedProps.type}</p>
-                  <p>場所：{selectedEvent.extendedProps.location || "-"}</p>
-                  <p>メモ：{selectedEvent.extendedProps.note || "-"}</p>
-                </div>
-              ) : (
-                <p className="text-lg">この日にイベントはありません</p>
-              )}
-            </div>
+                name="note"
+                placeholder="メモ"
+                value={form.note}
+                onChange={handleChange}
+                className="border p-2 w-full mb-2"
+              ></textarea>
+
+              <button
+                onClick={handleRegister}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                登録
+              </button>
+            </>
           )}
         </Modal>
       )}
