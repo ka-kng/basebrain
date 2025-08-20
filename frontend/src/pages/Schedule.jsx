@@ -1,100 +1,167 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import axios from "axios";
 
+// モーダルコンポーネント
 function Modal({ children, onClose }) {
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-96">
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex justify-center items-center bg-black bg-opacity-40"
+      onClick={handleOverlayClick}
+    >
+      <div className="bg-white p-6 rounded-xl shadow-lg w-96 max-w-full relative max-h-[80vh] overflow-auto">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-lg font-bold"
+        >
+          ✕
+        </button>
         {children}
-        <div className="mt-4 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-          >
-            閉じる
-          </button>
-        </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
-// 時間を「9:00」形式に変換する関数
+// 時間整形
 function formatTime(time) {
   if (!time) return "";
-  const [hour, minute] = time.split(":"); // "09:00:00" → ["09","00","00"]
+  const [hour, minute] = time.split(":");
   return `${parseInt(hour, 10)}:${minute}`;
 }
+
 
 export default function Schedule() {
   const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [role, setRole] = useState("coach"); // ← ロール。ここを "player" にすると登録ボタン非表示
-  const [form, setForm] = useState({
-    time: "",
-    type: "",
-    location: "",
-    note: "",
-  });
+  const [role, setRole] = useState("coach"); // "player" にすると確認のみ
+  const [form, setForm] = useState({ time: "", type: "", location: "", note: "" });
+  const [editEventId, setEditEventId] = useState(null);
+  const formRef = useRef(null);
 
-  // 初回読み込み時にイベント取得
+
+
+  // 初回読み込みで予定取得
   useEffect(() => {
+
+    axios.get("/api/user").then((res) => {
+      setRole(res.data.role); // "coach" or "player"
+    });
+
     axios.get("/api/schedules").then((res) => {
       setEvents(
         res.data.map((s) => ({
           id: s.id,
-          title: `${formatTime(s.time) || "時間未設定"}~集合  ${
-            s.location || "場所未設定"
-          }`,
           start: s.date,
+          title: `${formatTime(s.time) || "時間未設定"} ${s.type || "内容未設定"}`,
           extendedProps: {
-            type: s.type,
-            note: s.note,
-            location: s.location,
             time: s.time,
+            type: s.type,
+            location: s.location,
+            note: s.note,
           },
         }))
       );
     });
   }, []);
 
-  // 日付クリック時
   const handleDateClick = (arg) => {
     setSelectedDate(arg.dateStr);
     setModalOpen(true);
+    setForm({ time: "", type: "", location: "", note: "" });
+    setEditEventId(null);
   };
 
-  // 入力フォーム変更時
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 登録処理（コーチのみ）
+  // 登録
   const handleRegister = () => {
+    const dayEvents = events.filter((ev) => ev.start === selectedDate);
+    if (dayEvents.length >= 3) {
+      alert("1日に登録できる予定は最大3件です");
+      return;
+    }
+
     axios
       .post("/api/schedules", { date: selectedDate, ...form })
       .then((res) => {
         const newEvent = {
           id: res.data.id,
-          title: `${formatTime(res.data.time) || "時間未設定"} @ ${
-            res.data.location || "場所未設定"
-          }`,
           start: res.data.date,
+          title: `${formatTime(res.data.time) || "時間未設定"} ${res.data.type || "内容未設定"
+            }`,
           extendedProps: {
-            type: res.data.type,
-            note: res.data.note,
-            location: res.data.location,
             time: res.data.time,
+            type: res.data.type,
+            location: res.data.location,
+            note: res.data.note,
           },
         };
         setEvents([...events, newEvent]);
         setForm({ time: "", type: "", location: "", note: "" });
-        setModalOpen(false);
-      });
+      })
+      .catch(() => alert("登録失敗"));
+  };
+
+  // 編集開始
+  const handleEdit = (ev) => {
+    if (role !== "coach") return;
+    setForm({
+      time: ev.extendedProps.time || "",
+      type: ev.extendedProps.type || "",
+      location: ev.extendedProps.location || "",
+      note: ev.extendedProps.note || "",
+    });
+    setEditEventId(ev.id);
+
+    // フォームにスクロール
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
+  };
+
+  // 更新
+  const handleUpdate = () => {
+    if (!editEventId) return;
+    axios
+      .put(`/api/schedules/${editEventId}`, form)
+      .then((res) => {
+        setEvents(
+          events.map((ev) =>
+            ev.id === editEventId
+              ? {
+                ...ev,
+                title: `${formatTime(res.data.time) || "時間未設定"} ${res.data.type || "内容未設定"
+                  }`,
+                extendedProps: { ...res.data },
+              }
+              : ev
+          )
+        );
+        setEditEventId(null);
+        setForm({ time: "", type: "", location: "", note: "" });
+      })
+      .catch(() => alert("更新失敗"));
+  };
+
+  // 削除
+  const handleDelete = (ev) => {
+    if (role !== "coach") return;
+    if (!window.confirm("本当に削除しますか？")) return;
+    axios
+      .delete(`/api/schedules/${ev.id}`)
+      .then(() => setEvents(events.filter((item) => item.id !== ev.id)))
+      .catch(() => alert("削除失敗"));
   };
 
   return (
@@ -103,23 +170,21 @@ export default function Schedule() {
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        initialDate={new Date().toISOString().split("T")[0]} // ← 今日の日付をセット
+        initialDate={new Date().toISOString().split("T")[0]}
         events={events}
         dateClick={handleDateClick}
       />
 
       {modalOpen && (
         <Modal onClose={() => setModalOpen(false)}>
-          <h3 className="text-xl font-bold mb-2">
-            {selectedDate} の予定
-          </h3>
+          <h3 className="text-xl font-bold mb-2">{selectedDate} の予定</h3>
 
-          {/* 予定表示部分 */}
-          <ul className="mb-4">
+          {/* 予定一覧 */}
+          <ul className="mb-4 max-h-[250px] overflow-auto">
             {events
               .filter((ev) => ev.start === selectedDate)
               .map((ev) => (
-                <li key={ev.id} className="border p-2 mb-1 rounded">
+                <li key={ev.id} className="border p-2 mb-2 rounded">
                   <p>
                     <strong>時間:</strong> {formatTime(ev.extendedProps.time)}
                   </p>
@@ -127,19 +192,38 @@ export default function Schedule() {
                     <strong>内容:</strong> {ev.extendedProps.type || "未設定"}
                   </p>
                   <p>
-                    <strong>場所:</strong>{" "}
-                    {ev.extendedProps.location || "未設定"}
+                    <strong>場所:</strong> {ev.extendedProps.location || "未設定"}
                   </p>
                   <p>
                     <strong>メモ:</strong> {ev.extendedProps.note || "なし"}
                   </p>
+
+                  {role === "coach" && (
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={() => handleEdit(ev)}
+                        className="px-3 py-1 bg-yellow-500 text-white rounded"
+                      >
+                        編集
+                      </button>
+                      <button
+                        onClick={() => handleDelete(ev)}
+                        className="px-3 py-1 bg-red-600 text-white rounded"
+                      >
+                        削除
+                      </button>
+                    </div>
+                  )}
                 </li>
               ))}
           </ul>
 
-          {/* コーチのみ登録フォーム表示 */}
+          {/* 新規登録 or 更新フォーム（coachのみ） */}
           {role === "coach" && (
-            <>
+            <div ref={formRef}>
+              <h4 className="font-semibold mb-2">
+                {editEventId ? "予定を編集" : "新しい予定を追加"}
+              </h4>
               <input
                 type="time"
                 name="time"
@@ -169,15 +253,15 @@ export default function Schedule() {
                 value={form.note}
                 onChange={handleChange}
                 className="border p-2 w-full mb-2"
-              ></textarea>
+              />
 
               <button
-                onClick={handleRegister}
+                onClick={editEventId ? handleUpdate : handleRegister}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
-                登録
+                {editEventId ? "更新" : "登録"}
               </button>
-            </>
+            </div>
           )}
         </Modal>
       )}
