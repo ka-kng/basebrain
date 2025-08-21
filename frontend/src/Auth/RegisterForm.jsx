@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function RegisterForm() {
@@ -17,6 +17,15 @@ export default function RegisterForm() {
 
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("invite");
+    if (code) {
+      setForm(prev => ({ ...prev, invite_code: code }));
+    }
+  }, []);
 
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));

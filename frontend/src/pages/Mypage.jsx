@@ -79,6 +79,15 @@ export default function MyPage() {
     }
   };
 
+  // 招待リンクをコピーする処理
+  const handleCopyInviteLink = () => {
+    if (!inviteCode) return;
+    const inviteUrl = `${window.location.origin}/register?invite=${inviteCode}`;
+    navigator.clipboard.writeText(inviteUrl)
+      .then(() => alert("招待リンクをコピーしました"))
+      .catch(() => alert("コピーに失敗しました"));
+  };
+
   if (!user) return null;
 
   return (
@@ -105,6 +114,13 @@ export default function MyPage() {
                 disabled
                 className="border rounded-lg p-3 text-lg bg-gray-100 cursor-not-allowed"
               />
+              <button
+                type="button"
+                onClick={handleCopyInviteLink}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg mt-2"
+              >
+                招待リンクをコピー
+              </button>
             </div>
           </>
         )}
