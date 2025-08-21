@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import InputField from '../components/InputField';
 
 
 export default function LoginForm() {
@@ -8,11 +9,9 @@ export default function LoginForm() {
     email: '',
     password: '',
   });
-
-  const navigate = useNavigate();
-
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -75,47 +74,34 @@ export default function LoginForm() {
   return (
 
     <div className="min-h-screen flex justify-center items-center px-4 bg-gray-100">
-      <div className='space-y-4 w-full max-w-3xl bg-white shadow-md rounded-lg p-8'>
-        <h1 className='mb-10 text-left text-2xl'>ログイン</h1>
+      <div className='w-full max-w-md bg-white rounded-xl shadow-lg p-10'>
+        <h1 className='text-3xl font-bold text-gray-800 mb-8 text-center'>ログイン</h1>
 
-        <form onSubmit={handleLogin} className='mt-10 text-left flex flex-col gap-5'>
+        <form onSubmit={handleLogin} className='mt-10 text-left flex flex-col gap-6'>
 
-          <div>
 
-            <label htmlFor='email'>メールアドレス</label>
+          <InputField
+            label="メールアドレス"
+            type='email'
+            inputName="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="example@gmail.com"
+            error={errors.email}
+          />
 
-            <input
-              id='email'
-              type='email'
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder='example@example.com'
-              className='w-full border p-2'
-            />
-            {errors.email && <p className='text-red-500'>{errors.email}</p>}
-          </div>
+          <InputField
+            label="パスワード"
+            type='password'
+            inputName="password"
+            value={form.password}
+            onChange={handleChange}
+            error={errors.password}
+          />
 
-          <div>
+          {errors.emailPass && <p className='text-center text-red-500'>{errors.emailPass}</p>}
 
-            <label htmlFor='password'>パスワード</label>
-
-            <input
-              id='password'
-              type='password'
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder='パスワード'
-              className='w-full border p-2'
-            />
-            {errors.password && <p className='text-red-500'>{errors.password}</p>}
-
-          </div>
-
-          {errors.emailPass && <p className='text-red-500'>{errors.emailPass}</p>}
-
-          <button type="submit" className="mt-5 mx-auto w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
+          <button type="submit" className="mt-4 w-40 mx-auto bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white py-3 rounded-lg shadow-lg transition duration-300">
             ログイン
           </button>
 

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import InputField from '../components/InputField';
+import RadioWithInput from '../components/RadioWithInput';
 
 export default function RegisterForm() {
   const [form, setForm] = useState({
@@ -17,7 +19,6 @@ export default function RegisterForm() {
 
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
-  const [inviteCode, setInviteCode] = useState('');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -102,133 +103,83 @@ export default function RegisterForm() {
   return (
     <div className='min-h-screen flex justify-center items-center px-4 bg-gray-100'>
       <div className='space-y-4 w-full max-w-3xl bg-white shadow-md rounded-lg p-8'>
-        <h1 className='mb-10 text-left text-2xl'>新規会員登録</h1>
+        <h1 className='text-center mb-10 text-left text-2xl'>新規会員登録</h1>
 
-        <form onSubmit={handleSubmit} className='mt-10 text-left flex flex-col gap-5'>
+        <form onSubmit={handleSubmit} className='text-left flex flex-col gap-5'>
 
-          <div>
+          <InputField
+            label="名前"
+            id="name"
+            inputName="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="田中太郎"
+            error={errors.name}
+          />
 
-            <label htmlFor='name'>名前</label>
+          <InputField
+            label="メールアドレス"
+            id="email"
+            type='email'
+            inputName="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="example@gmail.com"
+            error={errors.email}
+          />
 
-            <input
-              id='name'
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder='田中 太郎'
-              className='w-full border p-2'
-            />
-            {errors.name && <p className='text-red-500'>{errors.name}</p>}
+          <InputField
+            label="パスワード"
+            type='password'
+            id="password"
+            inputName="password"
+            value={form.password}
+            onChange={handleChange}
+            error={errors.password}
+          />
 
-          </div>
+          <InputField
+            label="パスワード確認"
+            type='password'
+            id="password_confirmation"
+            inputName="password_confirmation"
+            value={form.password_confirmation}
+            onChange={handleChange}
+          />
 
-          <div>
+          <p className='text-gray-600 text-sm'>※選択に応じて下の入力欄が変わります</p>
 
-            <label htmlFor='email'>メールアドレス</label>
+          <RadioWithInput
+            label="チームを作成したい (首脳陣・マネージャー)"
+            radioValue="coach"
+            selectedValue={form.role}
+            onChange={() => setForm(prev => ({ ...prev, role: 'coach' }))}
+            inputProps={{
+              label: "チーム名",
+              inputName: "team_name",
+              value: form.team_name,
+              onChange: handleChange,
+              placeholder: "チーム名"
+            }}
+            error={errors.team_name}
+          />
 
-            <input
-              id='email'
-              type='email'
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder='example@example.com'
-              className='w-full border p-2'
-            />
-            {errors.email && <p className='text-red-500'>{errors.email}</p>}
-          </div>
+          <RadioWithInput
+            label="チームに参加したい (選手)"
+            radioValue="player"
+            selectedValue={form.role}
+            onChange={() => setForm(prev => ({ ...prev, role: 'player' }))}
+            inputProps={{
+              label: "招待コード",
+              inputName: "invite_code",
+              value: form.invite_code,
+              onChange: handleChange,
+              placeholder: "招待コード"
+            }}
+            error={errors.invite_code}
+          />
 
-          <div>
-
-            <label htmlFor='password'>パスワード</label>
-
-            <input
-              id='password'
-              type='password'
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder='パスワード'
-              className='w-full border p-2'
-            />
-            {errors.password && <p className='text-red-500'>{errors.password}</p>}
-
-          </div>
-
-          <div>
-
-            <label htmlFor='password_confirmation'>パスワード確認</label>
-
-            <input
-              id='password_confirmation'
-              type='password'
-              name="password_confirmation"
-              value={form.password_confirmation}
-              onChange={handleChange}
-              placeholder='パスワード確認'
-              className='w-full border p-2'
-            />
-
-          </div>
-
-          <div className='mt-5 flex flex-col gap-3'>
-
-            <p>あなたはどちらですか？</p>
-            <p>※選択に応じて下の入力欄が変わります</p>
-
-          </div>
-
-          <div className='flex flex-col gap-3'>
-
-            <label className="flex items-center gap-2 rounded">
-              <input
-                type="radio"
-                name="role"
-                value="coach"
-                checked={form.role === 'coach'}
-                onChange={handleChange}
-              />
-              <span className="cursor-pointer">チームを作成したい（指導者・マネージャー等）</span>
-            </label>
-
-            <input
-              name="team_name"
-              value={form.team_name}
-              onChange={handleChange}
-              placeholder='チーム名'
-              disabled={form.role !== 'coach'}
-              className='w-full border p-2'
-            />
-            {errors.team_name && <p className="text-red-500">{errors.team_name}</p>}
-
-          </div>
-
-          <div className='flex flex-col gap-3'>
-
-            <label className="flex items-center gap-2 rounded">
-              <input
-                type="radio"
-                name="role"
-                value="player"
-                checked={form.role === 'player'}
-                onChange={handleChange}
-              />
-              <span className="cursor-pointer">チームに参加したい（選手）</span>
-            </label>
-
-            <input
-              name="invite_code"
-              value={form.invite_code}
-              onChange={handleChange}
-              placeholder='招待コード'
-              disabled={form.role !== 'player'}
-              className='w-full border p-2'
-            />
-            {errors.invite_code && <p className="text-red-500">{errors.invite_code}</p>}
-
-          </div>
-
-          <button type="submit" className="mt-5 mx-auto w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
+          <button type="submit" className="mt-4 w-40 mx-auto bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white py-3 rounded-lg shadow-lg transition duration-300">
             登録
           </button>
 
