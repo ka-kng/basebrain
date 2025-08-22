@@ -17,6 +17,8 @@ import PlayerDashboard from './pages/PlayerDashboard';
 import PlayerRanking from './pages/PlayerRanking';
 import Schedule from './pages/Schedule';
 import Mypage from './pages/Mypage';
+import ForgetPassword from './pages/ForgetPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   const { user, loading } = useAuth();
@@ -28,6 +30,8 @@ function App() {
       {/* 非ログイン時 */}
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/login" element={<LoginForm />} />
+      <Route path="password/forget" element={<ForgetPassword />} />
+      <Route path="password/reset" element={<ResetPassword />} />
 
       {/* ログイン後 (Sidebar含めたレイアウト) */}
       <Route path="/" element={<SidebarLayout />}>
@@ -61,6 +65,7 @@ function App() {
         <Route path="ranking" element={<PlayerRanking />} />
         <Route path="schedule" element={<Schedule />} />
         <Route path="mypage" element={<Mypage />} />
+
       </Route>
     </Routes>
   );

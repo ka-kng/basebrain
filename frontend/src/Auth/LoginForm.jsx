@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import InputField from '../components/InputField';
 
 
@@ -98,6 +98,12 @@ export default function LoginForm() {
             onChange={handleChange}
             error={errors.password}
           />
+
+          <div className="text-center mt-4">
+            <Link to="/password/forget" className="text-blue-600 hover:underline">
+              パスワードを忘れた方はこちら
+            </Link>
+          </div>
 
           {errors.emailPass && <p className='text-center text-red-500'>{errors.emailPass}</p>}
 

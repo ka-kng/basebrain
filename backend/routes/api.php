@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Pages\DashboardController;
 use App\Http\Controllers\Pages\PlayerRankingController;
 use App\Http\Controllers\Pages\ScheduleController;
@@ -16,12 +18,16 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
+Route::post('/forget-password', [PasswordResetLinkController::class, 'store']);
+Route::post('/reset-password', [NewPasswordController::class, 'store']);
+
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
     Route::get('/mypage', [UserController::class, 'show']);
     Route::put('/mypage/{id}', [UserController::class, 'update']);
     Route::delete('/mypage/{id}', [UserController::class, 'destroy']);
