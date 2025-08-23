@@ -1,4 +1,13 @@
 import { NavLink } from "react-router-dom";
+import { Home, Trophy, Calendar, BookOpen, User } from "lucide-react";
+
+const icons = {
+  "ダッシュボード": <Home size={20} />,
+  "ランキング": <Trophy size={20} />,
+  "記録": <BookOpen size={20} />,
+  "スケジュール": <Calendar size={20} />,
+  "マイページ": <User size={20} />,
+};
 
 const menuItems = {
   coach: [
@@ -17,32 +26,57 @@ const menuItems = {
 };
 
 export default function Sidebar({ role }) {
+  const items = menuItems[role] ?? [];
+
   return (
-    <div className="bg-gray-800">
+    <>
+      {/* PC Sidebar */}
       <aside
-        className="bg-gray-800 text-white
-                 w-full md:w-60
-                 h-16 md:h-screen
-                 fixed bottom-0 md:static
-                 flex md:block justify-around items-center
-                 z-50"
+        className="hidden md:flex md:flex-col fixed top-0 left-0 w-56 h-screen
+                   bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900
+                   text-gray-300 shadow-2xl border-r border-gray-700 z-50 overflow-y-auto"
       >
-        <ul className="md:mt-20 flex md:flex-col w-full justify-around md:justify-start md:space-y-2">
-          {menuItems[role]?.map(({ label, path }) => (
+        <ul className="mt-24 space-y-4 px-4">
+          {items.map(({ label, path }) => (
             <li key={path}>
               <NavLink
                 to={path}
                 className={({ isActive }) =>
-                  `flex flex-col items-center text-sm px-2 py-1 md:px-3 md:py-2 rounded hover:bg-gray-700
-                 ${isActive ? 'bg-gray-700 font-bold' : ''}`
+                  `flex items-center space-x-3 px-4 py-3 rounded-lg
+                   transition-all duration-300 transform
+                   hover:translate-x-2 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white hover:shadow-lg
+                   ${isActive ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold shadow-2xl scale-105' : ''}`
                 }
               >
-                {label}
+                {icons[label]}
+                <span className="whitespace-nowrap">{label}</span>
               </NavLink>
             </li>
           ))}
         </ul>
       </aside>
-    </div>
+
+      {/* Mobile Bottom Navigation */}
+      <aside
+        className="flex md:hidden fixed bottom-0 left-0 w-full h-16
+                   bg-gray-900 flex justify-around items-center
+                   text-gray-300 shadow-2xl z-50"
+      >
+        {items.map(({ label, path }) => (
+          <NavLink
+            key={path}
+            to={path}
+            className={({ isActive }) =>
+              `flex flex-col items-center text-xs transition-all duration-300
+               transform hover:-translate-y-1 hover:text-pink-400
+               ${isActive ? 'text-purple-400 font-bold scale-110' : ''}`
+            }
+          >
+            {icons[label]}
+            <span>{label}</span>
+          </NavLink>
+        ))}
+      </aside>
+    </>
   );
 }
