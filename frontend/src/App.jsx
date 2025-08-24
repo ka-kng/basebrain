@@ -17,8 +17,8 @@ import PlayerDashboard from './pages/PlayerDashboard';
 import PlayerRanking from './pages/PlayerRanking';
 import Schedule from './pages/Schedule';
 import Mypage from './pages/Mypage';
-import ForgetPassword from './pages/ForgetPassword';
-import ResetPassword from './pages/ResetPassword';
+import ForgetPassword from './Auth/ForgetPassword';
+import ResetPassword from './Auth/ResetPassword';
 
 function App() {
   const { user, loading } = useAuth();

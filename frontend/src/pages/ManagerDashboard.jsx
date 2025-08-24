@@ -8,7 +8,6 @@ export default function ManagerDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
     axios.get("/api/dashboard/manager")
       .then(res => {
         setGames(res.data.games);
@@ -20,76 +19,106 @@ export default function ManagerDashboard() {
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
 
+  // チーム情報
   const totalGames = games.length;
+  const totalWins = games.filter(g => g.result === '勝利').length;
+  const totalLoses = games.filter(g => g.result === '敗北').length;
+  const totalDraw = games.filter(g => g.result === '引き分け').length;
+  const winRatePercent = totalGames ? ((totalWins / totalGames) * 100).toFixed(1) + "%" : "0%";
 
   // 打者統計
-  const totalAtBats = battingRecords.reduce((sum, record) => sum + Number(record.at_bats || 0), 0);
-  const totalHits = battingRecords.reduce((sum, record) => sum + Number(record.hits || 0), 0);
-  const totalRuns = battingRecords.reduce((sum, record) => sum + Number(record.runs || 0), 0);
-  const totalRbis = battingRecords.reduce((sum, record) => sum + Number(record.rbis || 0), 0);
-  const totalWalks = battingRecords.reduce((sum, record) => sum + Number(record.walks || 0), 0);
-  const totalStrikeouts = battingRecords.reduce((sum, record) => sum + Number(record.strikeouts || 0), 0);
-  const totalSteals = battingRecords.reduce((sum, record) => sum + Number(record.steals || 0), 0);
-  const totalCaughtStealing = battingRecords.reduce((sum, record) => sum + Number(record.caught_stealing || 0), 0);
-  const totalErrors = battingRecords.reduce((sum, record) => sum + Number(record.errors || 0), 0);
+  const totalAtBats = battingRecords.reduce((sum, r) => sum + Number(r.at_bats || 0), 0);
+  const totalHits = battingRecords.reduce((sum, r) => sum + Number(r.hits || 0), 0);
+  const totalDoubles = battingRecords.reduce((sum, r) => sum + Number(r.doubles || 0), 0);
+  const totalTriples = battingRecords.reduce((sum, r) => sum + Number(r.triples || 0), 0);
+  const totalHomeruns = battingRecords.reduce((sum, r) => sum + Number(r.home_runs || 0), 0);
+  const totalRuns = battingRecords.reduce((sum, r) => sum + Number(r.runs || 0), 0);
+  const totalRbis = battingRecords.reduce((sum, r) => sum + Number(r.rbis || 0), 0);
+  const totalWalks = battingRecords.reduce((sum, r) => sum + Number(r.walks || 0), 0);
+  const totalStrikeouts = battingRecords.reduce((sum, r) => sum + Number(r.strikeouts || 0), 0);
+  const totalSteals = battingRecords.reduce((sum, r) => sum + Number(r.steals || 0), 0);
+  const totalCaughtStealing = battingRecords.reduce((sum, r) => sum + Number(r.caught_stealing || 0), 0);
+  const totalErrors = battingRecords.reduce((sum, r) => sum + Number(r.errors || 0), 0);
 
   const battingAverage = totalAtBats ? (totalHits / totalAtBats).toFixed(3) : "0.000";
-  const onBasePercentage = totalAtBats + totalWalks ? ((totalHits + totalWalks) / (totalAtBats + totalWalks)).toFixed(3) : "0.000";
+  const onBasePercentage = (totalAtBats + totalWalks) > 0
+    ? ((totalHits + totalWalks) / (totalAtBats + totalWalks)).toFixed(3)
+    : "0.000";
   const stealSuccessRate = totalSteals + totalCaughtStealing ? (totalSteals / (totalSteals + totalCaughtStealing) * 100).toFixed(1) : "0";
+  const totalBases = totalHits + totalDoubles + (2 * totalTriples) + (3 * totalHomeruns);
+  const sluggingPercentage = totalAtBats ? (totalBases / totalAtBats).toFixed(3) : "0.000";
 
   // 投手統計
-  const totalInningsOuts = pitchingRecords.reduce((sum, record) => sum + Number(record.pitching_innings_outs || 0), 0);
-  const totalPitches = pitchingRecords.reduce((sum, record) => sum + Number(record.pitches || 0), 0);
-  const totalPitcherStrikeouts = pitchingRecords.reduce((sum, record) => sum + Number(record.strikeouts || 0), 0);
-  const totalHitsAllowed = pitchingRecords.reduce((sum, record) => sum + Number(record.hits_allowed || 0), 0);
-  const totalHrAllowed = pitchingRecords.reduce((sum, record) => sum + Number(record.hr_allowed || 0), 0);
-  const totalWalksGiven = pitchingRecords.reduce((sum, record) => sum + Number(record.walks_given || 0), 0);
-  const totalRunsAllowed = pitchingRecords.reduce((sum, record) => sum + Number(record.runs_allowed || 0), 0);
-  const totalEarnedRuns = pitchingRecords.reduce((sum, record) => sum + Number(record.earned_runs || 0), 0);
-
+  const totalInningsOuts = pitchingRecords.reduce((sum, r) => sum + Number(r.pitching_innings_outs || 0), 0);
+  const totalPitcherStrikeouts = pitchingRecords.reduce((sum, r) => sum + Number(r.strikeouts || 0), 0);
+  const totalHitsAllowed = pitchingRecords.reduce((sum, r) => sum + Number(r.hits_allowed || 0), 0);
+  const totalHrAllowed = pitchingRecords.reduce((sum, r) => sum + Number(r.hr_allowed || 0), 0);
+  const totalWalksGiven = pitchingRecords.reduce((sum, r) => sum + Number(r.walks_given || 0), 0);
+  const totalRunsAllowed = pitchingRecords.reduce((sum, r) => sum + Number(r.runs_allowed || 0), 0);
+  const totalEarnedRuns = pitchingRecords.reduce((sum, r) => sum + Number(r.earned_runs || 0), 0);
   const era = totalInningsOuts ? ((totalEarnedRuns / totalInningsOuts) * 3).toFixed(2) : "0.00";
 
+  const StatCard = ({ label, value, color }) => (
+    <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
+      <span className="font-semibold text-gray-700">{label}</span>
+      <span className={`font-bold text-lg ${color || "text-gray-800"}`}>{value}</span>
+    </div>
+  );
+
   return (
-    <div className="p-5 pb-20 max-w-5xl mx-auto space-y-8">
-      <h1 className="text-2xl font-bold text-center mb-5">チーム成績</h1>
+    <div className="p-4 pb-16 max-w-5xl mx-auto space-y-10">
+      <h1 className="text-3xl font-bold text-gray-800 border-b-4 border-green-500 inline-block pb-2">
+        チーム成績
+      </h1>
 
       {/* チーム情報 */}
-      <div className="bg-white shadow-md rounded-lg p-5">
-        <h2 className="text-xl font-semibold mb-3">チーム情報</h2>
-        <p className="text-lg font-bold text-left text-gray-700">試合数: {totalGames}</p>
-      </div>
+      <section>
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">チーム情報</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <StatCard label="試合数" value={totalGames} />
+          <StatCard label="勝利数" value={totalWins} color="text-green-600" />
+          <StatCard label="敗北数" value={totalLoses} color="text-red-500" />
+          <StatCard label="引き分け数" value={totalDraw} color="text-yellow-500" />
+          <StatCard label="勝率" value={winRatePercent} color="text-blue-600" />
+        </div>
+      </section>
 
       {/* 打者成績 */}
-      <div className="bg-white shadow-md rounded-lg p-5">
-        <h2 className="text-xl font-semibold mb-3">打者成績</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-left text-gray-700">
-          <p className="text-lg font-bold">打数: {totalAtBats}</p>
-          <p className="text-lg font-bold">安打: {totalHits}</p>
-          <p className="text-lg font-bold">打率: {battingAverage}</p>
-          <p className="text-lg font-bold">出塁率: {onBasePercentage}</p>
-          <p className="text-lg font-bold">得点: {totalRuns}</p>
-          <p className="text-lg font-bold">打点: {totalRbis}</p>
-          <p className="text-lg font-bold">四死球: {totalWalks}</p>
-          <p className="text-lg font-bold">三振: {totalStrikeouts}</p>
-          <p className="text-lg font-bold">盗塁: {totalSteals}</p>
-          <p className="text-lg font-bold">盗塁成功率: {stealSuccessRate}%</p>
-          <p className="text-lg font-bold">失策: {totalErrors}</p>
+      <section>
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">打者成績</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <StatCard label="打率" value={battingAverage} color="text-blue-600" />
+          <StatCard label="長打率" value={sluggingPercentage} color="text-indigo-600" />
+          <StatCard label="出塁率" value={onBasePercentage} color="text-indigo-600" />
+          <StatCard label="盗塁率" value={`${stealSuccessRate}%`} color="text-indigo-600" />
+          <StatCard label="打数" value={totalAtBats} />
+          <StatCard label="安打" value={totalHits} color="text-green-600" />
+          <StatCard label="二塁打" value={totalDoubles} />
+          <StatCard label="三塁打" value={totalTriples} />
+          <StatCard label="本塁打" value={totalHomeruns} color="text-purple-600" />
+          <StatCard label="得点" value={totalRuns} />
+          <StatCard label="打点" value={totalRbis} />
+          <StatCard label="四死球" value={totalWalks} />
+          <StatCard label="三振" value={totalStrikeouts} color="text-red-500" />
+          <StatCard label="盗塁数" value={totalSteals} />
+          <StatCard label="盗塁成功数" value={totalCaughtStealing} />
+          <StatCard label="失策" value={totalErrors} color="text-gray-500" />
         </div>
-      </div>
+      </section>
 
       {/* 投手成績 */}
-      <div className="bg-white shadow-md rounded-lg p-5">
-        <h2 className="text-xl font-semibold mb-3">投手成績</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-left text-gray-700">
-          <p className="text-lg font-bold">防御率: {era}</p>
-          <p className="text-lg font-bold">奪三振: {totalPitcherStrikeouts}</p>
-          <p className="text-lg font-bold">被安打: {totalHitsAllowed}</p>
-          <p className="text-lg font-bold">被本塁打: {totalHrAllowed}</p>
-          <p className="text-lg font-bold">与四死球: {totalWalksGiven}</p>
-          <p className="text-lg font-bold">失点: {totalRunsAllowed}</p>
-          <p className="text-lg font-bold">自責点: {totalEarnedRuns}</p>
+      <section>
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">投手成績</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
+          <StatCard label="防御率" value={era} color="text-blue-600" />
+          <StatCard label="奪三振" value={totalPitcherStrikeouts} />
+          <StatCard label="被安打" value={totalHitsAllowed} />
+          <StatCard label="被本塁打" value={totalHrAllowed} color="text-purple-600" />
+          <StatCard label="与四死球" value={totalWalksGiven} />
+          <StatCard label="失点" value={totalRunsAllowed} />
+          <StatCard label="自責点" value={totalEarnedRuns} />
         </div>
-      </div>
+      </section>
     </div>
   );
 }

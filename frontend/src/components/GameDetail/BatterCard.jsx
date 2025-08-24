@@ -30,8 +30,8 @@ export default function BatterCard({ batter, open, toggleOpen, onDelete, navigat
           <div className="flex justify-between"><span>得点</span><span>{batter.runs}</span></div>
           <div className="flex justify-between"><span>四死球</span><span>{batter.walks}</span></div>
           <div className="flex justify-between"><span>三振</span><span>{batter.strikeouts}</span></div>
-          <div className="flex justify-between"><span>盗塁</span><span>{batter.steals}</span></div>
-          <div className="flex justify-between"><span>盗塁死</span><span>{batter.caught_stealing}</span></div>
+          <div className="flex justify-between"><span>盗塁数</span><span>{batter.steals}</span></div>
+          <div className="flex justify-between"><span>盗塁成功数</span><span>{batter.caught_stealing}</span></div>
           <div className="flex justify-between"><span>失策</span><span>{batter.errors}</span></div>
         </div>
       )}
