@@ -112,7 +112,7 @@ export default function GameDetail() {
     return <p className="text-center py-10 text-red-500">エラーが発生しました。</p>;
 
   return (
-    <div className="max-w-screen-sm p-4 pb-16 mx-auto xl:max-w-screen-lg">
+    <div className="max-w-screen-sm p-4 pb-16 mx-auto xl:max-w-4xl">
       <Toaster position="top-right" />
 
       {/* 戻る・編集・削除 */}

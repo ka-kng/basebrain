@@ -34,7 +34,7 @@ export default function SummaryRecord() {
   }[game.result] || "bg-gray-400";
 
   return (
-    <div className="max-w-5xl mx-auto px-6 pt-10 pb-20 space-y-8">
+    <div className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-8">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <button

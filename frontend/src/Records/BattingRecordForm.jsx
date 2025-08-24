@@ -172,18 +172,12 @@ export default function BattingRecordForm() {
     }
   };
 
-  // -------------------
-  // Memoized selectable users
-  // -------------------
   const selectableUsers = useMemo(() => {
     return users.filter(u => isEdit ? u.id === form.user_id || !registeredBatters.includes(u.id) : !registeredBatters.includes(u.id));
   }, [users, registeredBatters, form.user_id, isEdit]);
 
   const onlyOnePlayerLeft = selectableUsers.length === 1;
 
-  // -------------------
-  // Render
-  // -------------------
   return (
     <div className="max-w-4xl mx-auto p-6 pb-20 space-y-6">
       {/* Header */}
