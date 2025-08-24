@@ -8,12 +8,12 @@ export default function SidebarLayout() {
   const role = user?.role || "player";
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen">
 
       <Header />
 
       {/* PCサイドバー */}
-      <div className="hidden md:block w-56 flex-shrink-0">
+      <div className="hidden lg:block w-56 flex-shrink-0">
         <Sidebar role={role} />
       </div>
 
@@ -24,7 +24,7 @@ export default function SidebarLayout() {
       <main className="pt-16 flex-1 p-4 bg-gray-50">
         <Outlet />
       </main>
-      
+
     </div>
   );
 }

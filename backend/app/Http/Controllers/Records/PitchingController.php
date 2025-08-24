@@ -112,8 +112,10 @@ class PitchingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $pitcher = PitchingRecord::findOrFail($id);
+        $pitcher->delete();
+        return response()->noContent(); // 204を返す
     }
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import InputField from "../components/InputField";
 
 export default function GameRecordForm() {
   const navigate = useNavigate();
@@ -8,244 +10,205 @@ export default function GameRecordForm() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({
-    date: '',
-    game_type: '',
-    tournament: '',
-    opponent: '',
-    team_score: '',
-    opponent_score: '',
-    memo: '',
-    result: '',
+    date: "",
+    game_type: "",
+    tournament: "",
+    opponent: "",
+    team_score: "",
+    opponent_score: "",
+    memo: "",
+    result: "",
   });
 
+  // 編集時: 試合情報取得
   useEffect(() => {
-    if (id) {
-      setLoading(true);
-      axios.get(`api/games/${id}`)
-        .then(res => {
-          setForm({
-            date: res.data.date ? res.data.date.split('T')[0] : '',
-            game_type: res.data.game_type,
-            tournament: res.data.tournament,
-            opponent: res.data.opponent,
-            team_score: res.data.team_score,
-            opponent_score: res.data.opponent_score,
-            memo: res.data.memo,
-            result: res.data.result,
-          });
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error(err);
-          setLoading(false);
+    if (!id) return;
+    setLoading(true);
+    axios.get(`/api/games/${id}`)
+      .then(res => {
+        const data = res.data;
+        setForm({
+          date: data.date ? data.date.split("T")[0] : "",
+          game_type: data.game_type,
+          tournament: data.tournament,
+          opponent: data.opponent,
+          team_score: data.team_score,
+          opponent_score: data.opponent_score,
+          memo: data.memo,
+          result: data.result,
         });
-    }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, [id]);
 
+  // 勝敗自動判定
   useEffect(() => {
-  if (form.team_score !== "" && form.opponent_score !== "") {
     const team = parseInt(form.team_score, 10);
-    const opponent = parseInt(form.opponent_score, 10);
-
-    if (!isNaN(team) && !isNaN(opponent)) {
-      let result = "";
-      if (team > opponent) result = "勝利";
-      else if (team < opponent) result = "敗北";
-      else result = "引き分け";
-      setForm(prev => ({ ...prev, result }));
+    const opp = parseInt(form.opponent_score, 10);
+    if (!isNaN(team) && !isNaN(opp)) {
+      setForm(prev => ({
+        ...prev,
+        result: team > opp ? "勝利" : team < opp ? "敗北" : "引き分け",
+      }));
     }
-  }
-}, [form.team_score, form.opponent_score]);
+  }, [form.team_score, form.opponent_score]);
 
-
-
-
-  const handleBack = () => {
-    navigate(-1);
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleBack = () => navigate(-1);
 
-
-  const handleChange = (e) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-
     const newErrors = {};
-
-    if (!form.date) newErrors.date = '試合日を入力してください';
-    if (!form.game_type) newErrors.game_type = '試合種類を選択してください';
-    if (!form.tournament) newErrors.tournament = '大会名を入力してください';
-    if (!form.opponent) newErrors.opponent = '相手チーム名を入力してください';
-    if (form.team_score === '' || isNaN(form.team_score)) newErrors.team_score = '自チームのスコアを正しく入力してください';
-    if (form.opponent_score === '' || isNaN(form.opponent_score)) newErrors.opponent_score = '相手チームのスコアを正しく入力してください';
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+    if (!form.date) newErrors.date = "試合日を入力してください";
+    if (!form.game_type) newErrors.game_type = "試合種類を選択してください";
+    if (!form.tournament) newErrors.tournament = "大会名を入力してください";
+    if (!form.opponent) newErrors.opponent = "相手チーム名を入力してください";
+    if (form.team_score === "" || isNaN(form.team_score)) newErrors.team_score = "自チームのスコアを正しく入力してください";
+    if (form.opponent_score === "" || isNaN(form.opponent_score)) newErrors.opponent_score = "相手チームのスコアを正しく入力してください";
+    if (Object.keys(newErrors).length) return setErrors(newErrors);
 
     setErrors({});
-
     try {
-      let res;
       if (id) {
-        res = await axios.put(`/api/records/games/${id}`, form);
+        await axios.put(`/api/games/${id}`, form);
+        toast.success("試合を更新しました");
         navigate(`/games/${id}`);
       } else {
-        res = await axios.post('/api/records/games', form);
-        const gameId = id || res.data.id;
-        navigate('/records/batting', { state: { game_id: gameId } });
+        const res = await axios.post("/api/games", form);
+        toast.success("試合を登録しました");
+        navigate("/records/batting", { state: { game_id: res.data.id } });
       }
-
     } catch (err) {
-
-      console.log(err);
-
+      console.error(err);
+      toast.error("登録に失敗しました");
     }
   };
 
-  return (
-    <div className="px-10 pt-10 pb-20">
-      <button className="block text-left text-xl" onClick={handleBack}>戻る</button>
-      <h1 className="text-2xl mt-10">試合結果</h1>
-      <form onSubmit={handleSubmit}>
+  if (loading) return <p className="text-center py-10 text-gray-500">読み込み中...</p>;
 
-        {/* 試合日 */}
-        <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="date">試合日</label>
-          <input
-            id="date"
+  return (
+    <div className="max-w-3xl mx-auto p-6 pb-16">
+      <Toaster position="top-right" />
+      <div className="text-left">
+        <button onClick={handleBack} className="text-gray-500 hover:text-gray-800 mb-4">← 戻る</button>
+      </div>
+
+      <h1 className="text-3xl font-bold mt-5 mb-10 text-gray-800 border-b-2 border-green-500 inline-block pb-1">
+        {id ? "試合編集" : "新規試合登録"}
+      </h1>
+
+      <div className="bg-white shadow-lg rounded-xl p-8 text-left">
+        <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* 試合日 */}
+          <InputField
+            label="試合日"
             type="date"
-            name="date"
             value={form.date}
             onChange={handleChange}
-            className="border p-2 md:w-40" />
-        </div>
-        {errors.date && <p className="text-red-600 mt-1 text-right">{errors.date}</p>}
+            inputName="date"
+            error={errors.date}
+          />
 
-        {/* 試合種類 */}
-        <div className="flex mt-10 justify-between items-center">
-          <label>試合種類</label>
-          <div className=" items-center flex gap-3 md:gap-10 justify-between">
-
-            <label className="items-center">
-              <input
-                type="radio"
-                name="game_type"
-                value="公式戦"
-                checked={form.game_type === '公式戦'}
-                onChange={handleChange}
-                className="mr-1"
-              />
-              公式戦
-            </label>
-
-            <label className="items-center">
-              <input
-                type="radio"
-                name="game_type"
-                value="練習試合"
-                checked={form.game_type === '練習試合'}
-                onChange={handleChange}
-                className="mr-1"
-              />
-              練習試合
-            </label>
+          {/* 試合種類 */}
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-700">試合種類</label>
+            <div className="flex gap-6">
+              {["公式戦", "練習試合"].map(type => (
+                <label key={type} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="game_type"
+                    value={type}
+                    checked={form.game_type === type}
+                    onChange={handleChange}
+                    className="accent-blue-500"
+                  />
+                  {type}
+                </label>
+              ))}
+            </div>
+            {errors.game_type && <p className="text-red-500 text-sm mt-1">{errors.game_type}</p>}
           </div>
-        </div>
-        {errors.game_type && <p className="text-red-600 mt-1 text-right">{errors.game_type}</p>}
 
-        {/* 大会名 */}
-        <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="tournament">大会名</label>
-          <input
-            id="tournament"
-            type="text"
-            name="tournament"
+          {/* 大会名 */}
+          <InputField
+            label="大会名"
             value={form.tournament}
             onChange={handleChange}
-            className="border p-2 md:w-80" />
-        </div>
-        {errors.tournament && <p className="text-red-600 mt-1 text-right">{errors.tournament}</p>}
+            inputName="tournament"
+            error={errors.tournament}
+          />
 
-        {/* 相手チーム名 */}
-        <div className="flex mt-10 justify-between items-center">
-          <label htmlFor="opponent">相手チーム名</label>
-          <input
-            id="opponent"
-            type="text"
-            name="opponent"
+          {/* 相手チーム */}
+          <InputField
+            label="相手チーム名"
             value={form.opponent}
             onChange={handleChange}
-            className="border p-2 md:w-80" />
-        </div>
-        {errors.opponent && <p className="text-red-600 mt-1 text-right">{errors.opponent}</p>}
+            inputName="opponent"
+            error={errors.opponent}
+          />
 
-        {/* スコア */}
-        <div className="flex mt-10 justify-between items-center">
-          <label>スコア</label>
-          <div className=" items-center flex gap-3 md:gap-10 justify-between">
-
-            <div className="items-center">
-              <input
-                type="text"
-                name="team_score"
+          {/* スコア */}
+          <div>
+            <label className="block font-medium mb-1">スコア</label>
+            <div className="flex items-center gap-4">
+              <InputField
+                inputName="team_score"
                 value={form.team_score}
                 onChange={handleChange}
-                placeholder="自分"
-                className="border p-2 w-12" />
-            </div>
-
-            <div>
-              <p>対</p>
-            </div>
-
-            <div className="items-center">
-              <input
-                type="text"
-                name="opponent_score"
+                placeholder="自チーム"
+                error={errors.team_score}
+              />
+              <span className="font-bold">対</span>
+              <InputField
+                inputName="opponent_score"
                 value={form.opponent_score}
                 onChange={handleChange}
                 placeholder="相手"
-                className="border p-2 w-12" />
+                error={errors.opponent_score}
+              />
             </div>
           </div>
-        </div>
-        {errors.team_score && <p className="text-red-600 mt-1 text-right">{errors.team_score}</p>}
-        {errors.opponent_score && <p className="text-red-600 mt-1 text-right">{errors.opponent_score}</p>}
 
-        {/* 勝敗（自動判定のみ） */}
-        <div className="flex mt-10 justify-between items-center">
-          <label>試合結果</label>
-          <p className="p-2 border md:w-40 text-center">
-            {form.result ? (form.result === '勝利' ? '勝利' : form.result === '敗北' ? '敗北' : '引き分け') : '-'}
-          </p>
-        </div>
+          {/* 勝敗 */}
+          <div>
+            <label className="block font-medium mb-1">試合結果</label>
+            <p className="text-center py-2 border rounded-md bg-gray-50">{form.result || "-"}</p>
+          </div>
 
-        {/* メモ */}
-        <div className="flex flex-col mt-10 justify-between text-left gap-2">
-          <label htmlFor="memo">メモ</label>
-          <textarea
-            id="memo"
-            name="memo"
-            value={form.memo}
-            onChange={handleChange}
-            rows={5}
-            className="border p-2"
-          />
-        </div>
+          {/* メモ */}
+          <div>
+            <label className="block font-medium mb-1">
+              メモ
+            </label>
+            <textarea
+              name="memo"
+              value={form.memo}
+              onChange={handleChange}
+              rows={5}
+              className="w-full border rounded-md p-2" />
+          </div>
 
-        <div className="text-right md:mt-10">
-          <button type="submit" className="mt-5 mx-auto w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition">
-            {id ? '更新する' : '打撃登録へ'}
-          </button>
-        </div>
 
-      </form>
+
+          {/* 送信ボタン */}
+          <div className="text-center">
+            <button
+              type="submit"
+              className="w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition-all"
+            >
+              {id ? "更新する" : "打撃登録へ"}
+            </button>
+          </div>
+
+        </form>
+      </div>
     </div>
   );
-
 }

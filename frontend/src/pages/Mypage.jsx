@@ -73,7 +73,7 @@ export default function MyPage() {
       if (user.role === "coach") payload.team_name = teamName;
       if (password) payload.password = password;
 
-      const res = await axios.put(`/api/mypage/${user.id}`, payload);
+      const res = await axios.put(`/api/mypage`, payload);
       setUser(res.data);
       setPassword("");
       alert("更新しました");
@@ -85,7 +85,7 @@ export default function MyPage() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/mypage/${user.id}`);
+      await axios.delete(`/api/mypage`);
       alert("アカウントを削除しました");
       window.location.href = "/";
     } catch (err) {

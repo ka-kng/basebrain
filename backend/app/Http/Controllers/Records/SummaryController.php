@@ -31,6 +31,7 @@ class SummaryController extends Controller
                 'opponent' => $game->opponent,
                 'team_score' => $game->team_score,
                 'opponent_score' => $game->opponent_score,
+                'result' => $game->result,
                 'memo' => $game->memo,
             ],
             'batters' => $batters,

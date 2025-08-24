@@ -32,7 +32,7 @@ export default function Sidebar({ role }) {
     <>
       {/* PC Sidebar */}
       <aside
-        className="hidden md:flex md:flex-col fixed top-0 left-0 w-56 h-screen
+        className="hidden lg:flex lg:flex-col fixed top-0 left-0 w-56 h-screen
                    bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900
                    text-gray-300 shadow-2xl border-r border-gray-700 z-50 overflow-y-auto"
       >
@@ -58,7 +58,7 @@ export default function Sidebar({ role }) {
 
       {/* Mobile Bottom Navigation */}
       <aside
-        className="flex md:hidden fixed bottom-0 left-0 w-full h-16
+        className="flex lg:hidden fixed bottom-0 left-0 w-full h-16
                    bg-gray-900 flex justify-around items-center
                    text-gray-300 shadow-2xl z-50"
       >
