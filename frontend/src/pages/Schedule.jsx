@@ -1,34 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
-import { createPortal } from "react-dom";
+import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import axios from "axios";
-
-// モーダルコンポーネント
-function Modal({ children, onClose }) {
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
-  return createPortal(
-    <div
-      className="fixed inset-0 z-[9999] flex justify-center items-center bg-black bg-opacity-40"
-      onClick={handleOverlayClick}
-    >
-      <div className="bg-white p-6 rounded-xl shadow-lg w-96 max-w-full relative max-h-[80vh] overflow-auto">
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-lg font-bold"
-        >
-          ✕
-        </button>
-        {children}
-      </div>
-    </div>,
-    document.body
-  );
-}
+import { format } from "date-fns";
+import ja from "date-fns/locale/ja";
 
 // 時間整形
 function formatTime(time) {
@@ -37,233 +13,158 @@ function formatTime(time) {
   return `${parseInt(hour, 10)}:${minute}`;
 }
 
-
 export default function Schedule() {
   const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [role, setRole] = useState("coach"); // "player" にすると確認のみ
-  const [form, setForm] = useState({ time: "", type: "", location: "", note: "" });
+  const [role, setRole] = useState("coach");
+  const [form, setForm] = useState({ date: "", time: "", type: "", location: "", note: "" });
   const [editEventId, setEditEventId] = useState(null);
-  const formRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
 
-
-
-  // 初回読み込みで予定取得
   useEffect(() => {
-
-    axios.get("/api/user").then((res) => {
-      setRole(res.data.role); // "coach" or "player"
-    });
-
-    axios.get("/api/schedules").then((res) => {
+    axios.get("/api/user").then((res) => setRole(res.data.role));
+    axios.get("/api/schedules").then((res) =>
       setEvents(
         res.data.map((s) => ({
           id: s.id,
           start: s.date,
           title: `${formatTime(s.time) || "時間未設定"} ${s.type || "内容未設定"}`,
-          extendedProps: {
-            time: s.time,
-            type: s.type,
-            location: s.location,
-            note: s.note,
-          },
+          extendedProps: { ...s },
         }))
-      );
-    });
+      )
+    );
   }, []);
 
-  const handleDateClick = (arg) => {
-    setSelectedDate(arg.dateStr);
-    setModalOpen(true);
-    setForm({ time: "", type: "", location: "", note: "" });
-    setEditEventId(null);
-  };
+  const handleDateClick = (arg) => setSelectedDate(arg.dateStr);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  // 登録
   const handleRegister = () => {
-    const dayEvents = events.filter((ev) => ev.start === selectedDate);
-    if (dayEvents.length >= 3) {
-      alert("1日に登録できる予定は最大3件です");
-      return;
-    }
+    if (!form.date) return alert("日付を指定してください");
+    const dayEvents = events.filter((ev) => ev.start === form.date);
+    if (dayEvents.length >= 3) return alert("1日に登録できる予定は最大3件です");
 
     axios
-      .post("/api/schedules", { date: selectedDate, ...form })
-      .then((res) => {
-        const newEvent = {
-          id: res.data.id,
-          start: res.data.date,
-          title: `${formatTime(res.data.time) || "時間未設定"} ${res.data.type || "内容未設定"
-            }`,
-          extendedProps: {
-            time: res.data.time,
-            type: res.data.type,
-            location: res.data.location,
-            note: res.data.note,
+      .post("/api/schedules", form)
+      .then((res) =>
+        setEvents([
+          ...events,
+          {
+            id: res.data.id,
+            start: res.data.date,
+            title: `${formatTime(res.data.time) || "時間未設定"} ${res.data.type || "内容未設定"}`,
+            extendedProps: { ...res.data },
           },
-        };
-        setEvents([...events, newEvent]);
-        setForm({ time: "", type: "", location: "", note: "" });
-      })
-      .catch(() => alert("登録失敗"));
+        ])
+      )
+      .finally(() => setForm({ date: "", time: "", type: "", location: "", note: "" }));
   };
 
-  // 編集開始
   const handleEdit = (ev) => {
     if (role !== "coach") return;
-    setForm({
-      time: ev.extendedProps.time || "",
-      type: ev.extendedProps.type || "",
-      location: ev.extendedProps.location || "",
-      note: ev.extendedProps.note || "",
-    });
+    setForm({ ...ev.extendedProps, date: ev.start });
     setEditEventId(ev.id);
-
-    // フォームにスクロール
-    setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 50);
+    setShowModal(true);
   };
 
-  // 更新
   const handleUpdate = () => {
     if (!editEventId) return;
     axios
       .put(`/api/schedules/${editEventId}`, form)
-      .then((res) => {
+      .then((res) =>
         setEvents(
           events.map((ev) =>
             ev.id === editEventId
-              ? {
-                ...ev,
-                title: `${formatTime(res.data.time) || "時間未設定"} ${res.data.type || "内容未設定"
-                  }`,
-                extendedProps: { ...res.data },
-              }
+              ? { ...ev, title: `${formatTime(res.data.time)} ${res.data.type}`, extendedProps: { ...res.data } }
               : ev
           )
-        );
+        )
+      )
+      .finally(() => {
         setEditEventId(null);
-        setForm({ time: "", type: "", location: "", note: "" });
-      })
-      .catch(() => alert("更新失敗"));
+        setForm({ date: "", time: "", type: "", location: "", note: "" });
+      });
   };
 
-  // 削除
   const handleDelete = (ev) => {
     if (role !== "coach") return;
     if (!window.confirm("本当に削除しますか？")) return;
-    axios
-      .delete(`/api/schedules/${ev.id}`)
-      .then(() => setEvents(events.filter((item) => item.id !== ev.id)))
-      .catch(() => alert("削除失敗"));
+    axios.delete(`/api/schedules/${ev.id}`).then(() => setEvents(events.filter((item) => item.id !== ev.id)));
   };
 
+  const dayEvents = selectedDate ? events.filter((ev) => ev.start === selectedDate) : [];
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">スケジュール</h2>
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        initialDate={new Date().toISOString().split("T")[0]}
-        events={events}
-        dateClick={handleDateClick}
-      />
+    <div className="pb-16 max-w-md mx-auto">
+      <h2 className="text-3xl font-extrabold mb-4 text-center text-indigo-600">📅 スケジュール</h2>
 
-      {modalOpen && (
-        <Modal onClose={() => setModalOpen(false)}>
-          <h3 className="text-xl font-bold mb-2">{selectedDate} の予定</h3>
+      <div className="overflow-hidden rounded-3xl shadow-lg">
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          locale="ja"
+          events={events}
+          dateClick={handleDateClick}
+          height="500px"
+          dayMaxEvents={true}
+          eventDisplay="block"
+          eventContent={() => <div className="w-2 h-2 bg-indigo-500 rounded-full mx-auto mt-1" />}
+          headerToolbar={{ left: "prev,next today", center: "title", right: "" }}
+          titleFormat={{ year: "numeric", month: "long" }}
+          dayCellClassNames={(arg) => {
+            if (arg.date.getDay() === 6) return ["bg-blue-100"];
+            if (arg.date.getDay() === 0) return ["bg-red-100"];
+            return [];
+          }}
+        />
+      </div>
 
-          {/* 予定一覧 */}
-          <ul className="mb-4 max-h-[250px] overflow-auto">
-            {events
-              .filter((ev) => ev.start === selectedDate)
-              .map((ev) => (
-                <li key={ev.id} className="border p-2 mb-2 rounded">
-                  <p>
-                    <strong>時間:</strong> {formatTime(ev.extendedProps.time)}
-                  </p>
-                  <p>
-                    <strong>内容:</strong> {ev.extendedProps.type || "未設定"}
-                  </p>
-                  <p>
-                    <strong>場所:</strong> {ev.extendedProps.location || "未設定"}
-                  </p>
-                  <p>
-                    <strong>メモ:</strong> {ev.extendedProps.note || "なし"}
-                  </p>
-
-                  {role === "coach" && (
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        onClick={() => handleEdit(ev)}
-                        className="px-3 py-1 bg-yellow-500 text-white rounded"
-                      >
-                        編集
-                      </button>
-                      <button
-                        onClick={() => handleDelete(ev)}
-                        className="px-3 py-1 bg-red-600 text-white rounded"
-                      >
-                        削除
-                      </button>
-                    </div>
-                  )}
-                </li>
-              ))}
-          </ul>
-
-          {/* 新規登録 or 更新フォーム（coachのみ） */}
-          {role === "coach" && (
-            <div ref={formRef}>
-              <h4 className="font-semibold mb-2">
-                {editEventId ? "予定を編集" : "新しい予定を追加"}
-              </h4>
-              <input
-                type="time"
-                name="time"
-                value={form.time}
-                onChange={handleChange}
-                className="border p-2 w-full mb-2"
-              />
-              <input
-                type="text"
-                name="type"
-                placeholder="内容"
-                value={form.type}
-                onChange={handleChange}
-                className="border p-2 w-full mb-2"
-              />
-              <input
-                type="text"
-                name="location"
-                placeholder="場所"
-                value={form.location}
-                onChange={handleChange}
-                className="border p-2 w-full mb-2"
-              />
-              <textarea
-                name="note"
-                placeholder="メモ"
-                value={form.note}
-                onChange={handleChange}
-                className="border p-2 w-full mb-2"
-              />
-
-              <button
-                onClick={editEventId ? handleUpdate : handleRegister}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                {editEventId ? "更新" : "登録"}
-              </button>
+      {/* 選択日詳細 */}
+      {selectedDate && (
+        <div className="mt-3 space-y-2">
+          {dayEvents.length > 0 ? dayEvents.map((ev) => (
+            <div key={ev.id} className="bg-white rounded-2xl shadow-md">
+              <div className="border-b border-indigo-200 p-2 flex justify-between">
+                <span className="font-medium">日付</span>
+                <span>{format(new Date(ev.start), "yyyy/MM/dd", { locale: ja })}</span>
+              </div>
+              <div className="border-b border-indigo-200 p-2 flex justify-between">
+                <span className="font-medium">時間</span>
+                <span>{formatTime(ev.extendedProps.time)}</span>
+              </div>
+              <div className="border-b border-indigo-200 p-2 flex justify-between">
+                <span className="font-medium">内容</span>
+                <span>{ev.extendedProps.type || "未設定"}</span>
+              </div>
+              <div className="border-b border-indigo-200 p-2 flex justify-between">
+                <span className="font-medium">場所</span>
+                <span>{ev.extendedProps.location || "未設定"}</span>
+              </div>
+              <div className="border-b border-indigo-200 p-2 flex justify-between">
+                <span className="font-medium">メモ</span>
+                <span>{ev.extendedProps.note || "なし"}</span>
+              </div>
+              {role === "coach" && (
+                <div className="flex gap-2 justify-end p-2">
+                  <button onClick={() => handleEdit(ev)} className="px-2 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition">編集</button>
+                  <button onClick={() => handleDelete(ev)} className="px-2 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">削除</button>
+                </div>
+              )}
             </div>
+          )) : (
+            <p className="text-center text-gray-400">まだ予定はありません</p>
           )}
-        </Modal>
+        </div>
+      )}
+
+      {/* フローティング＋ボタン */}
+      {role === "coach" && (
+        <button
+          onClick={() => { setForm({ date: "", time: "", type: "", location: "", note: "" }); setEditEventId(null); setShowModal(true); }}
+          className="fixed bottom-20 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center text-3xl hover:bg-indigo-700 transition z-50"
+        >
+          +
+        </button>
       )}
     </div>
   );

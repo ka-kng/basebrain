@@ -60,7 +60,7 @@ export default function ManagerDashboard() {
 
   const StatCard = ({ label, value, color }) => (
     <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
-      <span className="font-semibold text-gray-700">{label}</span>
+      <span className={`font-semibold ${color || "text-gray-700"}`}>{label}</span>
       <span className={`font-bold text-lg ${color || "text-gray-800"}`}>{value}</span>
     </div>
   );
@@ -72,51 +72,51 @@ export default function ManagerDashboard() {
       </h1>
 
       {/* チーム情報 */}
-      <section>
+      <section className="bg-white shadow-md rounded-xl p-5">
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">チーム情報</h2>
         <div className="grid grid-cols-2 gap-4">
-          <StatCard label="試合数" value={totalGames} />
-          <StatCard label="勝利数" value={totalWins} color="text-green-600" />
+          <StatCard label="勝率" value={winRatePercent} color="text-green-600" />
+          <StatCard label="試合数" value={totalGames} color="text-blue-600"/>
+          <StatCard label="勝利数" value={totalWins} color="text-blue-600" />
           <StatCard label="敗北数" value={totalLoses} color="text-red-500" />
-          <StatCard label="引き分け数" value={totalDraw} color="text-yellow-500" />
-          <StatCard label="勝率" value={winRatePercent} color="text-blue-600" />
+          <StatCard label="引き分け数" value={totalDraw}/>
         </div>
       </section>
 
       {/* 打者成績 */}
-      <section>
+      <section className="bg-white shadow-md rounded-xl p-5">
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">打者成績</h2>
         <div className="grid grid-cols-2 gap-4">
-          <StatCard label="打率" value={battingAverage} color="text-blue-600" />
-          <StatCard label="長打率" value={sluggingPercentage} color="text-indigo-600" />
-          <StatCard label="出塁率" value={onBasePercentage} color="text-indigo-600" />
-          <StatCard label="盗塁率" value={`${stealSuccessRate}%`} color="text-indigo-600" />
-          <StatCard label="打数" value={totalAtBats} />
-          <StatCard label="安打" value={totalHits} color="text-green-600" />
-          <StatCard label="二塁打" value={totalDoubles} />
-          <StatCard label="三塁打" value={totalTriples} />
-          <StatCard label="本塁打" value={totalHomeruns} color="text-purple-600" />
-          <StatCard label="得点" value={totalRuns} />
-          <StatCard label="打点" value={totalRbis} />
-          <StatCard label="四死球" value={totalWalks} />
+          <StatCard label="打率" value={battingAverage} color="text-green-600" />
+          <StatCard label="出塁率" value={onBasePercentage} color="text-green-600" />
+          <StatCard label="長打率" value={sluggingPercentage} color="text-green-600" />
+          <StatCard label="盗塁率" value={`${stealSuccessRate}%`} color="text-green-600" />
+          <StatCard label="打数" value={totalAtBats} color="text-blue-600"/>
+          <StatCard label="一塁打" value={totalHits} color="text-blue-600"/>
+          <StatCard label="二塁打" value={totalDoubles} color="text-blue-600"/>
+          <StatCard label="三塁打" value={totalTriples} color="text-blue-600"/>
+          <StatCard label="本塁打" value={totalHomeruns} color="text-blue-600"/>
+          <StatCard label="得点" value={totalRuns} color="text-blue-600"/>
+          <StatCard label="打点" value={totalRbis} color="text-blue-600"/>
+          <StatCard label="四死球" value={totalWalks} color="text-blue-600"/>
+          <StatCard label="盗塁数" value={totalSteals} color="text-blue-600"/>
+          <StatCard label="盗塁成功数" value={totalCaughtStealing} color="text-blue-600"/>
           <StatCard label="三振" value={totalStrikeouts} color="text-red-500" />
-          <StatCard label="盗塁数" value={totalSteals} />
-          <StatCard label="盗塁成功数" value={totalCaughtStealing} />
-          <StatCard label="失策" value={totalErrors} color="text-gray-500" />
+          <StatCard label="失策" value={totalErrors} color="text-red-500" />
         </div>
       </section>
 
       {/* 投手成績 */}
-      <section>
+      <section className="bg-white shadow-md rounded-xl p-5">
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">投手成績</h2>
         <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
-          <StatCard label="防御率" value={era} color="text-blue-600" />
-          <StatCard label="奪三振" value={totalPitcherStrikeouts} />
-          <StatCard label="被安打" value={totalHitsAllowed} />
-          <StatCard label="被本塁打" value={totalHrAllowed} color="text-purple-600" />
-          <StatCard label="与四死球" value={totalWalksGiven} />
-          <StatCard label="失点" value={totalRunsAllowed} />
-          <StatCard label="自責点" value={totalEarnedRuns} />
+          <StatCard label="防御率" value={era} color="text-green-600" />
+          <StatCard label="奪三振" value={totalPitcherStrikeouts} color="text-blue-600"/>
+          <StatCard label="被安打" value={totalHitsAllowed} color="text-red-500" />
+          <StatCard label="被本塁打" value={totalHrAllowed}color="text-red-500" />
+          <StatCard label="与四死球" value={totalWalksGiven} color="text-red-500" />
+          <StatCard label="失点" value={totalRunsAllowed} color="text-red-500" />
+          <StatCard label="自責点" value={totalEarnedRuns} color="text-red-500" />
         </div>
       </section>
     </div>

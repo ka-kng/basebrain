@@ -106,7 +106,7 @@ export default function MyPage() {
   if (!user) return null;
 
   return (
-    <div className="p-5 max-w-screen-md mx-auto">
+    <div className="p-5 pb-16 max-w-screen-md mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">マイページ</h1>
 
       <form onSubmit={handleUpdate} className="text-left flex flex-col gap-4 mb-6">

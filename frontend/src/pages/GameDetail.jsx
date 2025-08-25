@@ -116,31 +116,33 @@ export default function GameDetail() {
       <Toaster position="top-right" />
 
       {/* 戻る・編集・削除 */}
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={handleBack}
-          className="text-gray-600 hover:text-black transition"
-        >
-          ← 戻る
-        </button>
-        <div className="space-x-2">
+      <div className="px-8 fixed left-0 w-full">
+        <div className="flex justify-between">
           <button
-            onClick={() => navigate(`/records/game/${game.id}/edit`)}
-            className={buttonClass}
+            onClick={handleBack}
+            className="text-gray-600 hover:text-black transition"
           >
-            試合を編集
+            ← 戻る
           </button>
-          <button
-            onClick={() => confirmDelete("game")}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow"
-          >
-            削除
-          </button>
+          <div className="space-x-2">
+            <button
+              onClick={() => navigate(`/records/game/${game.id}/edit`)}
+              className={buttonClass}
+            >
+              試合を編集
+            </button>
+            <button
+              onClick={() => confirmDelete("game")}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow"
+            >
+              削除
+            </button>
+          </div>
         </div>
       </div>
 
       {/* タイトル */}
-      <h1 className="text-3xl font-bold mt-8 text-gray-800 border-b-2 border-green-500 inline-block pb-1">
+      <h1 className="text-3xl font-bold mt-16 text-gray-800 border-b-2 border-green-500 inline-block pb-1">
         試合詳細
       </h1>
 
