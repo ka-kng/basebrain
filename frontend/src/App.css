@@ -42,3 +42,22 @@ body {
 .read-the-docs {
   color: #888;
 }
+
+/* App.css に追加 */
+.fc-daygrid-day-top {
+  display: flex;
+  flex-direction: column;      /* 縦並びに */
+  align-items: center;         /* 横中央 */
+  justify-content: center;     /* 縦方向も中央 */
+  height: 100%;                /* 高さいっぱい */
+}
+
+.fc-daygrid-day-number {
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500;    /* font-medium */
+  margin-bottom: 4px;  /* ドットとの隙間 */
+}
+
+.fc-toolbar {
+  padding-inline: 10px;
+}

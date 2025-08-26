@@ -82,8 +82,18 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
+        // 1. 現在ログイン中のユーザーのトークン削除
+        if ($request->user()) {
+            $request->user()->tokens()->delete();
+        }
 
-        return response()->json(['message' => 'ログアウトしました']);
+        // 2. セッションを無効化
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // 3. レスポンスに Cookie 削除を付与
+        return response()->json(['message' => 'ログアウトしました'], 200)
+            ->withCookie(cookie()->forget('laravel_session'))
+            ->withCookie(cookie()->forget('XSRF-TOKEN'));
     }
 }

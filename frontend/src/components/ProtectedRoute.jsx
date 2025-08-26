@@ -9,7 +9,7 @@ export default function ProtectedRoute({ user, allowedRoles, children }) {
 
   if (!allowedRoles.includes(user.role)) {
     // 権限なしならダッシュボードなどへ
-    return <Navigate to={"/ranking"} replace />;
+    return <Navigate to={"/"} replace />;
   }
 
   return children;

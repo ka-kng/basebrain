@@ -107,9 +107,31 @@ export default function MyPage() {
 
   return (
     <div className="p-5 pb-16 max-w-screen-md mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">マイページ</h1>
+      <h1 className="text-3xl font-bold text-gray-800 border-b-4 border-green-500 inline-block pb-2 mb-10">
+        マイページ
+      </h1>
 
       <form onSubmit={handleUpdate} className="text-left flex flex-col gap-4 mb-6">
+
+        <InputField
+          label="名前"
+          inputName="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="名前を入力"
+          error={errors?.name}
+        />
+
+        <InputField
+          label="メールアドレス"
+          type="email"
+          inputName="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="example@example.com"
+          error={errors?.email}
+        />
+
         {user.role === "coach" && (
           <>
             <InputField
@@ -139,25 +161,6 @@ export default function MyPage() {
 
           </>
         )}
-
-        <InputField
-          label="名前"
-          inputName="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="名前を入力"
-          error={errors?.name}
-        />
-
-        <InputField
-          label="メールアドレス"
-          type="email"
-          inputName="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="example@example.com"
-          error={errors?.email}
-        />
 
         <button
           type="submit"

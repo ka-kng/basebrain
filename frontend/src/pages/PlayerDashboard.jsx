@@ -69,7 +69,7 @@ export default function PlayerDashboard() {
   );
 
   return (
-    <div className="p-4 pb-16 bg-gray-50 min-h-screen space-y-10">
+    <div className="p-4 pb-16 bg-gray-50 max-w-xl mx-auto space-y-10">
       <h1 className="text-3xl font-bold text-gray-800 border-b-4 border-green-500 inline-block pb-2">個人成績</h1>
 
       {/* 出場数 */}
