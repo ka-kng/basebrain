@@ -1,33 +1,20 @@
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Header() {
   const navigate = useNavigate();
+  const { logout } = useAuth(); // AuthContext から logout を取得
 
-  const handleLogout = async () => {
-    const token = localStorage.getItem("token");
-
-    try {
-      await axios.post(
-        "/api/logout",
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-    } catch (error) {
-      console.warn("サーバー側ログアウト失敗、フロントで削除します");
-    } finally {
-      // トークン削除
-      localStorage.removeItem("token");
-      // ログインページへ
-      navigate("/login");
-    }
+  const handleLogout = () => {
+    logout();      // localStorage と axios ヘッダーをクリア
+    navigate("/login");
   };
 
   return (
     <header className="fixed top-0 left-0 w-full h-16 bg-gray-900 text-white flex items-center justify-between px-4 shadow-md z-50">
-      <h1 className="font-bold text-xl">Basebrain</h1>
+      <Link to="/" className="font-bold text-xl text-white">
+        Basebrain
+      </Link>
 
       <button
         onClick={handleLogout}

@@ -1,14 +1,12 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import InputField from '../components/InputField';
 
-
 export default function LoginForm() {
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-  });
+  const { login } = useAuth();
+  const [form, setForm] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
   const navigate = useNavigate();
@@ -20,10 +18,9 @@ export default function LoginForm() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrors({});
+    setGeneralError('');
 
     const newErrors = {};
-
-    // バリデーション
     if (!form.email) {
       newErrors.email = 'メールアドレスを入力してください';
     } else if (!/^[\w\-._]+@[\w\-._]+\.\w+$/.test(form.email)) {
@@ -42,47 +39,32 @@ export default function LoginForm() {
     }
 
     try {
-
+      await axios.get('/sanctum/csrf-cookie');
       const res = await axios.post('api/login', form);
-
       const token = res.data.access_token;
 
-      // トークンを保存（localStorageなど）
-      localStorage.setItem('access_token', token);
-
-      // axiosにデフォルトヘッダーとして設定
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
+      login(token); // AuthContext に反映
       navigate('/');
-
     } catch (err) {
-
-      if (err.response && err.response.data && err.response.data.errors) {
-
+      if (err.response?.data?.errors) {
         setErrors(err.response.data.errors);
-
       } else {
-
-        setGeneralError('登録に失敗しました。時間をおいて再度お試しください。');
+        setGeneralError('ログインに失敗しました。時間をおいて再度お試しください。');
         console.error(err);
-
       }
     }
-
   };
 
   return (
-
     <div className="min-h-screen flex justify-center items-center px-4 bg-gray-100">
-      <div className='w-full max-w-md bg-white rounded-xl shadow-lg p-10'>
-        <h1 className='text-3xl font-bold text-gray-800 mb-8 text-center'>ログイン</h1>
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-10">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">ログイン</h1>
 
-        <form onSubmit={handleLogin} className='mt-10 text-left flex flex-col gap-6'>
-
+        <form onSubmit={handleLogin} className="text-left mt-10 flex flex-col gap-6">
 
           <InputField
             label="メールアドレス"
-            type='email'
+            type="email"
             inputName="email"
             value={form.email}
             onChange={handleChange}
@@ -92,7 +74,7 @@ export default function LoginForm() {
 
           <InputField
             label="パスワード"
-            type='password'
+            type="password"
             inputName="password"
             value={form.password}
             onChange={handleChange}
@@ -105,18 +87,16 @@ export default function LoginForm() {
             </Link>
           </div>
 
-          {errors.emailPass && <p className='text-center text-red-500'>{errors.emailPass}</p>}
+          {errors.emailPass && <p className="text-center text-red-500">{errors.emailPass}</p>}
 
           <button type="submit" className="mt-4 w-40 mx-auto bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white py-3 rounded-lg shadow-lg transition duration-300">
             ログイン
           </button>
 
-          {generalError && (
-            <p className="text-red-500 text-center">{generalError}</p>
-          )}
+          {generalError && <p className="text-red-500 text-center">{generalError}</p>}
 
         </form>
       </div>
     </div>
   );
-};
+}
