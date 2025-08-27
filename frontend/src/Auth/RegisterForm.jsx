@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import InputField from '../components/InputField';
 import RadioWithInput from '../components/RadioWithInput';
 
@@ -82,7 +83,7 @@ export default function RegisterForm() {
     try {
 
       await axios.get('/sanctum/csrf-cookie'); // CSRFトークン取得
-      const res = await axios.post('api/register', form);
+      const res = await axios.post('/api/register', form);
       navigate('/login');
 
     } catch (err) {
@@ -101,7 +102,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className='min-h-screen flex justify-center items-center px-4 bg-gray-100'>
+    <div className='min-h-screen flex justify-center items-center p-4 bg-gray-100'>
       <div className='space-y-4 w-full max-w-3xl bg-white shadow-md rounded-lg p-8'>
         <h1 className='text-center mb-10 text-left text-2xl'>新規会員登録</h1>
 
@@ -182,6 +183,12 @@ export default function RegisterForm() {
           <button type="submit" className="mt-4 w-40 mx-auto bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white py-3 rounded-lg shadow-lg transition duration-300">
             登録
           </button>
+
+          <div>
+            <Link to="/login" className="text-blue-600 hover:underline">
+              ログインはこちらから
+            </Link>
+          </div>
 
           {generalError && (
             <p className="text-red-500 text-center">{generalError}</p>

@@ -21,6 +21,7 @@ import GameDetail from './pages/GameDetail';
 import PlayerRanking from './pages/PlayerRanking';
 import Schedule from './pages/Schedule';
 import Mypage from './pages/Mypage';
+import Home from './pages/Home';
 
 function App() {
   const { user, loading } = useAuth();
@@ -30,6 +31,7 @@ function App() {
   return (
     <Routes>
       {/* 非ログインページ */}
+      <Route path="/" element={<Home />} />
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="password/forget" element={<ForgetPassword />} />

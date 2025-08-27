@@ -76,7 +76,7 @@ export default function ManagerDashboard() {
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">チーム情報</h2>
         <div className="grid grid-cols-2 gap-4">
           <StatCard label="勝率" value={winRatePercent} color="text-green-600" />
-          <StatCard label="試合数" value={totalGames} color="text-blue-600"/>
+          <StatCard label="試合数" value={totalGames} />
           <StatCard label="勝利数" value={totalWins} color="text-blue-600" />
           <StatCard label="敗北数" value={totalLoses} color="text-red-500" />
           <StatCard label="引き分け数" value={totalDraw}/>

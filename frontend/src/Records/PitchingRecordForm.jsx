@@ -286,7 +286,7 @@ export default function PitchingRecordForm() {
           </div>
 
           {/* ボタン */}
-          <div className="flex justify-end gap-4 mt-6">
+          <div className="flex justify-center gap-4 mt-6">
             {!isEdit && !onlyOnePlayerLeft && (
               <button
                 type="button"

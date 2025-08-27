@@ -5,38 +5,37 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // ←追加
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const getUser = async () => {
-        try {
-          const res = await axios.get('api/user');
-          setUser(res.data);
-        } catch (err) {
-          console.error(err);
-          logout();
-        }
-      };
-      getUser();
+      axios.get('/api/user')
+        .then(res => setUser(res.data))
+        .catch(() => logout())
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
   }, []);
 
-  const login = (token) => {
+  const login = (token, userData = null) => {
     localStorage.setItem('access_token', token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    const getUser = async () => {
-      try {
-        const res = await axios.get('api/user');
-        setUser(res.data);
-      } catch (err) {
-        console.error(err);
-        logout();
-      }
-    };
-    getUser();
+
+    if (userData) {
+      setUser(userData);
+    } else {
+      axios.get('/api/user')
+        .then(res => setUser(res.data))
+        .catch(err => {
+          console.error(err);
+          logout();
+        });
+    }
   };
+
 
   const logout = () => {
     localStorage.removeItem('access_token');
@@ -45,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

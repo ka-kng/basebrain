@@ -244,7 +244,7 @@ export default function BattingRecordForm() {
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-end gap-4 mt-6">
+          <div className="flex justify-center gap-4 mt-6">
             {!isEdit && !onlyOnePlayerLeft && (
               <button type="button" onClick={e => handleSubmit(e, "continue")} className="w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded shadow">続けて登録</button>
             )}
@@ -252,6 +252,7 @@ export default function BattingRecordForm() {
               {isEdit ? "更新する" : "投手登録へ"}
             </button>
           </div>
+
         </form>
       </div>
 

@@ -7,14 +7,14 @@ export default function Header() {
 
   const handleLogout = () => {
     logout();      // localStorage と axios ヘッダーをクリア
-    navigate("/login");
+    navigate("/");
   };
 
   return (
     <header className="fixed top-0 left-0 w-full h-16 bg-gray-900 text-white flex items-center justify-between px-4 shadow-md z-50">
-      <Link to="/" className="font-bold text-xl text-white">
+      <p className="font-bold xl:pl-60 text-xl text-white">
         Basebrain
-      </Link>
+      </p>
 
       <button
         onClick={handleLogout}
