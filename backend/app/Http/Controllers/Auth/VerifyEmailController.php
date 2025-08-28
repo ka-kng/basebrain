@@ -1,31 +1,39 @@
 <?php
 
+// app/Http/Controllers/Auth/VerifyEmailController.php
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\RedirectResponse;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class VerifyEmailController extends Controller
 {
-    /**
-     * Mark the authenticated user's email address as verified.
-     */
-    public function __invoke(EmailVerificationRequest $request): RedirectResponse
+    public function __invoke(Request $request, $id, $hash)
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(
-                config('app.frontend_url').'/dashboard?verified=1'
-            );
+        $user = User::find($id);
+
+        if (! $user) {
+            return response()->json(['error' => 'User not found'], 404);
         }
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
+        // ここに有効期限チェック
+        if ($user->email_verification_sent_at && $user->email_verification_sent_at->diffInMinutes(now()) > 60) {
+            return response()->json(['error' => 'Link expired'], 403);
         }
 
-        return redirect()->intended(
-            config('app.frontend_url').'/dashboard?verified=1'
-        );
+        if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
+            return response()->json(['error' => 'Invalid verification link'], 403);
+        }
+
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+            event(new \Illuminate\Auth\Events\Verified($user));
+        }
+
+        return response()->json([
+            'verified' => true,
+            'redirect_url' => config('app.frontend_url') . '/login?verified=1',
+        ]);
     }
 }

@@ -12,7 +12,12 @@ class GameController extends Controller
     // 一覧取得(GET /api/games/list)
     public function index()
     {
-        $games = Game::with('team')->orderBy('id', 'desc')->get();
+        $teamId = Auth::user()->team_id; // ログインユーザーのチームID取得
+        $games = Game::with('team')
+            ->where('team_id', $teamId) // 自チームの試合だけ
+            ->orderBy('id', 'desc')
+            ->get();
+
         return response()->json($games);
     }
 

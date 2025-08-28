@@ -7,6 +7,7 @@ use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 
@@ -14,7 +15,6 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        // ユーザー登録（コーチはチーム新規作成、選手は招待コードで既存チーム参加）
         $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users',
@@ -24,23 +24,15 @@ class AuthController extends Controller
             'team_name' => 'nullable|string|max:100',
         ]);
 
+        // チーム作成・参加
         if ($request->role === 'coach') {
-            //　チーム作成
-            $request->validate([
-                'team_name' => 'required|string|max:100',
-            ]);
-
             $team = Team::create([
                 'name' => $request->team_name,
                 'invite_code' => Str::random(10),
             ]);
             $team_id = $team->id;
         } else {
-            // 既存チームに参加
-            $request->validate([
-                'invite_code' => 'required|exists:teams,invite_code',
-            ]);
-            $team = Team::where('invite_code', $request->invite_code)->first();
+            $team = Team::where('invite_code', $request->invite_code)->firstOrFail();
             $team_id = $team->id;
         }
 
@@ -52,10 +44,10 @@ class AuthController extends Controller
             'team_id' => $team_id,
         ]);
 
-        return response()->json([
-            'token' => $user->createToken('auth_token')->plainTextToken,
-            'user' => $user,
-        ]);
+        // メール送信
+        $user->sendEmailVerificationNotification(); // ここで標準メール送信
+
+        return response()->json(['message' => '登録完了。確認メールを送信しました']);
     }
 
     public function login(Request $request)
@@ -73,6 +65,12 @@ class AuthController extends Controller
             ]);
         }
 
+        if (!$user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'メール認証を完了してください'
+            ], 403);
+        }
+
         return response()->json([
             'access_token' => $user->createToken('auth_token')->plainTextToken,
             'token_type' => 'Bearer',
@@ -80,11 +78,10 @@ class AuthController extends Controller
         ]);
     }
 
-     public function logout(Request $request)
+    public function logout(Request $request)
     {
-        if ($request->user()) $request->user()->tokens()->delete();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return response()->json(['message'=>'ログアウトしました'], 200);
+        $request->user()->tokens()->delete();
+
+        return response()->json(['message' => 'ログアウトしました']);
     }
 }

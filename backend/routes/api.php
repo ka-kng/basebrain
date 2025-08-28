@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Pages\DashboardController;
 use App\Http\Controllers\Pages\PlayerRankingController;
 use App\Http\Controllers\Pages\ScheduleController;
