@@ -36,4 +36,23 @@ class VerifyEmailController extends Controller
             'redirect_url' => config('app.frontend_url') . '/login?verified=1',
         ]);
     }
+
+    public function resend(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'すでに認証済みです']);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return response()->json(['message' => '確認メールを再送信しました']);
+
+    }
+
 }

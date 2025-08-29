@@ -67,7 +67,8 @@ class AuthController extends Controller
 
         if (!$user->hasVerifiedEmail()) {
             return response()->json([
-                'message' => 'メール認証を完了してください'
+                'message' => 'メール認証を完了してください',
+                'emailVerified' => false
             ], 403);
         }
 
