@@ -6,14 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\PitchingRecord;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PitchingController extends Controller
 {
 
     public function users()
     {
+         $user = Auth::user();
         $users = User::where('role', 'player')
-            ->select('id', 'name')
+            ->where('team_id', $user->team_id)  // ログインユーザーと同じチームIDに絞り込み
+            ->select('id', 'name', 'team_id')
             ->orderBy('name')
             ->get();
         return response()->json($users);

@@ -37,4 +37,5 @@ class BattingRecord extends Model
     {
         return $this->belongsTo(Game::class);
     }
+
 }
