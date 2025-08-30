@@ -7,21 +7,23 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 // -------------------
 const NumberInput = ({ label, name, value, onChange, unit, error }) => (
   <div className="flex flex-col gap-1">
-    <div className="flex items-center gap-2">
-      <label htmlFor={name} className="w-24 font-medium">{label}</label>
-      <input
-        id={name}
-        name={name}
-        type="number"
-        min={0}
-        value={value}
-        onChange={onChange}
-        className={`w-20 border p-2 rounded text-center ${error ? "border-red-500" : ""}`}
-        aria-invalid={!!error}
-      />
-      <span className="text-gray-600">{unit}</span>
+    <div className="flex items-center justify-between">
+      <label htmlFor={name} className="">{label}</label>
+      <div className="flex items-center gap-2">
+        <input
+          id={name}
+          name={name}
+          type="number"
+          min={0}
+          value={value}
+          onChange={onChange}
+          className={`w-20 border p-2 rounded text-center ${error ? "border-red-500" : ""}`}
+          aria-invalid={!!error}
+        />
+        <span className="text-gray-600">{unit}</span>
+      </div>
     </div>
-    {error && <p className="text-left text-red-500 text-sm mt-1 ml-6">{error}</p>}
+    {error && <p className="text-left text-red-500 text-sm mt-1">{error}</p>}
   </div>
 );
 
@@ -199,7 +201,7 @@ export default function PitchingRecordForm() {
   // Render
   // -------------------
   return (
-    <div className="max-w-4xl mx-auto p-6 pb-20 space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-800 text-lg">← 戻る</button>
@@ -270,7 +272,7 @@ export default function PitchingRecordForm() {
 
           {/* 数値フィールド */}
           <div className="flex justify-center">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
               {numberFields.map(f => (
                 <NumberInput
                   key={f.key}

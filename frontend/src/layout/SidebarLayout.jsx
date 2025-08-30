@@ -21,7 +21,7 @@ export default function SidebarLayout() {
       <Sidebar role={role} />
 
       {/* メインコンテンツ */}
-      <main className="pt-16 flex-1 py-4 bg-gray-50">
+      <main className="py-24 xl:pb-5 px-4 flex-1">
         <Outlet />
       </main>
 

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import InputField from '../components/InputField';
+import BackgroundLayout from '../layout/Background';
 
 export default function LoginForm() {
   const { login } = useAuth();
@@ -83,8 +84,8 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex justify-center items-center px-4 bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-10">
+    <BackgroundLayout>
+      <div className="space-y-4 w-full max-w-3xl bg-white shadow-md rounded-lg p-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">ログイン</h1>
         <form onSubmit={handleLogin} className="text-left mt-10 flex flex-col gap-6">
           <InputField label="メールアドレス" type="email" inputName="email" value={form.email} onChange={handleChange} placeholder="example@gmail.com" error={errors.email} />
@@ -112,6 +113,6 @@ export default function LoginForm() {
           </div>
         </form>
       </div>
-    </div>
+    </BackgroundLayout>
   );
 }

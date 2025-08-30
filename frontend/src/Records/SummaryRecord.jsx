@@ -34,7 +34,7 @@ export default function SummaryRecord() {
   }[game.result] || "bg-gray-400";
 
   return (
-    <div className="max-w-4xl mx-auto px-6 pt-10 pb-20 space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <button
@@ -97,9 +97,9 @@ export default function SummaryRecord() {
 
         {/* Memo */}
         {game.memo && (
-          <div className="text-left bg-gray-50 p-4 rounded-md border border-gray-200">
-            <h2 className="font-semibold mb-1">メモ</h2>
-            <p className="text-gray-600">{game.memo}</p>
+          <div>
+            <h2 className="font-semibold mb-1 text-left">メモ</h2>
+            <p className="text-gray-600 text-left bg-gray-50 p-4 rounded-md border border-gray-200">{game.memo}</p>
           </div>
         )}
 

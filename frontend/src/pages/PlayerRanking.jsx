@@ -173,7 +173,7 @@ export default function PlayerRanking() {
   };
 
   return (
-    <div className="p-6 pb-16 max-w-md mx-auto bg-gray-50 min-h-screen">
+    <div className="max-w-2xl mx-auto min-h-screen">
       {/* タブ切替 */}
       <div className="flex justify-center space-x-4 mb-6">
         <button

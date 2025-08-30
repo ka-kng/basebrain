@@ -92,7 +92,7 @@ export default function GameRecordForm() {
   if (loading) return <p className="text-center py-10 text-gray-500">読み込み中...</p>;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 pb-16">
+    <div className="max-w-4xl mx-auto">
       <Toaster position="top-right" />
       <div className="text-left">
         <button onClick={handleBack} className="text-gray-500 hover:text-gray-800 mb-4">← 戻る</button>

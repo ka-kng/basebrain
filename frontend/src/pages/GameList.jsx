@@ -13,7 +13,7 @@ export default function GameList() {
   }, []);
 
   return (
-    <div className="max-w-screen-sm p-4 pb-16 mx-auto xl:max-w-screen-md">
+    <div className="max-w-screen-sm mx-auto xl:max-w-screen-md">
       {/* 新規登録ボタン */}
       <div className="flex justify-end">
         <button

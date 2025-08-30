@@ -7,22 +7,24 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 // -------------------
 const NumberInput = ({ label, name, value, onChange, unit, note, error }) => (
   <div className="flex flex-col gap-1">
-    <div className="flex items-center gap-2">
-      <label htmlFor={name} className="w-24">{label}</label>
-      <input
-        id={name}
-        name={name}
-        type="number"
-        min={0}
-        value={value}
-        onChange={onChange}
-        className={`w-20 border p-2 rounded text-center ${error ? "border-red-500" : ""}`}
-        aria-invalid={!!error}
-      />
-      <span className="text-gray-600">{unit}</span>
+    <div className="flex items-center justify-between">
+      <label htmlFor={name} className="">{label}</label>
+      <div className="flex items-center gap-2">
+        <input
+          id={name}
+          name={name}
+          type="number"
+          min={0}
+          value={value}
+          onChange={onChange}
+          className={`w-20 border p-2 rounded text-center ${error ? "border-red-500" : ""}`}
+          aria-invalid={!!error}
+        />
+        <span className="text-gray-600">{unit}</span>
+      </div>
     </div>
-    {note && <p className="text-left text-gray-500 text-xs pl-6">{note}</p>}
-    {error && <p className="text-left text-red-500 text-sm mt-1 ml-6">{error}</p>}
+    {note && <p className="text-left text-gray-500 text-xs">{note}</p>}
+    {error && <p className="text-left text-red-500 text-sm mt-1">{error}</p>}
   </div>
 );
 
@@ -179,7 +181,7 @@ export default function BattingRecordForm() {
   const onlyOnePlayerLeft = selectableUsers.length === 1;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 pb-20 space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-800 text-lg">← 戻る</button>
@@ -201,7 +203,7 @@ export default function BattingRecordForm() {
       <div className="bg-white rounded-xl shadow-lg p-8 space-y-6">
         <form className="space-y-6">
           {/* 選手・守備位置・打順 */}
-          <div className="text-left grid grid-cols-1 xl:grid-cols-3 gap-4">
+          <div className="text-left grid grid-cols-1 xl:grid-cols-3 gap-2">
             {[
               { key: "user_id", label: "選手名", options: selectableUsers.map(u => ({ value: u.id, label: u.name })) },
               { key: "position", label: "守備位置", options: ["投手", "捕手", "一塁手", "二塁手", "三塁手", "遊撃手", "左翼手", "中堅手", "右翼手", "DH", "代打"].map(v => ({ value: v, label: v })) },
@@ -227,7 +229,7 @@ export default function BattingRecordForm() {
 
           {/* 数値フィールド */}
           <div className="flex justify-center">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
               {numberFields.map(f => (
                 <NumberInput
                   key={f.key}

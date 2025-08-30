@@ -106,7 +106,7 @@ export default function MyPage() {
   if (!user) return null;
 
   return (
-    <div className="p-5 pb-16 max-w-screen-md mx-auto">
+    <div className="max-w-screen-md mx-auto">
       <h1 className="text-3xl font-bold text-gray-800 border-b-4 border-green-500 inline-block pb-2 mb-10">
         マイページ
       </h1>

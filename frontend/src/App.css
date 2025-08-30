@@ -5,6 +5,7 @@ body {
 #root {
   min-height: 100vh;
   text-align: center;
+  background: rgba(236, 253, 245, 0.5);
 }
 
 .logo {

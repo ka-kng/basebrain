@@ -3,11 +3,11 @@ import { useAuth } from "../contexts/AuthContext";
 
 export default function Header() {
   const navigate = useNavigate();
-  const { logout } = useAuth(); // AuthContext から logout を取得
+  const { logout, user } = useAuth(); // userも取得
 
   const handleLogout = () => {
     logout();      // localStorage と axios ヘッダーをクリア
-    navigate("/");
+    navigate("/"); // ログアウト後にホームページにリダイレクト
   };
 
   return (
@@ -16,12 +16,29 @@ export default function Header() {
         Basebrain
       </p>
 
-      <button
-        onClick={handleLogout}
-        className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg shadow text-white"
-      >
-        ログアウト
-      </button>
+      <div className="flex items-center space-x-4">
+        {!user ? (
+          <>
+            <Link to="/login">
+              <button className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg shadow text-white">
+                ログイン
+              </button>
+            </Link>
+            <Link to="/register">
+              <button className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg shadow text-white">
+                新規登録
+              </button>
+            </Link>
+          </>
+        ) : (
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg shadow text-white"
+          >
+            ログアウト
+          </button>
+        )}
+      </div>
     </header>
   );
 }

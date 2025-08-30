@@ -123,7 +123,7 @@ export default function Schedule() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto pt-5 pb-16">
+    <div className="max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-800 border-b-4 border-green-500 inline-block pb-2 mb-10">
         スケジュール
       </h1>
