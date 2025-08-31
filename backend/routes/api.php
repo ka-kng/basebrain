@@ -12,7 +12,6 @@ use App\Http\Controllers\Records\BattingController;
 use App\Http\Controllers\Records\GameController;
 use App\Http\Controllers\Records\PitchingController;
 use App\Http\Controllers\Records\SummaryController;
-use App\Models\PitchingRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

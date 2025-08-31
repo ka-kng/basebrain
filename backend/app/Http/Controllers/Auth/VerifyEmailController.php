@@ -14,16 +14,16 @@ class VerifyEmailController extends Controller
         $user = User::find($id);
 
         if (! $user) {
-            return response()->json(['error' => 'User not found'], 404);
+            return redirect(config('app.frontend_url') . '/login?verified=0&error=user_not_found');
         }
 
-        // ここに有効期限チェック
+        // 有効期限チェック
         if ($user->email_verification_sent_at && $user->email_verification_sent_at->diffInMinutes(now()) > 60) {
-            return response()->json(['error' => 'Link expired'], 403);
+            return redirect(config('app.frontend_url') . '/login?verified=0&error=expired');
         }
 
         if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
-            return response()->json(['error' => 'Invalid verification link'], 403);
+            return redirect(config('app.frontend_url') . '/login?verified=0&error=invalid');
         }
 
         if (! $user->hasVerifiedEmail()) {
@@ -31,10 +31,8 @@ class VerifyEmailController extends Controller
             event(new \Illuminate\Auth\Events\Verified($user));
         }
 
-        return response()->json([
-            'verified' => true,
-            'redirect_url' => config('app.frontend_url') . '/login?verified=1',
-        ]);
+        // 成功時はログインページに飛ばす
+        return redirect(config('app.frontend_url') . '/login?verified=1');
     }
 
     public function resend(Request $request)
@@ -46,13 +44,11 @@ class VerifyEmailController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'すでに認証済みです']);
+            return redirect(config('app.frontend_url') . '/login?verified=1&message=already_verified');
         }
 
         $user->sendEmailVerificationNotification();
 
-        return response()->json(['message' => '確認メールを再送信しました']);
-
+        return redirect(config('app.frontend_url') . '/login?resent=1');
     }
-
 }
