@@ -7,39 +7,36 @@ use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+class MypageController extends Controller
 {
+    // マイページ情報の取得
     public function show(Request $request)
     {
-        $user = $request->user()->load('team'); // team をまとめて取得
+        // ログイン中のユーザー情報を取得し、teamリレーションを同時にロード
+        $user = $request->user()->load('team');
 
+        // 必要な情報のみJSONで返す
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'role' => $user->role,
-            'team_name' => $user->team->name ?? null,       // ここで直接アクセス
+            'team_name' => $user->team->name ?? null,
             'invite_code' => $user->team->invite_code ?? null,
         ]);
     }
 
-
-    public function update(Request $request, $id)
+    // マイページ情報の更新
+    public function update(Request $request)
     {
         $user = $request->user();
-
-        if ($user->id != $id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
 
         $user->name = $request->name;
         $user->email = $request->email;
 
-        if ($request->password) {
-            $user->password = Hash::make($request->password);
-        }
         $user->save();
 
+        // チーム名の更新（コーチの場合のみ）
         if ($user->role === 'coach' && $user->team_id && $request->team_name) {
             $team = Team::find($user->team_id);
             if ($team) {
@@ -51,14 +48,12 @@ class UserController extends Controller
         return $this->show($request);
     }
 
-    public function destroy(Request $request, $id)
+    // アカウント削除処理
+    public function destroy(Request $request)
     {
         $user = $request->user();
 
-        if ($user->id != $id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
+        // コーチは削除不可
         if ($user->role === 'coach') {
             return response()->json(['error' => 'コーチアカウントは削除できません'], 403);
         }

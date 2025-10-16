@@ -3,88 +3,50 @@
 namespace App\Http\Controllers\Records;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Game;
-use Illuminate\Http\Request;
+use App\Http\Requests\GameRequest;
+use App\Services\GameService;
 
 class GameController extends Controller
 {
-    // 一覧取得(GET /api/games/list)
+    protected $service;
+
+    public function __construct(GameService $service)
+    {
+        $this->service = $service;
+    }
+
+    // 一覧取得
     public function index()
     {
-        $teamId = Auth::user()->team_id; // ログインユーザーのチームID取得
-        $games = Game::with('team')
-            ->where('team_id', $teamId) // 自チームの試合だけ
-            ->orderBy('id', 'desc')
-            ->get();
-
+        $games = $this->service->listGames();
         return response()->json($games);
     }
 
-    // 新規登録(POST /api/games)
-    public function store(Request $request)
+    // 試合新規登録
+    public function store(GameRequest $request)
     {
-        $validated = $request->validate([
-            'game_type' => 'required|string|max:255',
-            'tournament' => 'required|string|max:255',
-            'opponent' => 'required|string|max:255',
-            'date' => 'required|date',
-            'team_score' => 'required|integer',
-            'result' => 'required|string',
-            'opponent_score' => 'required|integer',
-            'memo' => 'nullable|string',
-        ]);
-
-        $validated['team_id'] = Auth::user()->team_id;
-
-        $game = Game::create($validated);
-
+        $game = $this->service->createGame($request->validated());
         return response()->json($game, 201);
     }
 
-    // 詳細取得(GET /api/games/{id})
+    // 詳細取得
     public function show(string $id)
     {
-        $gameDetail = Game::with([
-            'team',
-            'battingRecords.user',
-            'pitchingRecords.user'
-        ])->findOrFail($id);
-        return response()->json($gameDetail);
-    }
-
-    // 更新(PUT /api/games/{id})
-    public function update(Request $request, string $id)
-    {
-        $teamId = Auth::user()->team_id;
-
-        $game = Game::where('id', $id)->where('team_id', $teamId)->firstOrFail();
-
-        $validated = $request->validate([
-            'game_type' => 'required|string|max:255',
-            'tournament' => 'required|string|max:255',
-            'opponent' => 'required|string|max:255',
-            'date' => 'required|date',
-            'team_score' => 'required|integer',
-            'result' => 'required|string',
-            'opponent_score' => 'required|integer',
-            'memo' => 'nullable|string',
-        ]);
-
-        $game->update($validated);
-
+        $game = $this->service->getGame($id);
         return response()->json($game);
     }
 
-    // 削除 (DELETE /api/games/{id})
+    // 試合更新
+    public function update(GameRequest $request, string $id)
+    {
+        $game = $this->service->updateGame($id, $request->validated());
+        return response()->json($game);
+    }
+
+    // 削除
     public function destroy(string $id)
     {
-        $teamId = Auth::user()->team_id;
-
-        $game = Game::where('id', $id)->where('team_id', $teamId)->firstOrFail();
-
-        $game->delete();
-
+        $this->service->deleteGame($id);
         return response()->json(null, 204);
     }
 }

@@ -1,26 +1,15 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Pages\DashboardController;
+use App\Http\Controllers\Pages\MypageController;
 use App\Http\Controllers\Pages\PlayerRankingController;
 use App\Http\Controllers\Pages\ScheduleController;
-use App\Http\Controllers\Pages\UserController;
 use App\Http\Controllers\Records\BattingController;
 use App\Http\Controllers\Records\GameController;
 use App\Http\Controllers\Records\PitchingController;
 use App\Http\Controllers\Records\SummaryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']);
-Route::post('/forget-password', [PasswordResetLinkController::class, 'store']);
-Route::post('/reset-password', [NewPasswordController::class, 'store']);
-Route::post('/email/resend', [VerifyEmailController::class, 'resend']);
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -29,9 +18,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('mypage')->group(function () {
-        Route::get('/', [UserController::class, 'show']);
-        Route::put('/', [UserController::class, 'update']);
-        Route::delete('/', [UserController::class, 'destroy']);
+        Route::get('/', [MypageController::class, 'show']);
+        Route::put('/', [MypageController::class, 'update']);
+        Route::delete('/', [MypageController::class, 'destroy']);
     });
 
     // ダッシュボード
@@ -68,3 +57,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // スケジュール
     Route::apiResource('schedules', ScheduleController::class);
 });
+
+require __DIR__ . '/auth.php';

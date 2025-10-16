@@ -10,38 +10,64 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    /**
+     * ユーザーがログインでき、トークンを受け取れるかテスト
+     */
+    public function test_users_can_login_and_receive_token(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'password' => bcrypt('password'), // パスワードを固定
+        ]);
 
-        $response = $this->post('/login', [
+        $response = $this->postJson('/api/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertNoContent();
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'access_token',
+                'token_type',
+                'user' => ['id', 'name', 'email'],
+            ]);
     }
 
-    public function test_users_can_not_authenticate_with_invalid_password(): void
+    /**
+     * 間違ったパスワードでログインできないことをテスト
+     */
+    public function test_users_cannot_login_with_invalid_password(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'password' => bcrypt('password'),
+        ]);
 
-        $this->post('/login', [
+        $response = $this->postJson('/api/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
 
-        $this->assertGuest();
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors('emailPass'); // バリデーションキー
     }
 
-    public function test_users_can_logout(): void
+    /**
+     * ログアウトできることをテスト
+     */
+    public function test_users_can_logout_with_token(): void
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post('/logout');
+        // Sanctumトークンを作成
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        $this->assertGuest();
-        $response->assertNoContent();
+        // Authorization ヘッダーでリクエスト
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer {$token}",
+        ])->postJson('/api/logout');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'ログアウトしました',
+            ]);
     }
 }

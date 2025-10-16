@@ -3,35 +3,32 @@
 namespace App\Http\Controllers\Pages;
 
 use App\Http\Controllers\Controller;
+use App\Models\BattingRecord;
+use App\Models\PitchingRecord;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class PlayerRankingController extends Controller
 {
+
+    // プレイヤーランキング表示
     public function index(Request $request)
-{
-    $user = $request->user(); // ログイン中のユーザー
+    {
+        $userTeamId = $request->user()->team_id;
 
-    // 打者成績（自チームの全選手）
-    $battingRecords = \DB::table('batting_records')
-        ->join('games', 'batting_records.game_id', '=', 'games.id')
-        ->where('games.team_id', $user->team_id)
-        ->select('batting_records.*', 'users.name') // 名前も取得
-        ->join('users', 'batting_records.user_id', '=', 'users.id')
-        ->get();
+        // 自チーム全選手の打者成績を取得
+        $battingRecords = BattingRecord::with('user')
+            ->whereHas('game', fn($q) => $q->where('team_id', $userTeamId))
+            ->get();
 
-    // 投手成績（自チームの全選手）
-    $pitchingRecords = \DB::table('pitching_records')
-        ->join('games', 'pitching_records.game_id', '=', 'games.id')
-        ->where('games.team_id', $user->team_id)
-        ->select('pitching_records.*', 'users.name')
-        ->join('users', 'pitching_records.user_id', '=', 'users.id')
-        ->get();
+        // 自チーム全選手の投手成績を取得
+        $pitchingRecords = PitchingRecord::with('user')
+            ->whereHas('game', fn($q) => $q->where('team_id', $userTeamId))
+            ->get();
 
-    return response()->json([
-        'battingRecords' => $battingRecords,
-        'pitchingRecords' => $pitchingRecords,
-    ]);
-}
-
+        // JSON形式で返却
+        return response()->json([
+            'battingRecords' => $battingRecords,
+            'pitchingRecords' => $pitchingRecords,
+        ]);
+    }
 }

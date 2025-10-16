@@ -3,36 +3,37 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Handle an incoming authentication request.
-     */
-    public function store(LoginRequest $request): Response
+    public function __construct(private AuthService $authService) {}
+
+    public function register(RegisterRequest $request)
     {
-        $request->authenticate();
+        $this->authService->register($request->validated());
 
-        $request->session()->regenerate();
-
-        return response()->noContent();
+        return response()->json(['message' => '登録完了。確認メールを送信しました']);
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
-    public function destroy(Request $request): Response
+    public function login(Request $request)
     {
-        Auth::guard('web')->logout();
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-        $request->session()->invalidate();
+        $data = $this->authService->login($request->email, $request->password);
 
-        $request->session()->regenerateToken();
+        return response()->json($data);
+    }
 
-        return response()->noContent();
+    public function logout(Request $request)
+    {
+        $this->authService->logout($request->user());
+
+        return response()->json(['message' => 'ログアウトしました']);
     }
 }

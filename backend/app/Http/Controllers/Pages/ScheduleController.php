@@ -3,70 +3,54 @@
 namespace App\Http\Controllers\Pages;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ScheduleRequest;
 use App\Models\Schedule;
-use Illuminate\Http\Request;
+use App\Services\ScheduleService;
 use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected ScheduleService $service;
+
+    // ScheduleService を注入
+    public function __construct(ScheduleService $service)
+    {
+        $this->service = $service;
+    }
+
+    // チームのスケジュール一覧を返す
     public function index()
     {
         $teamId = Auth::user()->team_id;
-        $schedules = Schedule::where('team_id', $teamId)->get();
+        $schedules = $this->service->getTeamSchedules($teamId);
         return response()->json($schedules);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    // 新しいスケジュールを作成
+    public function store(ScheduleRequest $request)
     {
         $user = Auth::user();
 
-        if ($user->role !== 'coach') {
-            return response()->json(['message' => '権限がありません'], 403);
-        }
+        $schedule = $this->service->createSchedule($request->validated(), $user->team_id);
 
-        $validated = $request->validate([
-            'date' => 'required|date',
-            'type' => 'required|string|max:255',
-            'time' => 'nullable|string|max:50',
-            'location' => 'nullable|string|max:255',
-            'note' => 'nullable|string',
-        ]);
-
-        $schedules = Schedule::create(array_merge($validated, ['team_id' => $user->team_id]));
-
-        return response()->json($schedules, 201);
+        return response()->json($schedule, 201);
     }
 
-    public function update(Request $request, $id)
+    // スケジュールの更新
+    public function update(ScheduleRequest $request, $id)
     {
-        $request->validate([
-            'type' => 'required|string|max:255',
-            'time' => 'nullable|string|max:50',
-            'location' => 'nullable|string|max:255',
-            'note' => 'nullable|string',
-        ]);
-
         $schedule = Schedule::findOrFail($id);
-        $schedule->update([
-            'type' => $request->type,
-            'time' => $request->time,
-            'location' => $request->location,
-            'note' => $request->note,
-        ]);
 
-        return response()->json($schedule);
+        $updated = $this->service->updateSchedule($schedule, $request->validated());
+
+        return response()->json($updated);
     }
 
+    // スケジュール削除
     public function destroy($id)
     {
         $schedule = Schedule::findOrFail($id);
-        $schedule->delete();
+        $this->service->deleteSchedule($schedule);
 
         return response()->json(['message' => 'Deleted successfully']);
     }

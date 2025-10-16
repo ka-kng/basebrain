@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class SummaryController extends Controller
 {
+    // 試合の概要と出場選手の名前一覧を取得
     public function summaryResult(Request $request)
     {
         // Reactから送られたgame_idを取得
@@ -20,6 +21,7 @@ class SummaryController extends Controller
             return response()->json(['error' => '試合が見つかりません'], 404);
         }
 
+         // JSONでレスポンスを返す
         $batters = $game->battingRecords()->with('user')->get()->map(fn($r) => $r->user->name);
         $pitchers = $game->pitchingRecords()->with('user')->get()->map(fn($r) => $r->user->name);
 
