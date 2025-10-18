@@ -11,6 +11,7 @@ use Illuminate\Validation\ValidationException;
 class PasswordResetLinkController extends Controller
 {
 
+    // パスワードリセット用リンク送信処理
     public function store(Request $request): JsonResponse
     {
         $request->validate([

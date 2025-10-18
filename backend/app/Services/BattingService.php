@@ -4,18 +4,19 @@ namespace App\Services;
 
 use App\Models\BattingRecord;
 
-class BattingRecordService
+class BattingService
 {
     // 試合に登録済みの打者ID一覧を取得
     public function getRegisteredBatters(int $gameId)
     {
+        // 指定された試合IDに紐づく打者のuser_idを配列で返す
         return BattingRecord::where('game_id', $gameId)->pluck('user_id');
     }
 
     // 新規打撃記録を登録
     public function store(array $data)
     {
-        // 同一試合・選手の重複チェック
+        // 同じ試合・選手の組み合わせがすでに存在するかチェック
         $exists = BattingRecord::where('game_id', $data['game_id'])
             ->where('user_id', $data['user_id'])
             ->exists();
@@ -28,7 +29,7 @@ class BattingRecordService
     }
 
     // ID指定で打撃記録を取得
-    public function show(int $id)
+    public function get(int $id)
     {
         return BattingRecord::findOrFail($id);
     }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class BattingRecordRequest extends FormRequest
+class BattingRequest extends FormRequest
 {
     public function authorize(): bool
     {

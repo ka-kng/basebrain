@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Records;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BattingRecordRequest;
-use App\Services\BattingRecordService;
+use App\Http\Requests\BattingRequest;
+use App\Services\BattingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -13,7 +13,7 @@ class BattingController extends Controller
 {
     protected $service;
 
-    public function __construct(BattingRecordService $service)
+    public function __construct(BattingService $service)
     {
         $this->service = $service;
     }
@@ -41,24 +41,31 @@ class BattingController extends Controller
     }
 
     // 新しい打撃記録を登録
-    public function store(BattingRecordRequest $request)
+    public function store(BattingRequest $request)
     {
-        $record = $this->service->store($request->validated());
-        return response()->json($record, 201);
+        try {
+            $record = $this->service->store($request->validated());
+            return response()->json($record, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
     }
 
     // 特定の打撃記録を取得
     public function show($id)
     {
-        $record = $this->service->show($id);
-        return response()->json($record);
+        return response()->json($this->service->get($id));
     }
 
     // 打撃記録を更新
-    public function update(BattingRecordRequest $request, $id)
+    public function update(BattingRequest $request, $id)
     {
-        $record = $this->service->update($id, $request->validated());
-        return response()->json($record);
+        try {
+            $record = $this->service->update($id, $request->validated());
+            return response()->json($record);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
     }
 
     // 打撃記録を削除

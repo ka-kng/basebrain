@@ -14,6 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class NewPasswordController extends Controller
 {
+    // パスワードリセットの保存処理
     public function store(Request $request): JsonResponse
     {
         $request->validate([

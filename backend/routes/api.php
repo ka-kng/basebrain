@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Pages\DashboardController;
 use App\Http\Controllers\Pages\MypageController;
+use App\Http\Controllers\Pages\PlayerDashboardController;
 use App\Http\Controllers\Pages\PlayerRankingController;
 use App\Http\Controllers\Pages\ScheduleController;
 use App\Http\Controllers\Records\BattingController;
@@ -26,7 +27,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // ダッシュボード
     Route::prefix('dashboard')->group(function () {
         Route::get('/manager', [DashboardController::class, 'index']);
-        Route::get('/player', [DashboardController::class, 'playerDashboard']);
+        Route::get('/player', [PlayerDashboardController::class, 'index']);
     });
 
     Route::get('/player/ranking', [PlayerRankingController::class, 'index']);

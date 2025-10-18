@@ -8,17 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PitchingService
 {
-    // チームの全選手を取得
-    public function getUsers()
-    {
-        $user = Auth::user();
-        return User::where('role', 'player')
-            ->where('team_id', $user->team_id)
-            ->select('id', 'name', 'team_id')
-            ->orderBy('name')
-            ->get();
-    }
-
     // 指定ゲームの登録済み投手ID
     public function getRegisteredPitchers(int $gameId)
     {
@@ -27,9 +16,9 @@ class PitchingService
     }
 
     // 新規作成
-    public function create(array $data)
+    public function store(array $data)
     {
-        // 重複チェック
+        // 同じ試合・選手の組み合わせがすでに存在するかチェック
         $exists = PitchingRecord::where('game_id', $data['game_id'])
             ->where('user_id', $data['user_id'])
             ->exists();
@@ -41,32 +30,21 @@ class PitchingService
         return PitchingRecord::create($data);
     }
 
-    // 編集用取得
+    // ID指定で投手記録を取得
     public function get(int $id)
     {
         return PitchingRecord::findOrFail($id);
     }
 
-    // 更新
+    // 投手記録を更新
     public function update(int $id, array $data)
     {
         $record = PitchingRecord::findOrFail($id);
-
-        // 重複チェック（自分以外）
-        $exists = PitchingRecord::where('game_id', $data['game_id'])
-            ->where('user_id', $data['user_id'])
-            ->where('id', '!=', $id)
-            ->exists();
-
-        if ($exists) {
-            throw new \Exception('この選手は既に登録されています');
-        }
-
         $record->update($data);
         return $record;
     }
 
-    // 削除
+    // 投手記録を削除
     public function delete(int $id)
     {
         $record = PitchingRecord::findOrFail($id);

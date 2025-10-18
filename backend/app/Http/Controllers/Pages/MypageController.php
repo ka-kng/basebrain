@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Pages;
 use App\Http\Controllers\Controller;
 use App\Models\Team;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class MypageController extends Controller
 {
@@ -31,6 +30,7 @@ class MypageController extends Controller
     {
         $user = $request->user();
 
+        // リクエストから送られてきた値で更新
         $user->name = $request->name;
         $user->email = $request->email;
 
@@ -38,13 +38,14 @@ class MypageController extends Controller
 
         // チーム名の更新（コーチの場合のみ）
         if ($user->role === 'coach' && $user->team_id && $request->team_name) {
-            $team = Team::find($user->team_id);
+            $team = Team::find($user->team_id); // 自分のチームを取得
             if ($team) {
                 $team->name = $request->team_name;
                 $team->save();
             }
         }
 
+        // 更新後の最新データをshow()で再取得して返す
         return $this->show($request);
     }
 

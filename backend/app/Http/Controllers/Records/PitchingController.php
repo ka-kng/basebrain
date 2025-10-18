@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Records;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PitchingRequest;
+use App\Models\User;
 use App\Services\PitchingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PitchingController extends Controller
 {
@@ -16,43 +18,45 @@ class PitchingController extends Controller
         $this->service = $service;
     }
 
-    // チームの選手一覧
+    // 同じチームの選手一覧を取得
     public function users()
     {
-        return response()->json($this->service->getUsers());
+        $user = Auth::user();
+
+        $users = User::where('role', 'player')
+            ->where('team_id', $user->team_id)
+            ->select('id', 'name', 'team_id')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json($users);
     }
 
-    // 登録済み投手ID取得
+    // 既に登録済みの投手ID一覧を取得
     public function registeredPitchers(Request $request)
     {
         $request->validate(['game_id' => 'required|integer|exists:games,id']);
         return response()->json($this->service->getRegisteredPitchers($request->game_id));
     }
 
-    // 一覧（未実装）
-    public function index()
-    {
-        //
-    }
-
-    // 新規作成
+    // 新しい投手記録を登録
     public function store(PitchingRequest $request)
     {
         try {
-            $record = $this->service->create($request->validated());
+            $record = $this->service->store($request->validated());
             return response()->json($record, 201);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 422);
         }
     }
 
-    // 編集用取得
+    // 特定の投手記録を取得
     public function show($id)
     {
         return response()->json($this->service->get($id));
     }
 
-    // 更新
+    // 投手記録を更新
     public function update(PitchingRequest $request, $id)
     {
         try {
@@ -63,7 +67,7 @@ class PitchingController extends Controller
         }
     }
 
-    // 削除
+    // 投手記録を削除
     public function destroy($id)
     {
         $this->service->delete($id);

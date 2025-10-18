@@ -11,6 +11,7 @@ class AuthenticatedSessionController extends Controller
 {
     public function __construct(private AuthService $authService) {}
 
+    // 新規登録（ユーザー登録）
     public function register(RegisterRequest $request)
     {
         $this->authService->register($request->validated());
@@ -18,6 +19,7 @@ class AuthenticatedSessionController extends Controller
         return response()->json(['message' => '登録完了。確認メールを送信しました']);
     }
 
+    // ログイン処理
     public function login(Request $request)
     {
         $request->validate([
@@ -30,6 +32,7 @@ class AuthenticatedSessionController extends Controller
         return response()->json($data);
     }
 
+    // ログアウト処理
     public function logout(Request $request)
     {
         $this->authService->logout($request->user());

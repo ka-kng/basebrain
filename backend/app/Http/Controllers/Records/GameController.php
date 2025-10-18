@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Records;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GameRequest;
+use App\Models\Game;
 use App\Services\GameService;
+use App\Services\GameStatsService;
 
 class GameController extends Controller
 {
@@ -30,10 +32,11 @@ class GameController extends Controller
     }
 
     // 詳細取得
-    public function show(string $id)
+    public function show($id, GameService $gameService, GameStatsService $statsService)
     {
-        $game = $this->service->getGame($id);
-        return response()->json($game);
+        $game = $gameService->getGame($id);           // DBから取得
+        $formatted = $statsService->formatGame($game); // 計算済みJSONに整形
+        return response()->json($formatted);
     }
 
     // 試合更新
