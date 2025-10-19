@@ -10,9 +10,7 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * ユーザーがログインでき、トークンを受け取れるかテスト
-     */
+    // ユーザーがログインでき、トークンを受け取れるかテスト
     public function test_users_can_login_and_receive_token(): void
     {
         $user = User::factory()->create([
@@ -32,9 +30,7 @@ class AuthenticationTest extends TestCase
             ]);
     }
 
-    /**
-     * 間違ったパスワードでログインできないことをテスト
-     */
+    // 間違ったパスワードでログインできないことをテスト
     public function test_users_cannot_login_with_invalid_password(): void
     {
         $user = User::factory()->create([
@@ -50,9 +46,7 @@ class AuthenticationTest extends TestCase
             ->assertJsonValidationErrors('emailPass'); // バリデーションキー
     }
 
-    /**
-     * ログアウトできることをテスト
-     */
+    // ログアウトできることをテスト
     public function test_users_can_logout_with_token(): void
     {
         $user = User::factory()->create();

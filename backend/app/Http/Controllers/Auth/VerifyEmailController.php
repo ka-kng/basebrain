@@ -25,6 +25,13 @@ class VerifyEmailController extends Controller
         $status = $verified ? 1 : 0;
         $error = $verified ? '' : 'invalid';
 
-        return redirect(config('app.frontend_url') . "/login?verified={$status}&error={$error}");
+        $url = config('app.frontend_url') . "/login?verified={$status}";
+
+        // エラーがあるときだけ &error= を追加
+        if (!empty($error)) {
+            $url .= "&error={$error}";
+        }
+
+        return redirect($url);
     }
 }

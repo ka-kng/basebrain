@@ -8,24 +8,31 @@ import { format } from "date-fns";
 
 // モーダルコンポーネント
 const ScheduleModal = ({ show, onClose, form, onChange, onSubmit, editMode }) => {
-  if (!show) return null;
+  if (!show) return null; // モーダル非表示なら描画なし
+
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-3xl w-96 shadow-lg space-y-4">
+        {/* モードによってタイトル切り替え*/}
         <h3 className="text-xl font-semibold text-indigo-600">
           {editMode ? "予定を編集" : "新しい予定を追加"}
         </h3>
+
+        {/* 入力フィールド群 */}
         <input type="date" name="date" value={form.date} onChange={onChange} className="border p-2 w-full rounded-xl" />
         <input type="time" name="time" value={form.time} onChange={onChange} className="border p-2 w-full rounded-xl" />
-        <input type="text" name="type" placeholder="内容" value={form.type} onChange={onChange} className="border p-2 w-full rounded-xl" />
-        <input type="text" name="location" placeholder="場所" value={form.location} onChange={onChange} className="border p-2 w-full rounded-xl" />
+        <input type="text" name="type" placeholder="内容 例；練習試合 vs ○○高校" value={form.type} onChange={onChange} className="border p-2 w-full rounded-xl" />
+        <input type="text" name="location" placeholder="場所 例：○○球場" value={form.location} onChange={onChange} className="border p-2 w-full rounded-xl" />
         <textarea name="note" placeholder="メモ" value={form.note} onChange={onChange} className="border p-2 w-full rounded-xl" />
+
+        {/* ボタン群 */}
         <div className="flex justify-end gap-2">
           <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded-xl hover:bg-gray-400 transition">キャンセル</button>
           <button onClick={onSubmit} className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition">
             {editMode ? "更新" : "追加"}
           </button>
         </div>
+
       </div>
     </div>
   );
@@ -33,6 +40,7 @@ const ScheduleModal = ({ show, onClose, form, onChange, onSubmit, editMode }) =>
 
 // 日付ごとのイベントリスト
 const DayEventList = ({ date, events, onEdit, onDelete, role }) => {
+  // 選択した日付のイベントのみ抽出
   const dayEvents = useMemo(
     () => events.filter(ev => new Date(ev.start).toDateString() === new Date(date).toDateString()),
     [events, date]
@@ -48,14 +56,16 @@ const DayEventList = ({ date, events, onEdit, onDelete, role }) => {
       {dayEvents.length > 0 ? (
         dayEvents.map(ev => (
           <div key={ev.id} className="text-left py-4 xl:p-0 space-y-2">
-            {["時間", "内容", "場所", "メモ"].map((label, idx) => (
+            {["集合時間", "内容", "場所", "メモ"].map((label, idx) => (
               <div className="flex border-b border-gray-300 py-1" key={idx}>
                 <span className="font-medium w-20 flex-shrink-0">{label}</span>
                 <span className="flex-1 break-words">
-                  {{"時間": ev.extendedProps.time?.slice(0, 5) || "未設定",
+                  {{
+                    "集合時間": ev.extendedProps.time?.slice(0, 5) || "未設定",
                     "内容": ev.extendedProps.type || "未設定",
                     "場所": ev.extendedProps.location || "未設定",
-                    "メモ": ev.extendedProps.note || "なし"}[label]}
+                    "メモ": ev.extendedProps.note || "なし"
+                  }[label]}
                 </span>
               </div>
             ))}
@@ -75,11 +85,11 @@ const DayEventList = ({ date, events, onEdit, onDelete, role }) => {
 };
 
 export default function Schedule() {
-  const [events, setEvents] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ date: "", time: "", type: "", location: "", note: "" });
-  const [editId, setEditId] = useState(null);
+  const [events, setEvents] = useState([]);  // 予定一覧
+  const [selectedDate, setSelectedDate] = useState(null); // 選択された日付
+  const [showModal, setShowModal] = useState(false);  // モーダル表示
+  const [form, setForm] = useState({ date: "", time: "", type: "", location: "", note: "" });  // 入力フォーム
+  const [editId, setEditId] = useState(null); // 編集対象ID
   const [role, setRole] = useState(""); // ユーザーrole
 
   useEffect(() => {
@@ -88,12 +98,14 @@ export default function Schedule() {
 
     // スケジュール取得
     axios.get("/api/schedules").then(res => {
+      // FullCalendar用の形式に整形
       setEvents(res.data.map(ev => ({ id: ev.id, start: ev.date, extendedProps: { ...ev } })));
     });
   }, []);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
+  // 新規登録処理
   const handleRegister = () => {
     if (!form.date) return alert("日付を指定してください");
     axios.post("/api/schedules", form).then(res => {
@@ -103,6 +115,7 @@ export default function Schedule() {
     });
   };
 
+  // 更新処理
   const handleUpdate = () => {
     axios.put(`/api/schedules/${editId}`, form).then(res => {
       setEvents(events.map(ev => (ev.id === editId ? { ...ev, extendedProps: res.data, start: res.data.date } : ev)));
@@ -112,10 +125,12 @@ export default function Schedule() {
     });
   };
 
+  // 削除処理
   const handleDelete = id => {
     axios.delete(`/api/schedules/${id}`).then(() => setEvents(events.filter(ev => ev.id !== id)));
   };
 
+  // 編集ボタンを押したとき
   const handleEdit = ev => {
     setForm({ ...ev.extendedProps, date: ev.start });
     setEditId(ev.id);
@@ -128,6 +143,7 @@ export default function Schedule() {
         スケジュール
       </h1>
 
+      {/* カレンダー */}
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
@@ -136,7 +152,11 @@ export default function Schedule() {
         height="auto"
         headerToolbar={{ left: "title", center: "", right: "today prev,next" }}
         titleFormat={{ year: "numeric", month: "long" }}
+
+        // 土日の背景色変更
         dayCellClassNames={arg => (arg.date.getDay() === 6 ? ["bg-blue-100"] : arg.date.getDay() === 0 ? ["bg-red-100"] : [])}
+
+        // 日付セルの中にイベントがあるかマークを表示
         dayCellContent={arg => {
           const hasEvent = events.some(ev => new Date(ev.start).toDateString() === arg.date.toDateString());
           return (
@@ -148,6 +168,7 @@ export default function Schedule() {
         }}
       />
 
+      {/* 選択日ごとの予定一覧 */}
       <DayEventList
         date={selectedDate}
         events={events}
@@ -164,6 +185,7 @@ export default function Schedule() {
         >+</button>
       )}
 
+      {/* モーダル表示 (新規・編集兼用) */}
       <ScheduleModal
         show={showModal}
         onClose={() => setShowModal(false)}

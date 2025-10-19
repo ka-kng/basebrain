@@ -2,9 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-// -------------------
-// 子コンポーネント: 数値入力
-// -------------------
+// 子コンポーネント: NumberInput 数値入力フォームをまとめて共通化したもの
 const NumberInput = ({ label, name, value, onChange, unit, error }) => (
   <div className="flex flex-col gap-1">
     <div className="flex items-center justify-between">
@@ -27,9 +25,7 @@ const NumberInput = ({ label, name, value, onChange, unit, error }) => (
   </div>
 );
 
-// -------------------
 // 子コンポーネント: 投球回数セレクト
-// -------------------
 const InningsSelect = ({ value, onChange, error }) => (
   <>
     <select
@@ -52,9 +48,6 @@ const InningsSelect = ({ value, onChange, error }) => (
   </>
 );
 
-// -------------------
-// メインコンポーネント
-// -------------------
 export default function PitchingRecordForm() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -75,10 +68,12 @@ export default function PitchingRecordForm() {
     earned_runs: "",
   });
 
+  // 選手一覧と登録済み投手
   const [users, setUsers] = useState([]);
   const [registeredPitchers, setRegisteredPitchers] = useState([]);
   const [errors, setErrors] = useState({});
 
+  // 数値入力フィールド定義
   const numberFields = [
     { key: "pitches", label: "投球数", unit: "球" },
     { key: "strikeouts", label: "奪三振", unit: "回" },
@@ -89,9 +84,7 @@ export default function PitchingRecordForm() {
     { key: "earned_runs", label: "自責点", unit: "点" },
   ];
 
-  // -------------------
-  // API fetch
-  // -------------------
+  // 選手一覧取得
   const fetchUsers = async () => {
     try {
       const res = await axios.get("/api/users/pitcher");
@@ -102,6 +95,7 @@ export default function PitchingRecordForm() {
     }
   };
 
+  // すでに投手成績登録済みの選手IDを取得
   const fetchRegisteredUserIds = async (gameId = form.game_id) => {
     if (!gameId) return;
     try {
@@ -113,11 +107,9 @@ export default function PitchingRecordForm() {
     }
   };
 
-  // -------------------
-  // useEffect
-  // -------------------
   useEffect(() => { fetchUsers(); }, []);
 
+  // game_id取得と登録済み投手取得
   useEffect(() => {
     const gameIdFromState = location.state?.game_id;
     if (!isEdit && !gameIdFromState) return navigate("/records/game");
@@ -127,6 +119,7 @@ export default function PitchingRecordForm() {
     }
   }, [location.state, navigate, isEdit]);
 
+  // 編集モード時：既存データを取得してフォームにセット
   useEffect(() => {
     if (!isEdit) return;
     axios.get(`/api/records/pitching/${id}`)
@@ -134,9 +127,6 @@ export default function PitchingRecordForm() {
       .catch(err => { console.error(err); alert("データの取得に失敗しました"); });
   }, [id, isEdit]);
 
-  // -------------------
-  // Handlers
-  // -------------------
   const handleChange = e => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const validateForm = () => {
@@ -150,6 +140,7 @@ export default function PitchingRecordForm() {
     return newErrors;
   };
 
+  // 登録・更新API呼び出し
   const submitForm = async () => {
     try {
       if (isEdit) {
@@ -164,11 +155,13 @@ export default function PitchingRecordForm() {
     }
   };
 
+  // 続けて登録用にフォーム初期化
   const resetFormForContinue = () => {
     setForm(prev => ({ ...Object.fromEntries(Object.keys(prev).map(k => [k, ""])), game_id: prev.game_id }));
     fetchRegisteredUserIds();
   };
 
+  // 送信ボタン押下時
   const handleSubmit = async (e, action) => {
     e.preventDefault();
     const validationErrors = validateForm();
@@ -188,18 +181,28 @@ export default function PitchingRecordForm() {
     }
   };
 
-  // -------------------
-  // Memoized selectable users
-  // -------------------
+  // 登録済みの選手を除外して選択肢に出す
+  // メモ化して不要な再計算を防ぐ
   const selectableUsers = useMemo(() => {
-    return users.filter(u => isEdit ? u.id === form.user_id || !registeredPitchers.includes(u.id) : !registeredPitchers.includes(u.id));
+    // users 配列をフィルターして「選択可能な選手だけ」を返す
+    return users.filter(u =>
+      isEdit
+        // 編集モードの場合：
+        // u.id === form.user_id → 編集中の選手は残す
+        // !registeredPitchers.includes(u.id) → 登録済みでない選手だけ残す
+        ? u.id === form.user_id || !registeredPitchers.includes(u.id)
+        // 新規登録モードの場合：
+        // 登録済み選手は除外
+        : !registeredPitchers.includes(u.id)
+    );
+    // useMemo の依存配列
+    // users / registeredPitchers / form.user_id / isEdit が変わったときだけ再計算
   }, [users, registeredPitchers, form.user_id, isEdit]);
 
-  const onlyOnePlayerLeft = selectableUsers.length === 1;
+  // 残り1人だけなら「続けて登録」ボタンを非表示にする
+  const MINIMUM_SELECTABLE_USERS = 1;
+  const onlyOnePlayerLeft = selectableUsers.length === MINIMUM_SELECTABLE_USERS;
 
-  // -------------------
-  // Render
-  // -------------------
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}

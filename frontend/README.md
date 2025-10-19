@@ -1,12 +1,177 @@
-# React + Vite
+# Basebrain（野球チームマネジメントシステム）
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 📘 概要
+野球チームの監督・コーチ・マネージャー向けに、選手管理・試合管理・成績分析・スケジュール管理などを行えるチームマネジメントアプリ。<br>
+選手は自分の成績やチーム内ランキングをスマホで簡単に確認でき、練習や試合の意欲につなげられます。
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# 開発背景
+野球を10年間続けてきましたが、当時はチーム内での成績を確認する手段が紙のスコアブックのみで、自分で計算する必要がありました。<br>
+スマホで自分の成績やチーム内ランキングを簡単に見られる環境があれば、モチベーションの向上にも繋がったであろうと考えました。<br>
+本アプリは、そうした個人的な経験を元に作成したものであり、Laravelやフロントエンド技術の学習として開発しました。
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# 技術スタック
+
+**バックエンド** | PHP 8.4 / Laravel 12<br>
+**フロントエンド** | react / Tailwind CSS<br>
+**データベース** | MySQL 8<br>
+**環境構築** | Docker<br>
+**テスト** | PHPUnit<br>
+**メール機能**  Mailpit<br>
+**認証** | Laravel Breeze
+
+---
+
+# 主な機能
+
+## 共通
+
+### ユーザー管理・認証
+- ユーザー登録・ログイン・ログアウト
+- ロール別権限管理（首脳陣・選手・ゲスト）
+
+### ランキングの表示
+- 打者ランキング(打率・出塁率・安打・本塁打・打点・盗塁)
+- 投手ランキング(防御率・勝利数・奪三振数)
+
+### スケジュール
+- 日付ごとのスケジュール確認
+
+
+## roleがplayerの場合
+
+### ダッシュボード
+- 個人成績の確認(出場情報、打者成績、投手成績)
+
+### マイページ
+- ユーザー情報の更新(名前・メールアドレス)
+
+
+## roleがcoachの場合
+
+### ダッシュボード
+- チーム成績の確認(チーム成績、打者成績、投手成績)
+
+### 記録
+- 試合・選手記録の登録／編集／削除
+- 試合ごとの結果、野手成績・投手成績の確認
+
+### スケジュール
+- スケジュールの登録(日付・時間・内容・場所・メモ)
+
+### マイページ
+- ユーザー情報の更新(名前・メールアドレス・チーム名)
+- 招待コードの確認(リンクコピーでURL生成し、URLからアクセスした場合、自動で招待コード入力に対応)
+
+---
+
+# 画面イメージ
+
+## データ入力画面
+
+<table>
+<tr>
+  <td valign="top">
+    ホーム<br>
+    <img src="docs/screenshots/ホーム.png" width="300"><br>
+  </td>
+  <td valign="top">
+    記録<br>
+    <img src="docs/screenshots/記録.png" width="300"><br>
+  </td>
+  <td valign="top">
+    マイページ<br>
+    <img src="docs/screenshots/マイページ.jpeg" width="300">
+  </td>
+</tr>
+<tr>
+  <td valign="top">
+    記録一覧<br>
+    <img src="docs/screenshots/記録一覧.png" width="300">
+  <td valign="top">
+    記録詳細<br>
+    <img src="docs/screenshots/記録詳細.jpeg" width="300">
+  </td>
+</tr>
+</table>
+
+## グラフ表示
+
+<table>
+<tr>
+  <td valign="top">
+    【週】体重<br>
+    <img src="docs/screenshots/【週】体重.png" width="300"><br>
+  </td>
+
+  <td valign="top">
+    【月】体重<br>
+    <img src="docs/screenshots/【月】体重.png" width="300"><br>
+  </td>
+
+  <td valign="top">
+    【年】体重<br>
+    <img src="docs/screenshots/【年】体重.png" width="300"><br>
+  </td>
+</tr>
+</table>
+
+<table>
+<tr>
+  <td valign="top">
+    【週】BMI<br>
+    <img src="docs/screenshots/【週】BMI.png" width="300"><br>
+  </td>
+
+  <td valign="top">
+    【月】BMI<br>
+    <img src="docs/screenshots/【月】BMI.png" width="300"><br>
+  </td>
+
+  <td valign="top">
+    【年】BMI<br>
+    <img src="docs/screenshots/【年】BMI.png" width="300"><br>
+  </td>
+</tr>
+</table>
+
+<table>
+<tr>
+  <td valign="top">
+    【週】体脂肪率<br>
+    <img src="docs/screenshots/【週】体脂肪率.png" width="300"><br>
+  </td>
+
+  <td valign="top">
+    【月】体脂肪率<br>
+    <img src="docs/screenshots/【月】体脂肪率.png" width="300"><br>
+  </td>
+
+  <td valign="top">
+    【年】体脂肪率<br>
+    <img src="docs/screenshots/【年】体脂肪率.png" width="300"><br>
+  </td>
+</tr>
+</table>
+
+<table>
+<tr>
+  <td valign="top">
+    【週】睡眠時間<br>
+    <img src="docs/screenshots/【週】睡眠時間.png" width="300"><br>
+  </td>
+
+  <td valign="top">
+    【月】睡眠時間<br>
+    <img src="docs/screenshots/【月】睡眠時間.png" width="300"><br>
+  </td>
+
+  <td valign="top">
+    【年】睡眠時間<br>
+    <img src="docs/screenshots/【年】睡眠時間.png" width="300"><br>
+  </td>
+</tr>
+</table>

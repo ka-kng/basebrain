@@ -15,7 +15,7 @@ class GameService
         // team_id が一致する試合を取得し、チーム情報も同時にロード
         return Game::with('team')
             ->where('team_id', $teamId)
-            ->orderBy('id', 'desc')
+            ->orderBy('date', 'desc')
             ->get();
     }
 

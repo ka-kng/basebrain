@@ -5,20 +5,9 @@ import toast, { Toaster } from "react-hot-toast";
 import GameSummary from "../components/GameDetail/GameSummary";
 import BatterCard from "../components/GameDetail/BatterCard";
 import PitcherCard from "../components/GameDetail/PitcherCard";
-import DeleteModal from "../components/GameDetail/DeleteModal";
-import {
-  formatInnings,
-  calcBattingAverage,
-  calcOnBasePercentage,
-  calcStealPercentage,
-  calcERA,
-  calcK9,
-  calcBB9,
-  calcSlugging,
-  calcOPS
-} from "../components/GameDetail/stats";
+import DeleteModal from "../components/DeleteModal";
 
-// APIエンドポイント定義（レンダリングごとに生成されない）
+// APIエンドポイント定義
 const API = {
   games: "/api/games",
   batting: "/api/users/batter",
@@ -38,7 +27,7 @@ export default function GameDetail() {
   const [openPitchers, setOpenPitchers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null); // { type, id }
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   // 試合データ取得
   useEffect(() => {
@@ -104,7 +93,9 @@ export default function GameDetail() {
     }
   }, [deleteTarget, id, navigate]);
 
-  const handleBack = () => navigate(-1);
+  const handleBack = () => {
+    navigate("/games/list");
+  };
 
   if (loading)
     return <p className="text-center py-10 text-gray-600">読み込み中...</p>;
@@ -116,28 +107,27 @@ export default function GameDetail() {
       <Toaster position="top-right" />
 
       {/* 戻る・編集・削除 */}
-      <div className="px-8 fixed left-0 w-full">
-        <div className="flex justify-between">
+
+      <div className="flex justify-between">
+        <button
+          onClick={handleBack}
+          className="text-gray-600 hover:text-black transition"
+        >
+          ← 戻る
+        </button>
+        <div className="space-x-2">
           <button
-            onClick={handleBack}
-            className="text-gray-600 hover:text-black transition"
+            onClick={() => navigate(`/records/game/${game.id}/edit`)}
+            className={buttonClass}
           >
-            ← 戻る
+            試合を編集
           </button>
-          <div className="space-x-2">
-            <button
-              onClick={() => navigate(`/records/game/${game.id}/edit`)}
-              className={buttonClass}
-            >
-              試合を編集
-            </button>
-            <button
-              onClick={() => confirmDelete("game")}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow"
-            >
-              削除
-            </button>
-          </div>
+          <button
+            onClick={() => confirmDelete("game")}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow"
+          >
+            削除
+          </button>
         </div>
       </div>
 
@@ -161,13 +151,6 @@ export default function GameDetail() {
             }
             onDelete={() => confirmDelete("batting", batter.id)}
             navigate={navigate}
-            stats={{
-              calcBattingAverage,
-              calcOnBasePercentage,
-              calcStealPercentage,
-              calcSlugging,
-              calcOPS,
-            }}
           />
         ))}
       </div>
@@ -190,12 +173,9 @@ export default function GameDetail() {
             key={pitcher.id}
             pitcher={pitcher}
             open={openPitchers.includes(pitcher.id)}
-            toggleOpen={() =>
-              toggleDetails(pitcher.id, openPitchers, setOpenPitchers)
-            }
+            toggleOpen={() => toggleDetails(pitcher.id, openPitchers, setOpenPitchers)}
             onDelete={() => confirmDelete("pitching", pitcher.id)}
             navigate={navigate}
-            stats={{ formatInnings, calcERA, calcK9, calcBB9 }}
           />
         ))}
       </div>

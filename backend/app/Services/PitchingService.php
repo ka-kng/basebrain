@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use App\Models\PitchingRecord;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
 class PitchingService
 {

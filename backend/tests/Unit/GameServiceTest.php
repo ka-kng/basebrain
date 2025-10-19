@@ -37,8 +37,6 @@ class GameServiceTest extends TestCase
     // 【テスト内容】
     // ログイン中のユーザーの team_id が自動セットされること
     // 必須カラムを渡すことでゲームが作成されることを確認
-
-    /** @test */
     public function test_create_game()
     {
         $data = [
@@ -65,8 +63,6 @@ class GameServiceTest extends TestCase
     // 【テスト内容】
     // ログインユーザーのチームに紐づくゲームだけが更新できることを確認
     // 更新後の値が正しく反映されていることをDBで検証
-
-    /** @test */
     public function test_update_game()
     {
         $game = Game::factory()->create([
@@ -93,8 +89,6 @@ class GameServiceTest extends TestCase
 
     // 【テスト内容】
     // 他チームのゲームを更新しようとすると ModelNotFoundException が投げられることを確認
-
-    /** @test */
     public function test_update_game_not_belonging_to_team_fails()
     {
         $otherTeam = Team::factory()->create();
@@ -117,8 +111,6 @@ class GameServiceTest extends TestCase
     // 【テスト内容】
     // ログインユーザーのチームに紐づくゲームが削除できることを確認
     // 削除後にDBに存在しないことを検証
-
-    /** @test */
     public function test_delete_game()
     {
         $game = Game::factory()->create([
@@ -136,8 +128,6 @@ class GameServiceTest extends TestCase
 
     // 【テスト内容】
     // 他チームのゲームを削除しようとすると ModelNotFoundException が投げられることを確認
-
-    /** @test */
     public function test_delete_game_not_belonging_to_team_fails()
     {
         $otherTeam = Team::factory()->create();

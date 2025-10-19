@@ -22,16 +22,17 @@ class GameStatsServiceTest extends TestCase
 
     // 【テスト内容】
     // formatBatting() が打率・出塁率・長打率・OPSなどを正しく計算するかを検証
-
-    /** @test */
-    public function format_batting_calculates_correctly()
+    public function test_format_batting_calculates_correctly()
     {
         $batters = collect([
             (object)[
                 'id' => 1,
-                'user' => (object)['name' => 'Player1'],
+                'user' => (object)[
+                    'id' => 10,          // ここを追加
+                    'name' => 'Player1'
+                ],
                 'order_no' => 1,
-                'position' => 'CF',
+                'position' => '投手',
                 'at_bats' => 4,
                 'hits' => 2,
                 'doubles' => 1,
@@ -58,14 +59,15 @@ class GameStatsServiceTest extends TestCase
 
     // 【テスト内容】
     // formatPitching() が防御率・奪三振率・与四死球率などを正しく計算するかを検証
-
-    /** @test */
-    public function format_pitching_calculates_correctly()
+    public function test_format_pitching_calculates_correctly()
     {
         $pitchers = collect([
             (object)[
                 'id' => 1,
-                'user' => (object)['name' => 'Pitcher1'],
+                'user' => (object)[
+                    'id' => 10,          // ここを追加
+                    'name' => 'Player1'
+                ],
                 'result' => '勝利',
                 'pitching_innings_outs' => 15, // 5回
                 'pitches' => 80,
@@ -88,9 +90,7 @@ class GameStatsServiceTest extends TestCase
 
     // 【テスト内容】
     // formatGame() がゲーム情報と野手・投手成績をまとめた構造を正しく返すかを検証
-
-    /** @test */
-    public function format_game_returns_correct_structure()
+    public function test_format_game_returns_correct_structure()
     {
         $game = Game::factory()->create();
 

@@ -29,15 +29,15 @@ class BattingServiceTest extends TestCase
         $this->game = Game::factory()->create();
     }
 
-    /** @test */
+    // 【テスト内容】新しい打撃記録が正しくDBに作成されること
+
     public function test_store_creates_a_new_batting_record()
     {
-        // 【テスト内容】新しい打撃記録が正しくDBに作成されること
         $data = [
             'game_id' => $this->game->id,
             'user_id' => $this->user->id,
             'order_no' => 1,
-            'position' => '投手',
+            'position' => '一塁',
             'at_bats' => 3,
             'hits' => 1,
             'doubles' => 0,
@@ -59,14 +59,14 @@ class BattingServiceTest extends TestCase
             'id' => $record->id,
             'game_id' => $this->game->id,
             'user_id' => $this->user->id,
-            'position' => '投手',
+            'position' => '一塁',
         ]);
     }
 
-    /** @test */
+    // 【テスト内容】既存の打撃記録が update により正しく更新されること
+
     public function test_update_modifies_existing_batting_record()
     {
-        // 【テスト内容】既存の打撃記録が update により正しく更新されること
         $record = BattingRecord::factory()->create([
             'game_id' => $this->game->id,
             'user_id' => $this->user->id,
@@ -92,10 +92,10 @@ class BattingServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    // 【テスト内容】打撃記録が destroy により削除されること
+
     public function test_destroy_deletes_batting_record()
     {
-        // 【テスト内容】打撃記録が destroy により削除されること
         $record = BattingRecord::factory()->create([
             'game_id' => $this->game->id,
             'user_id' => $this->user->id,

@@ -2,9 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-// -------------------
-// 子コンポーネント: 数値入力
-// -------------------
+// 子コンポーネント: NumberInput 数値入力フォームをまとめて共通化したもの
 const NumberInput = ({ label, name, value, onChange, unit, note, error }) => (
   <div className="flex flex-col gap-1">
     <div className="flex items-center justify-between">
@@ -28,9 +26,6 @@ const NumberInput = ({ label, name, value, onChange, unit, note, error }) => (
   </div>
 );
 
-// -------------------
-// メインコンポーネント
-// -------------------
 export default function BattingRecordForm() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,10 +51,13 @@ export default function BattingRecordForm() {
     errors: "",
   });
 
+  // 選手一覧・登録済み選手・バリデーションエラー
   const [users, setUsers] = useState([]);
   const [registeredBatters, setRegisteredBatters] = useState([]);
   const [errors, setErrors] = useState({});
 
+
+  // 数値項目一覧（繰り返し部分をまとめる）
   const numberFields = [
     { key: "at_bats", label: "打数", unit: "打数", note: "※打数には四死球を含みません" },
     { key: "hits", label: "一塁打", unit: "本" },
@@ -75,9 +73,7 @@ export default function BattingRecordForm() {
     { key: "errors", label: "失策", unit: "回" },
   ];
 
-  // -------------------
-  // API fetch
-  // -------------------
+  // 選手一覧を取得（同チームの打者）
   const fetchUsers = async () => {
     try {
       const res = await axios.get("/api/users/batter");
@@ -88,6 +84,7 @@ export default function BattingRecordForm() {
     }
   };
 
+  // すでに打撃成績登録済みの選手IDを取得
   const fetchRegisteredUserIds = async (gameId = form.game_id) => {
     if (!gameId) return;
     try {
@@ -99,11 +96,9 @@ export default function BattingRecordForm() {
     }
   };
 
-  // -------------------
-  // Lifecycle
-  // -------------------
   useEffect(() => { fetchUsers(); }, []);
 
+  // 新規登録時：試合IDを state から受け取る
   useEffect(() => {
     const gameIdFromState = location.state?.game_id;
     if (!isEdit && !gameIdFromState) return navigate("/records/game");
@@ -113,6 +108,7 @@ export default function BattingRecordForm() {
     }
   }, [location.state, navigate, isEdit]);
 
+  // 編集モード時：既存データを取得してフォームにセット
   useEffect(() => {
     if (!isEdit || !id) return;
     axios.get(`/api/records/batting/${id}`)
@@ -120,9 +116,6 @@ export default function BattingRecordForm() {
       .catch(err => { console.error(err); alert("データの取得に失敗しました"); });
   }, [id, isEdit]);
 
-  // -------------------
-  // Handlers
-  // -------------------
   const handleChange = e => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const validateForm = () => {
@@ -136,6 +129,7 @@ export default function BattingRecordForm() {
     return newErrors;
   };
 
+  // 登録・更新API呼び出し
   const submitForm = async () => {
     try {
       if (isEdit) {
@@ -150,11 +144,13 @@ export default function BattingRecordForm() {
     }
   };
 
+  // 続けて登録用にフォーム初期化
   const resetFormForContinue = () => {
     setForm(prev => ({ ...Object.fromEntries(Object.keys(prev).map(k => [k, ""])), game_id: prev.game_id }));
     fetchRegisteredUserIds();
   };
 
+  // 送信ボタン押下時
   const handleSubmit = async (e, action) => {
     e.preventDefault();
     const validationErrors = validateForm();
@@ -174,11 +170,15 @@ export default function BattingRecordForm() {
     }
   };
 
+
+  // 登録済みの選手を除外して選択肢に出す
   const selectableUsers = useMemo(() => {
     return users.filter(u => isEdit ? u.id === form.user_id || !registeredBatters.includes(u.id) : !registeredBatters.includes(u.id));
   }, [users, registeredBatters, form.user_id, isEdit]);
 
-  const onlyOnePlayerLeft = selectableUsers.length === 1;
+  // 残り1人だけなら「続けて登録」ボタンを非表示にする
+  const MINIMUM_SELECTABLE_USERS = 1;
+  const onlyOnePlayerLeft = selectableUsers.length === MINIMUM_SELECTABLE_USERS;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">

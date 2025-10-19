@@ -78,16 +78,20 @@ class ManagerDashboardService
 
     // 打率 (すべてのヒットを含む)
     $totalHits = $totals['hits'] + $totals['doubles'] + $totals['triples'] + $totals['home_runs'];
-    $totals['average'] = $totals['at_bats'] > 0 ? round($totalHits / $totals['at_bats'], 3) : 0;
+    $totals['average'] = $totals['at_bats'] > 0
+      ? number_format($totalHits / $totals['at_bats'], 3)
+      : number_format(0, 3);
 
     // 出塁率 (ヒット + 四死球) ÷ (打数 + 四死球)
     $totals['obp'] = ($totals['at_bats'] + $totals['walks']) > 0
-      ? round(($totalHits + $totals['walks']) / ($totals['at_bats'] + $totals['walks']), 3)
-      : 0;
+      ? number_format(($totalHits + $totals['walks']) / ($totals['at_bats'] + $totals['walks']), 3)
+      : number_format(0, 3);
 
     // 長打率 ((単打 + 2*二塁打 + 3*三塁打 + 4*本塁打) ÷ 打数)
     $totalBases = $totals['hits'] + (2 * $totals['doubles']) + (3 * $totals['triples']) + (4 * $totals['home_runs']);
-    $totals['slg'] = $totals['at_bats'] > 0 ? round($totalBases / $totals['at_bats'], 3) : 0;
+    $totals['slg'] = $totals['at_bats'] > 0
+      ? number_format($totalBases / $totals['at_bats'], 3)
+      : number_format(0, 3);
 
     return $totals;
   }

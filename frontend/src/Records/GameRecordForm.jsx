@@ -20,7 +20,7 @@ export default function GameRecordForm() {
     result: "",
   });
 
-  // 編集時: 試合情報取得
+  // 編集時: 試合情報を取得してフォームにセット
   useEffect(() => {
     if (!id) return;
     setLoading(true);
@@ -28,7 +28,7 @@ export default function GameRecordForm() {
       .then(res => {
         const data = res.data;
         setForm({
-          date: data.date ? data.date.split("T")[0] : "",
+          date: data.date ? data.date.slice(0, 10) : "",
           game_type: data.game_type,
           tournament: data.tournament,
           opponent: data.opponent,
@@ -42,7 +42,7 @@ export default function GameRecordForm() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // 勝敗自動判定
+  // 勝敗自動判定 team_score と opponent_score が入力されている場合
   useEffect(() => {
     const team = parseInt(form.team_score, 10);
     const opp = parseInt(form.opponent_score, 10);
@@ -59,8 +59,10 @@ export default function GameRecordForm() {
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
+  // 戻るボタン
   const handleBack = () => navigate(-1);
 
+  // フォーム送信
   const handleSubmit = async e => {
     e.preventDefault();
     const newErrors = {};
@@ -73,6 +75,7 @@ export default function GameRecordForm() {
     if (Object.keys(newErrors).length) return setErrors(newErrors);
 
     setErrors({});
+
     try {
       if (id) {
         await axios.put(`/api/games/${id}`, form);
@@ -81,6 +84,7 @@ export default function GameRecordForm() {
       } else {
         const res = await axios.post("/api/games", form);
         toast.success("試合を登録しました");
+        // 打撃登録ページへ遷移、game_idをstateで渡す
         navigate("/records/batting", { state: { game_id: res.data.id } });
       }
     } catch (err) {

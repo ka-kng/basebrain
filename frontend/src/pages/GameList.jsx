@@ -35,50 +35,47 @@ export default function GameList() {
         {games.map((game) => (
           <div
             key={game.id}
-            className="border rounded-xl shadow-md p-5 bg-white hover:shadow-xl transition transform hover:-translate-y-1"
+            className="flex flex-col h-full border rounded-xl shadow-md p-5 bg-white hover:shadow-xl transition transform hover:-translate-y-1"
           >
             {/* 日付 & 結果 */}
             <div className="flex items-center justify-between mb-3">
               <span className="text-sm text-gray-500">{game.formatted_date}</span>
-              <span
-                className={`px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-600"}`}
-              >
+              <span className="px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-600">
                 {game.game_type}
               </span>
             </div>
 
             {/* 大会情報 */}
-            <h2 className="text-lg font-semibold text-gray-800">
-              {game.tournament}
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-800">{game.tournament}</h2>
             <p className="text-sm text-gray-500 mb-3">試合結果：{game.result}</p>
 
             {/* スコア */}
-            <div className="flex justify-between items-center bg-gray-50 rounded-lg p-3 mb-3">
-              <div className="text-center flex-1">
-                <p className="font-bold">{game.team?.name}</p>
+            <div className="flex justify-between bg-gray-50 rounded-lg p-3 mb-3 flex-1">
+              <div className="flex-1 text-center flex flex-col justify-center">
+                <p className="font-bold break-words">{game.team?.name}</p>
                 <p className="text-2xl font-bold text-green-600">{game.team_score}</p>
               </div>
-              <span className="text-lg font-bold text-gray-500">vs</span>
-              <div className="text-center flex-1">
-                <p className="font-bold">{game.opponent}</p>
+              <span className="text-lg font-bold text-gray-500 self-center">vs</span>
+              <div className="flex-1 text-center flex flex-col justify-center">
+                <p className="font-bold break-words">{game.opponent}</p>
                 <p className="text-2xl font-bold text-red-600">{game.opponent_score}</p>
               </div>
             </div>
 
             {/* メモ */}
-            <p className="text-sm text-left text-gray-600 truncate mb-4">{game.memo}</p>
+            <p className="text-sm text-left text-gray-600 mb-4">{game.memo}</p>
 
             {/* 詳細ボタン */}
             <button
               onClick={() => navigate(`/games/${game.id}`)}
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg shadow-sm transition"
+              className="mt-auto w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg shadow-sm transition"
             >
               詳細を見る
             </button>
           </div>
         ))}
       </div>
+
     </div>
   );
 }

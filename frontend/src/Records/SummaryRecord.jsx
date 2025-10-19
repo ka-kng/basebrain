@@ -54,7 +54,7 @@ export default function SummaryRecord() {
 
       {/* Title */}
       <h1 className="text-3xl font-bold mt-8 text-gray-800 border-b-2 border-green-500 inline-block pb-1">
-        試合詳細
+        登録結果
       </h1>
 
       <div className="bg-white rounded-2xl p-8 space-y-6">

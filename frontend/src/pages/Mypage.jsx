@@ -1,36 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import InputField from "../components/InputField";
-import { motion } from "framer-motion";
-
-// 削除確認モーダル
-function ConfirmModal({ onConfirm, onCancel }) {
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-sm text-center"
-      >
-        <p className="text-lg mb-4">本当にアカウントを削除しますか？</p>
-        <div className="flex gap-3 justify-center">
-          <button
-            onClick={onConfirm}
-            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition"
-          >
-            削除
-          </button>
-          <button
-            onClick={onCancel}
-            className="bg-gray-200 hover:bg-gray-300 px-6 py-3 rounded-xl font-bold transition"
-          >
-            キャンセル
-          </button>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
+import InputField from "../components/InputField"; // フォーム用モーダルコンポーネント
+import DeleteModal from "../components/DeleteModal"; // アカウント削除用モーダルコンポーネント
 
 export default function MyPage() {
   const [user, setUser] = useState(null);
@@ -38,7 +9,6 @@ export default function MyPage() {
   const [inviteCode, setInviteCode] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
 
@@ -58,24 +28,26 @@ export default function MyPage() {
     fetchUser();
   }, []);
 
+  // ユーザー情報更新
   const handleUpdate = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
+    // フロント側バリデーション
     if (!name) newErrors.name = "名前を入力してください";
     if (!email) newErrors.email = "メールアドレスを入力してください";
 
     setErrors(newErrors);
 
+    // エラーがあれば送信中止
     if (Object.keys(newErrors).length > 0) return;
+
     try {
       const payload = { name, email };
-      if (user.role === "coach") payload.team_name = teamName;
-      if (password) payload.password = password;
+      if (user.role === "coach") payload.team_name = teamName; // ユーザーがcoachの場合、チーム名も送信
 
       const res = await axios.put(`/api/mypage`, payload);
       setUser(res.data);
-      setPassword("");
       alert("更新しました");
     } catch (err) {
       console.error(err);
@@ -83,6 +55,7 @@ export default function MyPage() {
     }
   };
 
+  // アカウント削除処理
   const handleDelete = async () => {
     try {
       await axios.delete(`/api/mypage`);
@@ -94,15 +67,14 @@ export default function MyPage() {
     }
   };
 
-  // 招待リンクをコピーする処理
+  // 招待リンクをコピーする処理(coachのみ表示)
   const handleCopyInviteLink = () => {
     if (!inviteCode) return;
     const inviteUrl = `${window.location.origin}/register?invite=${inviteCode}`;
-    navigator.clipboard.writeText(inviteUrl)
-      .then(() => alert("招待リンクをコピーしました"))
-      .catch(() => alert("コピーに失敗しました"));
+    navigator.clipboard.writeText(inviteUrl);
   };
 
+  // データ未取得時は何も表示しない
   if (!user) return null;
 
   return (
@@ -180,9 +152,9 @@ export default function MyPage() {
           </button>
 
           {showModal && (
-            <ConfirmModal
-              onConfirm={handleDelete}
-              onCancel={() => setShowModal(false)}
+            <DeleteModal
+              onConfirm={handleDelete}     // 削除処理
+              onCancel={() => setShowModal(false)} // モーダルを閉じる
             />
           )}
         </>

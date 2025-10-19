@@ -10,8 +10,6 @@ export default function SidebarLayout() {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
 
-      <Header />
-
       {/* PCサイドバー */}
       <div className="hidden lg:block w-56 flex-shrink-0">
         <Sidebar role={role} />

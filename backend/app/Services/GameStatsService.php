@@ -119,7 +119,7 @@ class GameStatsService
     {
         return [
             'id' => $game->id,
-            'formatted_date' => $game->date->format('Y-m-d (D)'),
+            'date' => $game->date->locale('ja')->isoFormat('YYYY-MM-DD（ddd）'),
             'game_type' => $game->game_type,
             'tournament' => $game->tournament,
             'result' => $game->result,

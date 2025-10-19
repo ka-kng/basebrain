@@ -10,6 +10,8 @@ class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
+     // 【テスト内容】
+     // 新規ユーザー登録API（/api/register）が正常に動作することを確認する。
     public function test_new_users_can_register(): void
     {
         // 事前にチーム作成

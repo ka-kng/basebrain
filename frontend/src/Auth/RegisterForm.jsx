@@ -153,7 +153,7 @@ export default function RegisterForm() {
           <p className='text-gray-600 text-sm'>※選択に応じて下の入力欄が変わります</p>
 
           <RadioWithInput
-            label="チームを作成したい (首脳陣・マネージャー)"
+            label="チームを作成したい (管理者)"
             radioValue="coach"
             selectedValue={form.role}
             onChange={() => setForm(prev => ({ ...prev, role: 'coach' }))}

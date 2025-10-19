@@ -51,24 +51,23 @@ export default function LoginForm() {
     } catch (err) {
       const data = err.response?.data;
 
-      if (data?.errors) {
-
-        setErrors(data.errors);
-
-      } else if (data?.emailPass) {
-
-        setGeneralError(data.emailPass[0]);
-
-      } else if (data?.emailVerified === false) {
-
-        setGeneralError(data.message || 'メール認証が完了していません');
+      // 1. メール未認証
+      if (data?.errors?.emailVerified?.[0] === false) {
+        setGeneralError(data.errors.message?.[0] || 'メール認証が完了していません');
         setShowResend(true);
-
-      } else {
-
+      }
+      // 2. バリデーションエラー
+      else if (data?.errors) {
+        setErrors(data.errors);
+      }
+      // 3. メール/パスワードエラー
+      else if (data?.emailPass) {
+        setGeneralError(data.emailPass[0]);
+      }
+      // 4. その他
+      else {
         setGeneralError('ログインに失敗しました。時間をおいて再度お試しください。');
         console.error(err);
-
       }
     }
 
