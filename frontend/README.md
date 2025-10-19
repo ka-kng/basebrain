@@ -75,103 +75,81 @@
 <table>
 <tr>
   <td valign="top">
-    ホーム<br>
-    <img src="docs/screenshots/ホーム.png" width="300"><br>
+    ダッシュボード(coach)<br>
+    <img src="../docs/screenshots/【ダッシュボード(coach)】チーム成績画面.jpeg" width="300"><br>
   </td>
   <td valign="top">
-    記録<br>
-    <img src="docs/screenshots/記録.png" width="300"><br>
-  </td>
-  <td valign="top">
-    マイページ<br>
-    <img src="docs/screenshots/マイページ.jpeg" width="300">
+    ダッシュボード(player)<br>
+    <img src="../docs/screenshots/【ダッシュボード(player)】個人成績画面.jpeg" width="300"><br>
   </td>
 </tr>
+
 <tr>
   <td valign="top">
-    記録一覧<br>
-    <img src="docs/screenshots/記録一覧.png" width="300">
+    打者ランキング<br>
+    <img src="../docs/screenshots/【ランキング】打者ランキング.jpeg" width="300">
   <td valign="top">
-    記録詳細<br>
-    <img src="docs/screenshots/記録詳細.jpeg" width="300">
+    投手ランキング<br>
+    <img src="../docs/screenshots/【ランキング】投手ランキング.jpeg" width="300">
   </td>
 </tr>
-</table>
 
-## グラフ表示
-
-<table>
 <tr>
   <td valign="top">
-    【週】体重<br>
-    <img src="docs/screenshots/【週】体重.png" width="300"><br>
-  </td>
-
+    試合一覧<br>
+    <img src="../docs/screenshots/【記録】試合一覧ページ.jpeg" width="300">
   <td valign="top">
-    【月】体重<br>
-    <img src="docs/screenshots/【月】体重.png" width="300"><br>
-  </td>
-
-  <td valign="top">
-    【年】体重<br>
-    <img src="docs/screenshots/【年】体重.png" width="300"><br>
+    試合詳細<br>
+    <img src="../docs/screenshots/【記録】試合詳細ページ.jpeg" width="300">
   </td>
 </tr>
-</table>
 
-<table>
 <tr>
   <td valign="top">
-    【週】BMI<br>
-    <img src="docs/screenshots/【週】BMI.png" width="300"><br>
-  </td>
-
+    試合登録ページ<br>
+    <img src="../docs/screenshots/【記録】試合登録ページ.jpeg" width="300">
   <td valign="top">
-    【月】BMI<br>
-    <img src="docs/screenshots/【月】BMI.png" width="300"><br>
+    打撃成績登録ページ<br>
+    <img src="../docs/screenshots/【記録】打撃成績登録ページ.jpeg" width="300">
   </td>
-
   <td valign="top">
-    【年】BMI<br>
-    <img src="docs/screenshots/【年】BMI.png" width="300"><br>
+    登録成績登録ページ<br>
+    <img src="../docs/screenshots/【記録】投手成績登録ページ.jpeg" width="300">
+  </td>
+  <td valign="top">
+    登録結果ページ<br>
+    <img src="../docs/screenshots/【記録】登録結果ページ.jpeg" width="300">
   </td>
 </tr>
-</table>
 
-<table>
 <tr>
   <td valign="top">
-    【週】体脂肪率<br>
-    <img src="docs/screenshots/【週】体脂肪率.png" width="300"><br>
-  </td>
-
+    スケジュール(coach)予定追加モーダル<br>
+    <img src="../docs/screenshots/【スケジュール(coach)】予定追加.jpeg" width="300">
   <td valign="top">
-    【月】体脂肪率<br>
-    <img src="docs/screenshots/【月】体脂肪率.png" width="300"><br>
+    スケジュール(coach)予定確認画面<br>
+    <img src="../docs/screenshots/【スケジュール(coach)】予定確認画面.jpeg" width="300">
   </td>
-
   <td valign="top">
-    【年】体脂肪率<br>
-    <img src="docs/screenshots/【年】体脂肪率.png" width="300"><br>
+    スケジュール(player)予定確認画面<br>
+    <img src="../docs/screenshots/【スケジュール(player)】予定確認画面.jpeg" width="300">
   </td>
 </tr>
-</table>
 
-<table>
 <tr>
   <td valign="top">
-    【週】睡眠時間<br>
-    <img src="docs/screenshots/【週】睡眠時間.png" width="300"><br>
-  </td>
-
+    マイページ(coach)<br>
+    <img src="../docs/screenshots/【マイページ】coach.jpeg" width="300">
   <td valign="top">
-    【月】睡眠時間<br>
-    <img src="docs/screenshots/【月】睡眠時間.png" width="300"><br>
-  </td>
-
-  <td valign="top">
-    【年】睡眠時間<br>
-    <img src="docs/screenshots/【年】睡眠時間.png" width="300"><br>
+    マイページ(player)<br>
+    <img src="../docs/screenshots/【マイページ】player.jpeg" width="300">
   </td>
 </tr>
+
+<tr>
+  <td valign="top">
+    紹介ページ(未ログイン)<br>
+    <img src="../docs/screenshots/【未ログイン】紹介ページ.jpeg" width="300">
+</tr>
+
 </table>
