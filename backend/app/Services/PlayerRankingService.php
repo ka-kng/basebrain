@@ -13,9 +13,11 @@ class PlayerRankingService
     $records = BattingRecord::with('user')->get();
 
     $grouped = [];
+
     foreach ($records as $record) {
       $userId = $record->user_id;
 
+      // ユーザーごとの初期値を設定
       if (!isset($grouped[$userId])) {
         $grouped[$userId] = [
           'user_id' => $userId,
@@ -29,8 +31,10 @@ class PlayerRankingService
         ];
       }
 
+      // 単打・二塁打・三塁打・本塁打を合計してヒット数に加算
       $totalHits = $record->hits + $record->doubles + $record->triples + $record->home_runs;
 
+      // ユーザーごとに各指標を加算
       $grouped[$userId]['hits'] += $totalHits;
       $grouped[$userId]['at_bats'] += $record->at_bats;
       $grouped[$userId]['walks'] += $record->walks;
@@ -40,20 +44,26 @@ class PlayerRankingService
     }
 
     // 打率・出塁率計算
-    foreach ($grouped as &$player) {
+    foreach ($grouped as &$player) { // 参照渡し
+
+      // 打率 = ヒット数 / 打数
       $player['avg'] = $player['at_bats'] > 0 ? round($player['hits'] / $player['at_bats'], 3) : 0;
+
+      // 出塁率 = (ヒット + 四球) / (打数 + 四球)
       $player['obp'] = ($player['at_bats'] + $player['walks']) > 0
         ? round(($player['hits'] + $player['walks']) / ($player['at_bats'] + $player['walks']), 3)
         : 0;
     }
 
+    // Laravel Collection に変換して扱いやすく
     $collection = collect($grouped);
 
+    // 各指標ごとにランキングを作成
     return [
       'avg' => $collection->filter(fn($p) => $p['avg'] > 0)
-        ->sortByDesc('avg')
-        ->take($limit)
-        ->values()
+        ->sortByDesc('avg') // 降順でソート
+        ->take($limit) // 上位$limit件
+        ->values() // 配列のキーを連番に振り直す
         ->all(),
 
       'obp' => $collection->filter(fn($p) => $p['obp'] > 0)
@@ -94,9 +104,11 @@ class PlayerRankingService
     $records = PitchingRecord::with('user')->get();
 
     $grouped = [];
+
     foreach ($records as $record) {
       $userId = $record->user_id;
 
+      // ユーザーごとの初期値を設定
       if (!isset($grouped[$userId])) {
         $grouped[$userId] = [
           'user_id' => $userId,
@@ -108,26 +120,30 @@ class PlayerRankingService
         ];
       }
 
+      // 各指標を加算
       $grouped[$userId]['strikeouts'] += $record->strikeouts;
       $grouped[$userId]['outs'] += $record->pitching_innings_outs;
       $grouped[$userId]['earned_runs'] += $record->earned_runs;
 
+      // 勝利の場合は勝利数を加算
       if ($record->result === '勝利') {
         $grouped[$userId]['wins'] += 1;
       }
+
     }
 
     // 防御率計算
     foreach ($grouped as &$player) {
-      $innings = $player['outs'] / 3;
+      $innings = $player['outs'] / 3; // アウト数から投球回に変換
       $player['era'] = $innings > 0 ? round(($player['earned_runs'] * 9) / $innings, 2) : 0;
     }
 
     $collection = collect($grouped);
 
+    // 各指標ごとにランキングを作成
     return [
-      'era' => $collection->filter(fn($p) => $p['era'] > 0)
-        ->sortBy('era') // 小さい順
+      'era' => $collection
+        ->sortBy('era') // 防御率は小さい順
         ->take($limit)
         ->values()
         ->all(),
@@ -137,7 +153,7 @@ class PlayerRankingService
         ->take($limit)
         ->values()
         ->all(),
-        
+
       'strikeouts' => $collection->filter(fn($p) => $p['strikeouts'] > 0)
         ->sortByDesc('strikeouts')
         ->take($limit)

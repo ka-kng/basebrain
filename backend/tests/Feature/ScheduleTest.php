@@ -82,7 +82,7 @@ class ScheduleTest extends TestCase
                          ->deleteJson("/api/schedules/{$schedule->id}");
 
         $response->assertStatus(200)
-                 ->assertJson(['message' => 'Deleted successfully']);
+                 ->assertJson(['message' => 'スケジュールを削除しました']);
 
         $this->assertDatabaseMissing('schedules', ['id' => $schedule->id]);
     }

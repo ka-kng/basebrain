@@ -31,6 +31,7 @@ class ManagerDashboardService
 
     // 打撃成績を取得（gameと結合）
     $battingRecords = DB::table('batting_records')
+      // games テーブルと結合（batting_records だけではチームがわからないため、チームを特定するために結合）
       ->join('games', 'batting_records.game_id', '=', 'games.id')
       ->where('games.team_id', $teamId)
       ->select('batting_records.*')

@@ -39,9 +39,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('records/batting', BattingController::class);
 
     // ピッチング記録
-    Route::prefix('records/pitching')->group(function () {
-        Route::get('registered-users', [PitchingController::class, 'registeredPitchers']);
-    });
+    Route::get('/records/pitching/registered-users', [PitchingController::class, 'registeredPitchers']);
+
     Route::apiResource('records/pitching', PitchingController::class);
 
     Route::get('/records/summary', [SummaryController::class, 'summaryResult']);

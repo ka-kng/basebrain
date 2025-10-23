@@ -52,6 +52,6 @@ class ScheduleController extends Controller
         $schedule = Schedule::findOrFail($id);
         $this->service->deleteSchedule($schedule);
 
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'スケジュールを削除しました']);
     }
 }
