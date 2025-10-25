@@ -30,7 +30,6 @@ class BattingServiceTest extends TestCase
     }
 
     // 【テスト内容】新しい打撃記録が正しくDBに作成されること
-
     public function test_store_creates_a_new_batting_record()
     {
         $data = [
@@ -64,7 +63,6 @@ class BattingServiceTest extends TestCase
     }
 
     // 【テスト内容】既存の打撃記録が update により正しく更新されること
-
     public function test_update_modifies_existing_batting_record()
     {
         $record = BattingRecord::factory()->create([
@@ -93,7 +91,6 @@ class BattingServiceTest extends TestCase
     }
 
     // 【テスト内容】打撃記録が destroy により削除されること
-
     public function test_destroy_deletes_batting_record()
     {
         $record = BattingRecord::factory()->create([
