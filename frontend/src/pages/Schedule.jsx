@@ -40,7 +40,7 @@ const ScheduleModal = ({ show, onClose, form, onChange, onSubmit, editMode }) =>
 
 // 日付ごとのイベントリスト
 const DayEventList = ({ date, events, onEdit, onDelete, role }) => {
-  // 選択した日付のイベントのみ抽出
+  // useMemoで不要な再計算を防ぎつつ、選択した日付と一致するイベントのみ抽出
   const dayEvents = useMemo(
     () => events.filter(ev => new Date(ev.start).toDateString() === new Date(date).toDateString()),
     [events, date]
@@ -94,10 +94,10 @@ export default function Schedule() {
 
   useEffect(() => {
     // ログイン中ユーザー情報取得
-    axios.get("/api/user").then(res => setRole(res.data.role));
+    axios.get("/user").then(res => setRole(res.data.role));
 
     // スケジュール取得
-    axios.get("/api/schedules").then(res => {
+    axios.get("/schedules").then(res => {
       // FullCalendar用の形式に整形
       setEvents(res.data.map(ev => ({ id: ev.id, start: ev.date, extendedProps: { ...ev } })));
     });
@@ -108,16 +108,17 @@ export default function Schedule() {
   // 新規登録処理
   const handleRegister = () => {
     if (!form.date) return alert("日付を指定してください");
-    axios.post("/api/schedules", form).then(res => {
+    axios.post("/schedules", form).then(res => {
+      // 登録した予定をeventsへ追加
       setEvents([...events, { id: res.data.id, start: res.data.date, extendedProps: res.data }]);
-      setShowModal(false);
-      setForm({ date: "", time: "", type: "", location: "", note: "" });
+      setShowModal(false); // モーダルを閉じる
+      setForm({ date: "", time: "", type: "", location: "", note: "" }); // フォーム初期化
     });
   };
 
   // 更新処理
   const handleUpdate = () => {
-    axios.put(`/api/schedules/${editId}`, form).then(res => {
+    axios.put(`/schedules/${editId}`, form).then(res => {
       setEvents(events.map(ev => (ev.id === editId ? { ...ev, extendedProps: res.data, start: res.data.date } : ev)));
       setEditId(null);
       setShowModal(false);
@@ -127,7 +128,7 @@ export default function Schedule() {
 
   // 削除処理
   const handleDelete = id => {
-    axios.delete(`/api/schedules/${id}`).then(() => setEvents(events.filter(ev => ev.id !== id)));
+    axios.delete(`/schedules/${id}`).then(() => setEvents(events.filter(ev => ev.id !== id)));
   };
 
   // 編集ボタンを押したとき

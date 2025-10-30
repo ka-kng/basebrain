@@ -6,7 +6,7 @@ export default function ManagerDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("/api/dashboard/manager")
+    axios.get("/dashboard/manager")
       .then(res => setData(res.data))
       .finally(() => setLoading(false));
   }, []);

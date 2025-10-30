@@ -8,7 +8,7 @@ import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx';
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = '/';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

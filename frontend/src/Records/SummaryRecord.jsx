@@ -15,7 +15,7 @@ export default function SummaryRecord() {
     if (!game_id) return navigate("/records/game");
 
     axios
-      .get(`/api/records/summary?game_id=${game_id}`)
+      .get(`/records/summary?game_id=${game_id}`)
       .then((res) => {
         setGame(res.data.game);
         setBatters(res.data.batters);

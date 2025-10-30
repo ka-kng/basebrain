@@ -10,7 +10,7 @@ export default function PlayerRanking() {
   // APIから打者・投手ランキング取得
   useEffect(() => {
     axios
-      .get("/api/player/ranking")
+      .get("/player/ranking")
       .then((res) => {
         setBattingRecords(res.data.battingRecords);
         setPitchingRecords(res.data.pitchingRecords);
@@ -81,7 +81,7 @@ export default function PlayerRanking() {
 
               </li>
             ))}
-            
+
           </ul>
         </div>
       );

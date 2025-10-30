@@ -7,7 +7,7 @@ export default function GameList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("/api/games")
+    axios.get("/games")
       .then(res => setGames(res.data))
       .catch(err => console.error(err));
   }, []);

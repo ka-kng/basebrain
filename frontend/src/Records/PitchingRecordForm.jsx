@@ -87,7 +87,7 @@ export default function PitchingRecordForm() {
   // 選手一覧取得
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("/api/users/pitcher");
+      const res = await axios.get("/users/pitcher");
       setUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch users:", err);
@@ -99,7 +99,7 @@ export default function PitchingRecordForm() {
   const fetchRegisteredUserIds = async (gameId = form.game_id) => {
     if (!gameId) return;
     try {
-      const res = await axios.get(`/api/records/pitching/registered-users?game_id=${gameId}`);
+      const res = await axios.get(`/records/pitching/registered-users?game_id=${gameId}`);
       setRegisteredPitchers(res.data);
     } catch (err) {
       console.error("Failed to fetch registered pitchers:", err);
@@ -122,7 +122,7 @@ export default function PitchingRecordForm() {
   // 編集モード時：既存データを取得してフォームにセット
   useEffect(() => {
     if (!isEdit) return;
-    axios.get(`/api/records/pitching/${id}`)
+    axios.get(`/records/pitching/${id}`)
       .then(res => { setForm(res.data); fetchRegisteredUserIds(res.data.game_id); })
       .catch(err => { console.error(err); alert("データの取得に失敗しました"); });
   }, [id, isEdit]);
@@ -144,10 +144,10 @@ export default function PitchingRecordForm() {
   const submitForm = async () => {
     try {
       if (isEdit) {
-        await axios.put(`/api/records/pitching/${id}`, form);
+        await axios.put(`/records/pitching/${id}`, form);
         navigate(`/games/${form.game_id}`);
       } else {
-        await axios.post("/api/records/pitching", form);
+        await axios.post("/records/pitching", form);
       }
     } catch (err) {
       console.error("Submit failed:", err);
@@ -195,7 +195,7 @@ export default function PitchingRecordForm() {
         // 登録済み選手は除外
         : !registeredPitchers.includes(u.id)
     );
-    // useMemo の依存配列
+
     // users / registeredPitchers / form.user_id / isEdit が変わったときだけ再計算
   }, [users, registeredPitchers, form.user_id, isEdit]);
 

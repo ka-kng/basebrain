@@ -15,7 +15,7 @@ export default function PlayerDashboard() {
     if (!user) return;
     setLoading(true);
 
-    axios.get("/api/dashboard/player")
+    axios.get("/dashboard/player")
       .then(res => {
         setDashboard(res.data);
       })
