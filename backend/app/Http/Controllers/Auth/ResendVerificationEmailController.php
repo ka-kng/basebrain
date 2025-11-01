@@ -11,7 +11,7 @@ class ResendVerificationEmailController extends Controller
 {
     public function __construct(private EmailVerificationService $service) {}
 
-    // メール再送
+    // メール再送 API
     public function __invoke(Request $request)
     {
         $request->validate([
@@ -21,11 +21,17 @@ class ResendVerificationEmailController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if ($user->hasVerifiedEmail()) {
-            return redirect(config('app.frontend_url') . '/login?verified=1&message=already_verified');
+            return response()->json([
+                'resent' => false,
+                'message' => 'already_verified'
+            ]);
         }
 
         $this->service->resend($user);
 
-        return redirect(config('app.frontend_url') . '/login?resent=1');
+        return response()->json([
+            'resent' => true,
+            'message' => 'verification_email_sent'
+        ]);
     }
 }

@@ -14,24 +14,21 @@ class VerifyEmailController extends Controller
     // メール認証
     public function __invoke(Request $request, $id, $hash)
     {
-        $user = User::find($id);
+       $user = User::find($id);
 
-        if (! $user) {
-            return redirect(config('app.frontend_url') . '/login?verified=0&error=user_not_found');
-        }
-
-        $verified = $this->service->verify($user, $hash);
-
-        $status = $verified ? 1 : 0;
-        $error = $verified ? '' : 'invalid';
-
-        $url = config('app.frontend_url') . "/login?verified={$status}";
-
-        // エラーがあるときだけ &error= を追加
-        if (!empty($error)) {
-            $url .= "&error={$error}";
-        }
-
-        return redirect($url);
+       if (! $user) {
+          return response()->json([
+              'verified' => false,
+              'error' => 'user_not_found',
+          ], 404);
     }
+
+      $verified = $this->service->verify($user, $hash);
+
+      return response()->json([
+          'verified' => $verified,
+          'error' => $verified ? null : 'invalid',
+      ]);
+    }
+
 }

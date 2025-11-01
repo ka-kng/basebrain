@@ -4,13 +4,19 @@ namespace App\Services;
 
 use App\Models\BattingRecord;
 use App\Models\PitchingRecord;
+use Illuminate\Support\Facades\Auth;
 
 class PlayerRankingService
 {
   // 打者ランキング（指標ごとにソート、0は除外）
   public function getBattingRanking($limit = 5)
   {
-    $records = BattingRecord::with('user')->get();
+    $teamId = Auth::user()->team_id; // ログイン中のチームID取得
+
+    // チームごとにフィルタ
+    $records = BattingRecord::with('user')
+      ->whereHas('user', fn($q) => $q->where('team_id', $teamId))
+      ->get();
 
     $grouped = [];
 
@@ -101,7 +107,11 @@ class PlayerRankingService
   // 投手ランキング（指標ごとにソート、0は除外）
   public function getPitchingRanking($limit = 5)
   {
-    $records = PitchingRecord::with('user')->get();
+    $teamId = Auth::user()->team_id;
+
+    $records = PitchingRecord::with('user')
+        ->whereHas('user', fn($q) => $q->where('team_id', $teamId))
+        ->get();
 
     $grouped = [];
 
