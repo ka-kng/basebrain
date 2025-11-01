@@ -10,19 +10,26 @@ export const AuthProvider = ({ children }) => {
 
   // ページ読み込み時にユーザー情報を取得
   useEffect(() => {
-    axios.get("/api/user")
+    axios.get("/api/user", { withCredentials: true })
       .then(res => setUser(res.data))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);
 
+  // login を token と userData 両方に対応
+  const login = (accessToken, userData) => {
+    localStorage.setItem("access_token", accessToken);
+    setUser(userData);
+  };
+
   const logout = async () => {
-    await axios.post("/api/logout");
+    await axios.post("/api/logout", {}, { withCredentials: true });
+    localStorage.removeItem('access_token');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, setUser, logout }}>
+    <AuthContext.Provider value={{ user, loading, setUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

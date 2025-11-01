@@ -1,4 +1,16 @@
-# Basebrain（野球チームマネジメントシステム）
+# 野球チーム管理アプリ
+
+URL: https://kb-sw.com
+
+テストユーザー(コーチ)
+メール: coach@example.com
+パスワード: password
+
+テストユーザー(選手)
+メール: player@example.com
+パスワード: password
+
+開発・確認用のサンプルユーザーです。
 
 # 📘 概要
 野球チームの監督・コーチ・マネージャー向けに、選手管理・試合管理・成績分析・スケジュール管理などを行えるチームマネジメントアプリ。<br>
@@ -18,7 +30,7 @@
 # 技術スタック
 
 **バックエンド** | PHP 8.4 / Laravel 12<br>
-**フロントエンド** | react / Tailwind CSS<br>
+**フロントエンド** | react 19 / Tailwind CSS<br>
 **データベース** | MySQL 8<br>
 **環境構築** | Docker<br>
 **テスト** | PHPUnit<br>

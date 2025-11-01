@@ -94,10 +94,10 @@ export default function Schedule() {
 
   useEffect(() => {
     // ログイン中ユーザー情報取得
-    axios.get("/user").then(res => setRole(res.data.role));
+    axios.get("/api/user").then(res => setRole(res.data.role));
 
     // スケジュール取得
-    axios.get("/schedules").then(res => {
+    axios.get("/api/schedules").then(res => {
       // FullCalendar用の形式に整形
       setEvents(res.data.map(ev => ({ id: ev.id, start: ev.date, extendedProps: { ...ev } })));
     });
@@ -108,7 +108,7 @@ export default function Schedule() {
   // 新規登録処理
   const handleRegister = () => {
     if (!form.date) return alert("日付を指定してください");
-    axios.post("/schedules", form).then(res => {
+    axios.post("/api/schedules", form).then(res => {
       // 登録した予定をeventsへ追加
       setEvents([...events, { id: res.data.id, start: res.data.date, extendedProps: res.data }]);
       setShowModal(false); // モーダルを閉じる
@@ -118,7 +118,7 @@ export default function Schedule() {
 
   // 更新処理
   const handleUpdate = () => {
-    axios.put(`/schedules/${editId}`, form).then(res => {
+    axios.put(`/api/schedules/${editId}`, form).then(res => {
       setEvents(events.map(ev => (ev.id === editId ? { ...ev, extendedProps: res.data, start: res.data.date } : ev)));
       setEditId(null);
       setShowModal(false);
@@ -128,7 +128,7 @@ export default function Schedule() {
 
   // 削除処理
   const handleDelete = id => {
-    axios.delete(`/schedules/${id}`).then(() => setEvents(events.filter(ev => ev.id !== id)));
+    axios.delete(`/api/schedules/${id}`).then(() => setEvents(events.filter(ev => ev.id !== id)));
   };
 
   // 編集ボタンを押したとき

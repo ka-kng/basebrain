@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import InputField from '../components/InputField';
 import RadioWithInput from '../components/RadioWithInput';
-import BackgroudLayout from '../layout/Background';
+import BackgroundLayout from '../layout/Background';
 
 export default function RegisterForm() {
   const [form, setForm] = useState({
@@ -104,7 +104,7 @@ export default function RegisterForm() {
 
   return (
 
-    <BackgroudLayout>
+    <BackgroundLayout>
       <div className='space-y-4 w-full max-w-3xl bg-white shadow-md rounded-lg p-8'>
         <h1 className='text-center mb-10 text-left text-2xl'>新規会員登録</h1>
 
@@ -198,6 +198,6 @@ export default function RegisterForm() {
 
         </form>
       </div>
-    </BackgroudLayout>
+    </BackgroundLayout>
   );
 };

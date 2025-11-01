@@ -15,7 +15,7 @@ export default function MyPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("/mypage");
+        const res = await axios.get("/api/mypage");
         setUser(res.data);
         setName(res.data.name || "");
         setEmail(res.data.email || "");
@@ -46,7 +46,7 @@ export default function MyPage() {
       const payload = { name, email };
       if (user.role === "coach") payload.team_name = teamName; // ユーザーがcoachの場合、チーム名も送信
 
-      const res = await axios.put(`/mypage`, payload);
+      const res = await axios.put(`/api/mypage`, payload);
       setUser(res.data);
       alert("更新しました");
     } catch (err) {
@@ -58,7 +58,7 @@ export default function MyPage() {
   // アカウント削除処理
   const handleDelete = async () => {
     try {
-      await axios.delete(`/mypage`);
+      await axios.delete(`/api/mypage`);
       alert("アカウントを削除しました");
       window.location.href = "/";
     } catch (err) {

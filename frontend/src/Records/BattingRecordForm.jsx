@@ -76,7 +76,7 @@ export default function BattingRecordForm() {
   // 選手一覧を取得（同チームの打者）
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("/users/batter");
+      const res = await axios.get("/api/users/batter");
       setUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch users:", err);
@@ -88,7 +88,7 @@ export default function BattingRecordForm() {
   const fetchRegisteredUserIds = async (gameId = form.game_id) => {
     if (!gameId) return;
     try {
-      const res = await axios.get(`/records/batting/registered-users?game_id=${gameId}`);
+      const res = await axios.get(`/api/records/batting/registered-users?game_id=${gameId}`);
       setRegisteredBatters(res.data);
     } catch (err) {
       console.error("Failed to fetch registered batters:", err);
@@ -111,7 +111,7 @@ export default function BattingRecordForm() {
   // 編集モード時：既存データを取得してフォームにセット
   useEffect(() => {
     if (!isEdit || !id) return;
-    axios.get(`/records/batting/${id}`)
+    axios.get(`/api/records/batting/${id}`)
       .then(res => { setForm(res.data); fetchRegisteredUserIds(res.data.game_id); })
       .catch(err => { console.error(err); alert("データの取得に失敗しました"); });
   }, [id, isEdit]);
@@ -133,10 +133,10 @@ export default function BattingRecordForm() {
   const submitForm = async () => {
     try {
       if (isEdit) {
-        await axios.put(`/records/batting/${id}`, form);
+        await axios.put(`/api/records/batting/${id}`, form);
         navigate(`/games/${form.game_id}`);
       } else {
-        await axios.post("/records/batting", form);
+        await axios.post("/api/records/batting", form);
       }
     } catch (err) {
       console.error("Submit failed:", err);

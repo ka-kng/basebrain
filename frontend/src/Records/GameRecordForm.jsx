@@ -24,7 +24,7 @@ export default function GameRecordForm() {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    axios.get(`/games/${id}`)
+    axios.get(`/api/games/${id}`)
       .then(res => {
         const data = res.data;
         setForm({
@@ -78,11 +78,11 @@ export default function GameRecordForm() {
 
     try {
       if (id) {
-        await axios.put(`/games/${id}`, form);
+        await axios.put(`/api/games/${id}`, form);
         toast.success("試合を更新しました");
         navigate(`/games/${id}`);
       } else {
-        const res = await axios.post("/games", form);
+        const res = await axios.post("/api/games", form);
         toast.success("試合を登録しました");
         // 打撃登録ページへ遷移、game_idをstateで渡す
         navigate("/records/batting", { state: { game_id: res.data.id } });

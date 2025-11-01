@@ -11,7 +11,7 @@ export default function ResetPassword() {
   const token = searchParams.get("token") || "";
   const emailQuery = searchParams.get("email") || "";
 
-  const [email, setEmail] = useState(emailQuery);
+  const [email, setEmail] = useState(emailQuery ? decodeURIComponent(emailQuery) : "");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [errors, setErrors] = useState({});
@@ -23,11 +23,17 @@ export default function ResetPassword() {
     setMessage("");
 
     try {
+      const decodedEmail = decodeURIComponent(email.trim());
+
+      await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
+
       await axios.post("/api/reset-password", {
         token,
-        email,
+        email: decodedEmail,
         password,
         password_confirmation: passwordConfirmation,
+      }, {
+        withCredentials: true,
       });
 
       setMessage("パスワードが更新されました。ログインページへ移動します。");

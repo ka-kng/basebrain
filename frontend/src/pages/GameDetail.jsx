@@ -9,9 +9,9 @@ import DeleteModal from "../components/DeleteModal";
 
 // APIエンドポイント定義
 const API = {
-  games: "/games",
-  batting: "/users/batter",
-  pitching: "/users/pitcher",
+  games: "/api/games",
+  batting: "/api/users/batter",
+  pitching: "/api/users/pitcher",
 };
 
 // 共通ボタンスタイル

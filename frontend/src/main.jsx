@@ -6,9 +6,7 @@ import './index.css'
 import './App.css'
 import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx';
-
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+import './lib/axios.js'
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -4,171 +4,100 @@ namespace App\Services;
 
 use App\Models\BattingRecord;
 use App\Models\PitchingRecord;
-use Illuminate\Support\Facades\Auth;
 
-class PlayerRankingService
+class PlayerDashboardService
 {
-  // 打者ランキング（指標ごとにソート、0は除外）
-  public function getBattingRanking($limit = 5)
+  // ユーザーIDごとの個人成績データを取得
+  public function getPlayerDashboardData(int $userId)
   {
-    $teamId = Auth::user()->team_id; // ログイン中のチームID取得
+    //  打者成績を取得
+    $battingRecords = BattingRecord::where('user_id', $userId)->get();
 
-    // チームごとにフィルタ
-    $records = BattingRecord::with('user')
-      ->whereHas('user', fn($q) => $q->where('team_id', $teamId))
-      ->get();
+    //  投手成績を取得
+    $pitchingRecords = PitchingRecord::where('user_id', $userId)->get();
 
-    $grouped = [];
+    // 試合数（打撃成績レコードから 試合IDだけを取り出し、重複をなくす）
+    $games = $battingRecords->pluck('game_id')->unique();
 
-    foreach ($records as $record) {
-      $userId = $record->user_id;
+    //  打者統計計算
+    $totalSingles = $battingRecords->sum('hits'); // 一塁打
+    $totalDoubles = $battingRecords->sum('doubles'); // 二塁打
+    $totalTriples = $battingRecords->sum('triples'); // 三塁打
+    $totalHomeRuns = $battingRecords->sum('home_runs'); // 本塁打
+    $totalAtBats = $battingRecords->sum('at_bats'); // 打数
+    $totalWalks = $battingRecords->sum('walks'); // 四死球
+    $totalRuns = $battingRecords->sum('runs'); // 得点
+    $totalRbis = $battingRecords->sum('rbis'); // 打点
+    $totalSteals = $battingRecords->sum('steals'); // 盗塁
+    $totalCaughtStealing = $battingRecords->sum('caught_stealing'); // 盗塁成功数
+    $totalStrikeouts = $battingRecords->sum('strikeouts'); // 三振
+    $totalErrors = $battingRecords->sum('errors'); // 失策
 
-      // ユーザーごとの初期値を設定
-      if (!isset($grouped[$userId])) {
-        $grouped[$userId] = [
-          'user_id' => $userId,
-          'name' => $record->user->name,
-          'hits' => 0,
-          'at_bats' => 0,
-          'walks' => 0,
-          'home_runs' => 0,
-          'rbis' => 0,
-          'caught_stealing' => 0,
-        ];
-      }
+    // 合計安打 = 一塁打 + 二塁打 + 三塁打 + 本塁打
+    $totalHits = $totalSingles + $totalDoubles + $totalTriples + $totalHomeRuns;
 
-      // 単打・二塁打・三塁打・本塁打を合計してヒット数に加算
-      $totalHits = $record->hits + $record->doubles + $record->triples + $record->home_runs;
+    // 打率 (安打 / 打数) ※0.000形式に
+    $battingAverage = $totalAtBats ? number_format($totalHits / $totalAtBats, 3) : '0.000';
 
-      // ユーザーごとに各指標を加算
-      $grouped[$userId]['hits'] += $totalHits;
-      $grouped[$userId]['at_bats'] += $record->at_bats;
-      $grouped[$userId]['walks'] += $record->walks;
-      $grouped[$userId]['home_runs'] += $record->home_runs;
-      $grouped[$userId]['rbis'] += $record->rbis;
-      $grouped[$userId]['caught_stealing'] += $record->caught_stealing;
-    }
+    // 出塁率 (安打 + 四死球) / (打数 + 四死球)
+    $onBasePercentage = ($totalAtBats + $totalWalks)
+      ? number_format(($totalHits + $totalWalks) / ($totalAtBats + $totalWalks), 3)
+      : '0.000';
 
-    // 打率・出塁率計算
-    foreach ($grouped as &$player) { // 参照渡し
+    // 総塁打 = 一塁打 + 2*二塁打 + 3*三塁打 + 4*本塁打
+    $totalBases = $totalSingles + (2 * $totalDoubles) + (3 * $totalTriples) + (4 * $totalHomeRuns);
 
-      // 打率 = ヒット数 / 打数
-      $player['avg'] = $player['at_bats'] > 0 ? round($player['hits'] / $player['at_bats'], 3) : 0;
+    // 長打率 = 総塁打 / 打数
+    $sluggingPercentage = $totalAtBats ? number_format($totalBases / $totalAtBats, 3) : '0.000';
 
-      // 出塁率 = (ヒット + 四球) / (打数 + 四球)
-      $player['obp'] = ($player['at_bats'] + $player['walks']) > 0
-        ? round(($player['hits'] + $player['walks']) / ($player['at_bats'] + $player['walks']), 3)
-        : 0;
-    }
+    // 盗塁成功率 (%) = 盗塁成功 / 盗塁
+    $stealFailureRate = $totalSteals
+      ? number_format($totalCaughtStealing / $totalSteals, 3)
+      : '0.000';
 
-    // Laravel Collection に変換して扱いやすく
-    $collection = collect($grouped);
+    //  投手統計計算
+    $totalInningsOuts = $pitchingRecords->sum('pitching_innings_outs'); // 投球アウト
+    $totalInnings = $totalInningsOuts / 3;
+    $totalStrikeoutsPitcher = $pitchingRecords->sum('strikeouts'); // 奪三振
+    $totalHitsAllowed = $pitchingRecords->sum('hits_allowed'); // 被安打
+    $totalHrAllowed = $pitchingRecords->sum('hr_allowed'); // 被本塁打
+    $totalWalksGiven = $pitchingRecords->sum('walks_given'); // 与四死球
+    $totalRunsAllowed = $pitchingRecords->sum('runs_allowed'); // 失点
+    $totalEarnedRuns = $pitchingRecords->sum('earned_runs'); // 自責点
 
-    // 各指標ごとにランキングを作成
+    // 防御率 = (自責点 / 投球回) * 3
+    $era = $totalInnings > 0 ? number_format(($totalEarnedRuns * 9) / $totalInnings, 2) : '0.00';
+
+    //  JSON形式で返却
     return [
-      'avg' => $collection->filter(fn($p) => $p['avg'] > 0)
-        ->sortByDesc('avg') // 降順でソート
-        ->take($limit) // 上位$limit件
-        ->values() // 配列のキーを連番に振り直す
-        ->all(),
-
-      'obp' => $collection->filter(fn($p) => $p['obp'] > 0)
-        ->sortByDesc('obp')
-        ->take($limit)
-        ->values()
-        ->all(),
-
-      'hits' => $collection->filter(fn($p) => $p['hits'] > 0)
-        ->sortByDesc('hits')
-        ->take($limit)
-        ->values()
-        ->all(),
-
-      'home_runs' => $collection->filter(fn($p) => $p['home_runs'] > 0)
-        ->sortByDesc('home_runs')
-        ->take($limit)
-        ->values()
-        ->all(),
-
-      'rbis' => $collection->filter(fn($p) => $p['rbis'] > 0)
-        ->sortByDesc('rbis')
-        ->take($limit)
-        ->values()
-        ->all(),
-
-      'caught_stealing' => $collection->filter(fn($p) => $p['caught_stealing'] > 0)
-        ->sortByDesc('caught_stealing')
-        ->take($limit)
-        ->values()
-        ->all(),
-    ];
-  }
-
-  // 投手ランキング（指標ごとにソート、0は除外）
-  public function getPitchingRanking($limit = 5)
-  {
-    $teamId = Auth::user()->team_id;
-
-    $records = PitchingRecord::with('user')
-        ->whereHas('user', fn($q) => $q->where('team_id', $teamId))
-        ->get();
-
-    $grouped = [];
-
-    foreach ($records as $record) {
-      $userId = $record->user_id;
-
-      // ユーザーごとの初期値を設定
-      if (!isset($grouped[$userId])) {
-        $grouped[$userId] = [
-          'user_id' => $userId,
-          'name' => $record->user->name,
-          'strikeouts' => 0,
-          'outs' => 0,
-          'earned_runs' => 0,
-          'wins' => 0,
-        ];
-      }
-
-      // 各指標を加算
-      $grouped[$userId]['strikeouts'] += $record->strikeouts;
-      $grouped[$userId]['outs'] += $record->pitching_innings_outs;
-      $grouped[$userId]['earned_runs'] += $record->earned_runs;
-
-      // 勝利の場合は勝利数を加算
-      if ($record->result === '勝利') {
-        $grouped[$userId]['wins'] += 1;
-      }
-
-    }
-
-    // 防御率計算
-    foreach ($grouped as &$player) {
-      $innings = $player['outs'] / 3; // アウト数から投球回に変換
-      $player['era'] = $innings > 0 ? round(($player['earned_runs'] * 9) / $innings, 2) : 0;
-    }
-
-    $collection = collect($grouped);
-
-    // 各指標ごとにランキングを作成
-    return [
-      'era' => $collection
-        ->sortBy('era') // 防御率は小さい順
-        ->take($limit)
-        ->values()
-        ->all(),
-
-      'wins' => $collection->filter(fn($p) => $p['wins'] > 0)
-        ->sortByDesc('wins')
-        ->take($limit)
-        ->values()
-        ->all(),
-
-      'strikeouts' => $collection->filter(fn($p) => $p['strikeouts'] > 0)
-        ->sortByDesc('strikeouts')
-        ->take($limit)
-        ->values()
-        ->all(),
+      'games' => $games->count(), // 試合数
+      'batting' => [
+        'batting_average' => $battingAverage, // 打率
+        'on_base_percentage' => $onBasePercentage, // 出塁率
+        'slugging_percentage' => $sluggingPercentage, // 長打率
+        'steal_success_rate' => $stealFailureRate, // 盗塁成功率
+        'at_bats' => $totalAtBats, // 打数
+        'singles' => $totalSingles, // 一塁打
+        'doubles' => $totalDoubles, // 二塁打
+        'triples' => $totalTriples, // 三塁打
+        'home_runs' => $totalHomeRuns, // 本塁打
+        'runs' => $totalRuns, // 得点
+        'rbis' => $totalRbis, // 打点
+        'walks' => $totalWalks, // 四死球
+        'steals' => $totalSteals, // 盗塁
+        'caught_stealing' => $totalCaughtStealing, // 盗塁死
+        'strikeouts' => $totalStrikeouts, // 三振
+        'errors' => $totalErrors, // 失策
+      ],
+      'pitching' => [
+        'era' => $era, // 防御率
+        'strikeouts' => $totalStrikeoutsPitcher, // 奪三振
+        'hits_allowed' => $totalHitsAllowed, // 被安打
+        'hr_allowed' => $totalHrAllowed, // 被本塁打
+        'walks_given' => $totalWalksGiven, // 与四死球
+        'runs_allowed' => $totalRunsAllowed, // 失点
+        'earned_runs' => $totalEarnedRuns, // 自責点
+      ],
     ];
   }
 }
