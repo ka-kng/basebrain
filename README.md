@@ -1,14 +1,14 @@
 # 野球チーム管理アプリ
 
-URL: https://kb-sw.com
+URL: https://kb-sw.com<br>
 
-テストユーザー(コーチ)
-メール: coach@example.com
-パスワード: password
+テストユーザー(コーチ)<br>
+メール: coach@example.com<br>
+パスワード: password<br>
 
-テストユーザー(選手)
-メール: player@example.com
-パスワード: password
+テストユーザー(選手)<br>
+メール: player@example.com<br>
+パスワード: password<br>
 
 開発・確認用のサンプルユーザーです。
 
