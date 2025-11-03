@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css'
 import './App.css'
 import App from './App.jsx'
-import { AuthProvider } from './contexts/AuthContext.jsx';
+import { AuthProvider } from './Auth/AuthContext.jsx';
 import './lib/axios.js'
 
 createRoot(document.getElementById('root')).render(

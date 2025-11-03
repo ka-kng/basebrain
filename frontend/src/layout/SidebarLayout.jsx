@@ -1,7 +1,6 @@
 import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../Auth/AuthContext";
 
 export default function SidebarLayout() {
   const { user } = useAuth();
@@ -15,7 +14,7 @@ export default function SidebarLayout() {
         <Sidebar role={role} />
       </div>
 
-      {/* モバイルボトムナビはSidebarコンポーネント内で md:hidden で制御 */}
+      {/* モバイルボトムナビはSidebarコンポーネント内でで制御 */}
       <Sidebar role={role} />
 
       {/* メインコンテンツ */}

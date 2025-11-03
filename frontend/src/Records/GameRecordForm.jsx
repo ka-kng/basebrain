@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast"; // トースト通知ライブラリをインポート
 import InputField from "../components/InputField";
 
+// GameRecordForm コンポーネント
 export default function GameRecordForm() {
-  const navigate = useNavigate();
-  const { id } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [form, setForm] = useState({
+  const navigate = useNavigate(); // ページ遷移用
+  const { id } = useParams(); // URL パラメータから game_id 取得
+  const [loading, setLoading] = useState(false); // 読み込み状態
+  const [errors, setErrors] = useState({}); // バリデーションエラー
+  const [form, setForm] = useState({ // フォーム状態
     date: "",
     game_type: "",
     tournament: "",
@@ -22,13 +23,13 @@ export default function GameRecordForm() {
 
   // 編集時: 試合情報を取得してフォームにセット
   useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    axios.get(`/api/games/${id}`)
+    if (!id) return;  // 新規登録なら何もしない
+    setLoading(true); // 読み込み開始
+    axios.get(`/api/games/${id}`) // API 呼び出し
       .then(res => {
         const data = res.data;
-        setForm({
-          date: data.date ? data.date.slice(0, 10) : "",
+        setForm({ // フォームにセット
+          date: data.date ? data.date.slice(0, 10) : "", // 日付のみ切り出し
           game_type: data.game_type,
           tournament: data.tournament,
           opponent: data.opponent,
@@ -38,25 +39,26 @@ export default function GameRecordForm() {
           result: data.result,
         });
       })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      .catch(console.error) // エラー時はコンソール表示
+      .finally(() => setLoading(false)); // 読み込み終了
   }, [id]);
 
   // 勝敗自動判定 team_score と opponent_score が入力されている場合
   useEffect(() => {
-    const team = parseInt(form.team_score, 10);
-    const opp = parseInt(form.opponent_score, 10);
-    if (!isNaN(team) && !isNaN(opp)) {
-      setForm(prev => ({
+    const team = parseInt(form.team_score, 10); // 自チームスコア数値化
+    const opp = parseInt(form.opponent_score, 10); // 相手スコア数値化
+    if (!isNaN(team) && !isNaN(opp)) { // 両方数値の場合
+      setForm(prev => ({ // 勝敗を自動セット
         ...prev,
         result: team > opp ? "勝利" : team < opp ? "敗北" : "引き分け",
       }));
     }
-  }, [form.team_score, form.opponent_score]);
+  }, [form.team_score, form.opponent_score]); // スコア変更時に再計算
 
+  // 入力値変更ハンドラー
   const handleChange = e => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm(prev => ({ ...prev, [name]: value })); // state 更新
   };
 
   // 戻るボタン
@@ -64,8 +66,8 @@ export default function GameRecordForm() {
 
   // フォーム送信
   const handleSubmit = async e => {
-    e.preventDefault();
-    const newErrors = {};
+    e.preventDefault(); // デフォルトのフォーム送信をキャンセル
+    const newErrors = {}; // バリデーションエラー初期化
     if (!form.date) newErrors.date = "試合日を入力してください";
     if (!form.game_type) newErrors.game_type = "試合種類を選択してください";
     if (!form.tournament) newErrors.tournament = "大会名を入力してください";
@@ -77,13 +79,13 @@ export default function GameRecordForm() {
     setErrors({});
 
     try {
-      if (id) {
-        await axios.put(`/api/games/${id}`, form);
-        toast.success("試合を更新しました");
-        navigate(`/games/${id}`);
+      if (id) { // 編集モード
+        await axios.put(`/api/games/${id}`, form); // PUT API
+        toast.success("試合を更新しました"); // トースト通知
+        navigate(`/games/${id}`); // 試合詳細へ遷移
       } else {
-        const res = await axios.post("/api/games", form);
-        toast.success("試合を登録しました");
+        const res = await axios.post("/api/games", form); // POST API
+        toast.success("試合を登録しました"); // トースト通知
         // 打撃登録ページへ遷移、game_idをstateで渡す
         navigate("/records/batting", { state: { game_id: res.data.id } });
       }

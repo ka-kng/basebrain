@@ -56,7 +56,7 @@ export default function Sidebar({ role }) {
         </ul>
       </aside>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile */}
       <aside
         className="flex lg:hidden fixed bottom-0 left-0 w-full h-16
                    bg-gray-900 flex justify-around items-center

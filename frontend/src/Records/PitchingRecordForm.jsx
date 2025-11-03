@@ -48,11 +48,12 @@ const InningsSelect = ({ value, onChange, error }) => (
   </>
 );
 
+
 export default function PitchingRecordForm() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { id } = useParams();
-  const isEdit = !!id;
+  const navigate = useNavigate(); // ページ遷移用
+  const location = useLocation(); // location.state 取得用
+  const { id } = useParams(); // URL パラメータ取得
+  const isEdit = !!id; // 編集モードかどうか
 
   const [form, setForm] = useState({
     game_id: "",
@@ -87,17 +88,17 @@ export default function PitchingRecordForm() {
   // 選手一覧取得
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("/api/users/pitcher");
-      setUsers(res.data);
+      const res = await axios.get("/api/users/pitcher"); // API 取得
+      setUsers(res.data); // state にセット
     } catch (err) {
       console.error("Failed to fetch users:", err);
       setUsers([]);
     }
   };
 
-  // すでに投手成績登録済みの選手IDを取得
+  // 登録済み投手IDを取得
   const fetchRegisteredUserIds = async (gameId = form.game_id) => {
-    if (!gameId) return;
+    if (!gameId) return; // game_id がない場合は何もしない
     try {
       const res = await axios.get(`/api/records/pitching/registered-users?game_id=${gameId}`);
       setRegisteredPitchers(res.data);
@@ -107,15 +108,15 @@ export default function PitchingRecordForm() {
     }
   };
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => { fetchUsers(); }, []); // 初回レンダー時に選手一覧取得
 
   // game_id取得と登録済み投手取得
   useEffect(() => {
-    const gameIdFromState = location.state?.game_id;
-    if (!isEdit && !gameIdFromState) return navigate("/records/game");
-    if (gameIdFromState) {
-      setForm(prev => ({ ...prev, game_id: gameIdFromState }));
-      fetchRegisteredUserIds(gameIdFromState);
+    const gameIdFromState = location.state?.game_id; // location.state から game_id を取り出す
+    if (!isEdit && !gameIdFromState) return navigate("/records/game"); // 新規モードで game_id が無ければ試合一覧に戻す
+    if (gameIdFromState) { // game_id が渡されていればフォームにセットして登録済みリストを取得
+      setForm(prev => ({ ...prev, game_id: gameIdFromState })); // form に game_id セット
+      fetchRegisteredUserIds(gameIdFromState); // 登録済み投手取得
     }
   }, [location.state, navigate, isEdit]);
 
@@ -144,10 +145,10 @@ export default function PitchingRecordForm() {
   const submitForm = async () => {
     try {
       if (isEdit) {
-        await axios.put(`/api/records/pitching/${id}`, form);
-        navigate(`/games/${form.game_id}`);
+        await axios.put(`/api/records/pitching/${id}`, form); // 編集時は PUT
+        navigate(`/games/${form.game_id}`); // 詳細ページに遷移
       } else {
-        await axios.post("/api/records/pitching", form);
+        await axios.post("/api/records/pitching", form); // 新規登録時は POST
       }
     } catch (err) {
       console.error("Submit failed:", err);
@@ -157,32 +158,32 @@ export default function PitchingRecordForm() {
 
   // 続けて登録用にフォーム初期化
   const resetFormForContinue = () => {
+    // game_id だけ残して他は空に
     setForm(prev => ({ ...Object.fromEntries(Object.keys(prev).map(k => [k, ""])), game_id: prev.game_id }));
-    fetchRegisteredUserIds();
+    fetchRegisteredUserIds(); // 再度登録済みリストを取得して選択肢を更新
   };
 
-  // 送信ボタン押下時
+  // 送信ボタン押下時のメイン処理
   const handleSubmit = async (e, action) => {
-    e.preventDefault();
-    const validationErrors = validateForm();
+    e.preventDefault(); // フォームのデフォルト送信を防ぐ
+    const validationErrors = validateForm(); // バリデーションを実行
     if (Object.keys(validationErrors).length) {
-      setErrors(validationErrors);
+      setErrors(validationErrors); // エラーがあるなら state にセットして早期リターン
       return;
     }
-    setErrors({});
+    setErrors({}); // エラーなしなのでエラー表示をクリア
     try {
       await submitForm();
-      if (!isEdit) {
-        if (action === "continue") resetFormForContinue();
-        else if (action === "summary") navigate("/records/summary", { state: { game_id: form.game_id } });
+      if (!isEdit) { // 新規登録時のみアクション分岐
+        if (action === "continue") resetFormForContinue(); // 続けて登録するならフォームリセット
+        else if (action === "summary") navigate("/records/summary", { state: { game_id: form.game_id } }); // 結果まとめへ
       }
     } catch {
       setErrors({ general: "通信エラーが発生しました" });
     }
   };
 
-  // 登録済みの選手を除外して選択肢に出す
-  // メモ化して不要な再計算を防ぐ
+  // 選択可能な選手リストを計算してメモ化（再計算を最小化）
   const selectableUsers = useMemo(() => {
     // users 配列をフィルターして「選択可能な選手だけ」を返す
     return users.filter(u =>

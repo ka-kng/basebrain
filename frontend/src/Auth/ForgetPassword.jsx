@@ -1,23 +1,23 @@
 import { useState } from "react";
 import axios from "axios";
-import { motion } from "framer-motion";
-import InputField from '../components/InputField';
+import { motion } from "framer-motion"; // アニメーション用の motion コンポーネントを読み込み
+import InputField from '../components/InputField'; // 独自の入力フォームコンポーネントを読み込み
 
-export default function ForgetPassword() {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [errors, setErrors] = useState({});
+export default function ForgetPassword() { // パスワードリセット画面のコンポーネント定義
+  const [email, setEmail] = useState(''); // 入力されたメールアドレスを管理
+  const [message, setMessage] = useState(''); // 成功メッセージを管理
+  const [errors, setErrors] = useState({}); // 入力エラーを管理
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrors({});
-    setMessage('');
+  const handleSubmit = async (e) => { // フォーム送信時の処理
+    e.preventDefault(); // ページリロードを防ぐ
+    setErrors({}); // 以前のエラーをリセット
+    setMessage(''); // 以前のメッセージをリセット
     try {
-      const res = await axios.post('/api/forgot-password', { email });
-      setMessage(res.data.status);
+      const res = await axios.post('/api/forgot-password', { email }); // APIにメールアドレスを送信
+      setMessage(res.data.status); // 成功メッセージをセット
     } catch (err) {
-      if (err.response?.data?.errors?.email) {
-        setErrors({ email: err.response.data.errors.email[0] });
+      if (err.response?.data?.errors?.email) { // バリデーションエラーがあれば
+        setErrors({ email: err.response.data.errors.email[0] });  // エラーメッセージをセット
       } else {
         setErrors({ email: 'エラーが発生しました' });
       }
@@ -26,17 +26,17 @@ export default function ForgetPassword() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0, y: -20 }} // 初期アニメーション: 少し上から透明状態
+      animate={{ opacity: 1, y: 0 }} // 表示時のアニメーション: 元の位置にフェードイン
+      transition={{ duration: 0.5 }} // アニメーション時間0.5秒
       className="flex items-center justify-center min-h-screen bg-gray-100 p-4"
     >
       <motion.form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit} // フォーム送信時にhandleSubmitを呼ぶ
         className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md text-left"
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.3 }}
+        initial={{ scale: 0.9 }} // 初期アニメーション: 少し縮小
+        animate={{ scale: 1 }} // 表示時に元のサイズに戻る
+        transition={{ duration: 0.3 }} // アニメーション時間0.3秒
       >
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           パスワードリセット
@@ -47,7 +47,7 @@ export default function ForgetPassword() {
           type="email"
           inputName="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)} // 入力内容が変わったときに実行される処理
           placeholder="example@example.com"
           error={errors.email}
         />

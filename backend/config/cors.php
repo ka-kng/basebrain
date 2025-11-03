@@ -26,7 +26,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        env('FRONTEND_URL', 'https://basebrain.ddns.net'),
+        env('FRONTEND_URL', 'https://kb-sw.com'),
         'http://localhost:5174',
     ],
 

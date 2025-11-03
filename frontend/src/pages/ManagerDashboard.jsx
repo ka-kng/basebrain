@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+// ManagerDashboardコンポーネント本体
 export default function ManagerDashboard() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null); // APIから取得したダッシュボードデータを保存するstate
+  const [loading, setLoading] = useState(true); // データ取得中かどうかを管理するstate
 
+  // コンポーネントマウント時にデータ取得
   useEffect(() => {
-    axios.get("/api/dashboard/manager")
-      .then(res => setData(res.data))
-      .finally(() => setLoading(false));
-  }, []);
+    axios.get("/api/dashboard/manager") // 管理者用ダッシュボードAPIを呼び出す
+      .then(res => setData(res.data)) // 成功したらstateに保存
+      .finally(() => setLoading(false)); // 取得終了でローディングをfalseに
+  }, []); // 空配列で初回レンダー時のみ実行
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
   if (!data) return <p className="text-center mt-10">データがありません</p>;
 
   const { teamInfo, battingTotals, pitchingTotals } = data;
 
+  // スタットカードコンポーネント（ラベルと値を表示）
   const StatCard = ({ label, value, color }) => (
     <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
       <span className={`font-semibold ${color || "text-gray-700"}`}>{label}</span>

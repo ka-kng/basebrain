@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { useAuth } from './contexts/AuthContext';
+import { useAuth } from './Auth/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import RegisterForm from './Auth/RegisterForm';

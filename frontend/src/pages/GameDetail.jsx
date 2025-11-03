@@ -15,16 +15,16 @@ const API = {
 };
 
 // 共通ボタンスタイル
-const buttonClass =
-  "bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow";
+const buttonClass ="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow";
 
+// GameDetailコンポーネント本体
 export default function GameDetail() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams(); // URLパラメータのidを取得
+  const navigate = useNavigate(); // ページ遷移用のnavigate関数
 
   const [game, setGame] = useState(null);
-  const [openBatters, setOpenBatters] = useState([]);
-  const [openPitchers, setOpenPitchers] = useState([]);
+  const [openBatters, setOpenBatters] = useState([]); // 野手詳細開閉
+  const [openPitchers, setOpenPitchers] = useState([]); // 投手詳細開閉
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -33,20 +33,21 @@ export default function GameDetail() {
   useEffect(() => {
     const fetchGame = async () => {
       try {
-        const res = await axios.get(`${API.games}/${id}`);
-        setGame(res.data);
+        const res = await axios.get(`${API.games}/${id}`); // APIから試合データを取得
+        setGame(res.data); // stateに保存
       } catch (err) {
-        console.error(err);
-        setError(err);
+        console.error(err); // エラーをコンソールに表示
+        setError(err); // stateにエラーを保存
       } finally {
-        setLoading(false);
+        setLoading(false); // 読み込み終了
       }
     };
-    fetchGame();
-  }, [id]);
+    fetchGame(); // データ取得を実行
+  }, [id]); // idが変わったら再実行
 
   // 詳細開閉トグル
   const toggleDetails = useCallback((id, openList, setOpenList) => {
+    // クリックしたidが既に開かれているか判定して追加/削除
     setOpenList((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
@@ -54,45 +55,53 @@ export default function GameDetail() {
 
   // 削除対象を設定してモーダル表示
   const confirmDelete = useCallback((type, recordId = null) => {
-    setDeleteTarget({ type, id: recordId });
+    setDeleteTarget({ type, id: recordId }); // type: game/batting/pitching, id: 該当レコードID
   }, []);
 
-  // 共通削除処理
+  // 削除確定後の処理
   const handleDeleteConfirmed = useCallback(async () => {
-    if (!deleteTarget) return;
+    if (!deleteTarget) return; // 対象がなければ何もしない
 
-    const { type, id: recordId } = deleteTarget;
+    const { type, id: recordId } = deleteTarget; // typeとidを取得
 
     try {
+      // 試合自体を削除
       if (type === "game") {
         await axios.delete(`${API.games}/${id}`);
         toast.success("試合を削除しました");
         navigate("/games/list");
+
       } else if (type === "batting") {
+        // 野手成績を削除
         await axios.delete(`${API.batting}/${recordId}`);
-        setGame((prev) => ({
+        setGame((prev) => ({  // stateを更新してUIから削除
           ...prev,
           batting_records: prev.batting_records.filter((p) => p.id !== recordId),
         }));
         toast.success("野手成績を削除しました");
+
       } else if (type === "pitching") {
+        // 投手成績を削除
         await axios.delete(`${API.pitching}/${recordId}`);
-        setGame((prev) => ({
+        setGame((prev) => ({ // stateを更新してUIから削除
           ...prev,
           pitching_records: prev.pitching_records.filter(
             (p) => p.id !== recordId
           ),
         }));
         toast.success("投手成績を削除しました");
+
       }
     } catch (err) {
       console.error(err);
       toast.error("削除に失敗しました");
+
     } finally {
-      setDeleteTarget(null);
+      setDeleteTarget(null); // モーダルを閉じる
     }
   }, [deleteTarget, id, navigate]);
 
+  // 戻るボタン用
   const handleBack = () => {
     navigate("/games/list");
   };
@@ -102,8 +111,10 @@ export default function GameDetail() {
   if (error)
     return <p className="text-center py-10 text-red-500">エラーが発生しました。</p>;
 
+  // メイン描画
   return (
     <div className="mx-auto xl:max-w-4xl">
+      {/* 通知表示 */}
       <Toaster position="top-right" />
 
       {/* 戻る・編集・削除 */}

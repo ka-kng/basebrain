@@ -3,34 +3,36 @@ import axios from "axios";
 import InputField from "../components/InputField"; // フォーム用モーダルコンポーネント
 import DeleteModal from "../components/DeleteModal"; // アカウント削除用モーダルコンポーネント
 
+// MyPageコンポーネント本体
 export default function MyPage() {
-  const [user, setUser] = useState(null);
-  const [teamName, setTeamName] = useState("");
-  const [inviteCode, setInviteCode] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [errors, setErrors] = useState({});
-  const [showModal, setShowModal] = useState(false);
+  const [user, setUser] = useState(null); // ユーザー情報を保存するstate
+  const [teamName, setTeamName] = useState(""); // チーム名（coach用）
+  const [inviteCode, setInviteCode] = useState(""); // 招待コード（coach用）
+  const [name, setName] = useState(""); // ユーザー名
+  const [email, setEmail] = useState(""); // メールアドレス
+  const [errors, setErrors] = useState({}); // 入力エラーを管理
+  const [showModal, setShowModal] = useState(false); // アカウント削除モーダル表示フラグ
 
+  // コンポーネントマウント時にユーザー情報を取得
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("/api/mypage");
-        setUser(res.data);
-        setName(res.data.name || "");
-        setEmail(res.data.email || "");
-        setTeamName(res.data.team_name || "");
-        setInviteCode(res.data.invite_code || "");
+        const res = await axios.get("/api/mypage"); // APIからマイページ情報取得
+        setUser(res.data); // stateに保存
+        setName(res.data.name || ""); // 名前初期化
+        setEmail(res.data.email || ""); // メール初期化
+        setTeamName(res.data.team_name || ""); // チーム名初期化
+        setInviteCode(res.data.invite_code || ""); // 招待コード初期化
       } catch (err) {
         console.error(err);
       }
     };
-    fetchUser();
-  }, []);
+    fetchUser(); // データ取得実行
+  }, []); // 初回レンダー時のみ
 
-  // ユーザー情報更新
+  // ユーザー情報更新処理
   const handleUpdate = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // フォーム送信のページリロードを防ぐ
     const newErrors = {};
 
     // フロント側バリデーション
@@ -43,12 +45,13 @@ export default function MyPage() {
     if (Object.keys(newErrors).length > 0) return;
 
     try {
-      const payload = { name, email };
+      const payload = { name, email }; // API送信データ
       if (user.role === "coach") payload.team_name = teamName; // ユーザーがcoachの場合、チーム名も送信
 
-      const res = await axios.put(`/api/mypage`, payload);
-      setUser(res.data);
+      const res = await axios.put(`/api/mypage`, payload); // API更新
+      setUser(res.data); // 更新後のデータをstateに反映
       alert("更新しました");
+
     } catch (err) {
       console.error(err);
       alert("更新に失敗しました");
@@ -58,9 +61,9 @@ export default function MyPage() {
   // アカウント削除処理
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/mypage`);
+      await axios.delete(`/api/mypage`); // APIでアカウント削除
       alert("アカウントを削除しました");
-      window.location.href = "/";
+      window.location.href = "/"; // トップページに遷移
     } catch (err) {
       console.error(err);
       alert("削除に失敗しました");
@@ -69,9 +72,9 @@ export default function MyPage() {
 
   // 招待リンクをコピーする処理(coachのみ表示)
   const handleCopyInviteLink = () => {
-    if (!inviteCode) return;
-    const inviteUrl = `${window.location.origin}/register?invite=${inviteCode}`;
-    navigator.clipboard.writeText(inviteUrl);
+    if (!inviteCode) return; // 招待コードがなければ処理中止
+    const inviteUrl = `${window.location.origin}/register?invite=${inviteCode}`; // 招待URL生成
+    navigator.clipboard.writeText(inviteUrl); // クリップボードにコピー
   };
 
   // データ未取得時は何も表示しない

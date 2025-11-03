@@ -2,30 +2,34 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+// SummaryRecord コンポーネント
 export default function SummaryRecord() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const game_id = location.state?.game_id;
+  const navigate = useNavigate(); // ページ遷移用
+  const location = useLocation(); // location.state 取得用
+  const game_id = location.state?.game_id; // 直前ページから渡された game_id
 
+  // ゲーム情報と打者・投手の状態管理
   const [game, setGame] = useState(null);
   const [batters, setBatters] = useState([]);
   const [pitchers, setPitchers] = useState([]);
 
+  // 初回レンダー時にデータ取得
   useEffect(() => {
-    if (!game_id) return navigate("/records/game");
+    if (!game_id) return navigate("/records/game"); // game_id がなければ試合一覧に戻す
 
     axios
-      .get(`/api/records/summary?game_id=${game_id}`)
+      .get(`/api/records/summary?game_id=${game_id}`) // API 呼び出し
       .then((res) => {
-        setGame(res.data.game);
-        setBatters(res.data.batters);
-        setPitchers(res.data.pitchers);
+        setGame(res.data.game); // 試合情報セット
+        setBatters(res.data.batters); // 打者情報セット
+        setPitchers(res.data.pitchers); // 投手情報セット
       })
-      .catch(() => navigate("/records/game"));
+      .catch(() => navigate("/records/game")); // エラー時は試合一覧に戻す
   }, [game_id, navigate]);
 
   if (!game) return <p className="text-center mt-10">読み込み中...</p>;
 
+  // 勝敗に応じた背景色を設定
   const resultColor = {
     勝利: "bg-green-500",
     敗北: "bg-red-500",

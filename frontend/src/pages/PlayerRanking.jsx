@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+// PlayerRankingコンポーネント本体
 export default function PlayerRanking() {
-  const [activeTab, setActiveTab] = useState("batting");
-  const [battingRecords, setBattingRecords] = useState([]);
-  const [pitchingRecords, setPitchingRecords] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("batting"); // 現在選択中のタブ（batting or pitching）を管理
+  const [battingRecords, setBattingRecords] = useState([]); // 打者ランキングデータを格納
+  const [pitchingRecords, setPitchingRecords] = useState([]); // 投手ランキングデータを格納
+  const [loading, setLoading] = useState(true); // データ取得中かどうかを管理
 
-  // APIから打者・投手ランキング取得
+  // コンポーネントマウント時にAPIからランキング取得
   useEffect(() => {
     axios
-      .get("/api/player/ranking")
+      .get("/api/player/ranking") // APIエンドポイント
       .then((res) => {
-        setBattingRecords(res.data.battingRecords);
-        setPitchingRecords(res.data.pitchingRecords);
+        setBattingRecords(res.data.battingRecords); // 打者データをstateに保存
+        setPitchingRecords(res.data.pitchingRecords); // 投手データをstateに保存
       })
-      .finally(() => setLoading(false));
-  }, []);
+      .finally(() => setLoading(false)); // ローディング終了
+  }, []); // 初回レンダリング時のみ実行
 
   // ローディング中表示
   if (loading) return <p className="text-center mt-10">Loading...</p>;
@@ -32,17 +33,22 @@ export default function PlayerRanking() {
       { key: "caught_stealing", label: "盗塁" },
     ];
 
+    // 各指標ごとにカードを作成
     return metrics.map(metric => {
-      const topPlayers = battingRecords[metric.key] || [];
+      const topPlayers = battingRecords[metric.key] || []; // 指標ごとのランキング取得
       return (
         <div key={metric.key} className="bg-white shadow-md rounded-xl p-4 mb-4">
+          {/* 指標名 */}
           <h3 className="text-lg font-bold mb-2">{metric.label}</h3>
           <ul>
+            {/* 上位プレイヤーをリスト表示 */}
             {topPlayers.map((player, index) => (
               <li key={player.user_id} className="flex justify-between py-2 border-b last:border-b-0">
 
+                {/* ランキング順位と名前 */}
                 <span>{index + 1}. {player.name}</span>
 
+                {/* 値を表示（打率・出塁率は小数3桁表示） */}
                 <span className="font-mono">
                   {["avg", "obp"].includes(metric.key) ? player[metric.key].toFixed(3) : player[metric.key]}
                 </span>
@@ -63,18 +69,24 @@ export default function PlayerRanking() {
       { key: "strikeouts", label: "奪三振数" },
     ];
 
+    // 指標ごとにカードを作成
     return metrics.map(metric => {
       const topPlayers = pitchingRecords[metric.key] || [];
       return (
         <div key={metric.key} className="bg-white shadow-md rounded-xl p-4 mb-4">
+          {/* 指標名 */}
           <h3 className="text-lg font-bold mb-2">{metric.label}</h3>
 
           <ul>
+            {/* 上位プレイヤーをリスト表示 */}
             {topPlayers.map((player, index) => (
 
               <li key={player.user_id} className="flex justify-between py-2 border-b last:border-b-0">
+
+                {/* ランキング順位と名前 */}
                 <span>{index + 1}. {player.name}</span>
 
+                {/* 値を表示（防御率のみ小数2桁） */}
                 <span className="font-mono">
                   {metric.key === "era" ? player[metric.key].toFixed(2) : player[metric.key]}
                 </span>

@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+// GameListコンポーネント本体
 export default function GameList() {
-  const [games, setGames] = useState([]);
-  const navigate = useNavigate();
+  const [games, setGames] = useState([]); // 試合一覧データを保存するstate
+  const navigate = useNavigate(); // ページ遷移用のnavigate関数
 
+  // 一度だけ試合データを取得
   useEffect(() => {
-    axios.get("/api/games")
-      .then(res => setGames(res.data))
-      .catch(err => console.error(err));
-  }, []);
+    axios.get("/api/games") // APIから試合一覧を取得
+      .then(res => setGames(res.data)) // 成功したらstateに保存
+      .catch(err => console.error(err)); // エラーがあればコンソールに表示
+  }, []); // 空配列で初回レンダー時のみ実行
 
   return (
     <div className="max-w-screen-sm mx-auto xl:max-w-screen-md">
@@ -32,7 +34,7 @@ export default function GameList() {
 
       {/* 試合リスト */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-8">
-        {games.map((game) => (
+        {games.map((game) => ( // games配列をループしてカードを生成
           <div
             key={game.id}
             className="flex flex-col h-full border rounded-xl shadow-md p-5 bg-white hover:shadow-xl transition transform hover:-translate-y-1"

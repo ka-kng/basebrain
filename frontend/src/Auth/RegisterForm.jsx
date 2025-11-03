@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import InputField from '../components/InputField';
-import RadioWithInput from '../components/RadioWithInput';
+import RadioWithInput from '../components/RadioWithInput'; // ラジオボタンと入力欄をまとめたコンポーネント
 import BackgroundLayout from '../layout/Background';
 
 export default function RegisterForm() {
+
+  // 入力データをまとめて管理
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -17,23 +18,27 @@ export default function RegisterForm() {
     invite_code: '',
   });
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // ページ移動を行うための関数
 
-  const [errors, setErrors] = useState({});
-  const [generalError, setGeneralError] = useState('');
+  const [errors, setErrors] = useState({}); // 入力エラーを保存する
+  const [generalError, setGeneralError] = useState(''); // エラーメッセージ
 
+  // ページ読み込み時にURLの「?invite=xxxx」パラメータをチェック
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("invite");
+    const params = new URLSearchParams(window.location.search); // URLのクエリを取得
+    const code = params.get("invite"); // inviteコードを取り出す
     if (code) {
+      // 招待コードがあれば、フォームに自動で入力
       setForm(prev => ({ ...prev, invite_code: code }));
     }
   }, []);
 
+  // 各入力欄の変更時にformの中身を更新
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // フォーム送信時の処理
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
@@ -75,7 +80,7 @@ export default function RegisterForm() {
       newErrors.invite_code = '招待コードを入力してください';
     }
 
-
+    // もしエラーが1つでもあれば、処理を止めて表示
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -83,15 +88,17 @@ export default function RegisterForm() {
 
     try {
 
-      await axios.get('/sanctum/csrf-cookie'); // CSRFトークン取得
-      const res = await axios.post('/api/register', form);
-      navigate('/login');
+      // Laravel Sanctum のCSRF保護用クッキーを取得
+      await axios.get('/sanctum/csrf-cookie');
+      const res = await axios.post('/api/register', form); // 登録APIに送信
+      navigate('/login'); // 成功したらログイン画面へ移動
 
     } catch (err) {
 
+      // サーバーからエラーが返ってきた場合
       if (err.response && err.response.data && err.response.data.errors) {
 
-        setErrors(err.response.data.errors);
+        setErrors(err.response.data.errors); // 各項目のエラーをセット
 
       } else {
 

@@ -27,11 +27,12 @@ const NumberInput = ({ label, name, value, onChange, unit, note, error }) => (
 );
 
 export default function BattingRecordForm() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { id } = useParams();
-  const isEdit = !!id;
+  const navigate = useNavigate(); // ページ遷移用
+  const location = useLocation(); // 前のページから渡されたstateを取得
+  const { id } = useParams();  // URLパラメータからidを取得
+  const isEdit = !!id; // idが存在する＝編集モード
 
+  // フォームの状態を管理するstate
   const [form, setForm] = useState({
     game_id: "",
     user_id: "",
@@ -51,13 +52,13 @@ export default function BattingRecordForm() {
     errors: "",
   });
 
-  // 選手一覧・登録済み選手・バリデーションエラー
-  const [users, setUsers] = useState([]);
-  const [registeredBatters, setRegisteredBatters] = useState([]);
-  const [errors, setErrors] = useState({});
+  // 選手一覧・登録済み選手・バリデーションエラーを管理
+  const [users, setUsers] = useState([]); // チーム内の打者一覧
+  const [registeredBatters, setRegisteredBatters] = useState([]); // すでに成績登録された選手のIDリスト
+  const [errors, setErrors] = useState({}); // 入力エラー情報
 
 
-  // 数値項目一覧（繰り返し部分をまとめる）
+  // 数値入力項目の設定（ラベル・単位など）
   const numberFields = [
     { key: "at_bats", label: "打数", unit: "打数", note: "※打数には四死球を含みません" },
     { key: "hits", label: "一塁打", unit: "本" },
@@ -73,52 +74,53 @@ export default function BattingRecordForm() {
     { key: "errors", label: "失策", unit: "回" },
   ];
 
-  // 選手一覧を取得（同チームの打者）
+  // チーム内の打者一覧を取得（初回のみ）
   const fetchUsers = async () => {
     try {
       const res = await axios.get("/api/users/batter");
-      setUsers(res.data);
+      setUsers(res.data);  // 成功時、選手データをstateに格納
     } catch (err) {
       console.error("Failed to fetch users:", err);
-      setUsers([]);
+      setUsers([]); // エラー時は空配列
     }
   };
 
-  // すでに打撃成績登録済みの選手IDを取得
+  // すでに登録済みの選手IDを取得（同じ試合内で重複登録を防ぐ）
   const fetchRegisteredUserIds = async (gameId = form.game_id) => {
-    if (!gameId) return;
+    if (!gameId) return; // 試合IDがない場合は処理しない
     try {
       const res = await axios.get(`/api/records/batting/registered-users?game_id=${gameId}`);
-      setRegisteredBatters(res.data);
+      setRegisteredBatters(res.data); // 登録済み選手のID配列を格納
+
     } catch (err) {
       console.error("Failed to fetch registered batters:", err);
       setRegisteredBatters([]);
     }
   };
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => { fetchUsers(); }, []); // 初回レンダー時に選手一覧を取得
 
-  // 新規登録時：試合IDを state から受け取る
+  // 新規登録モード時に前ページから渡された game_id を受け取り処理
   useEffect(() => {
-    const gameIdFromState = location.state?.game_id;
-    if (!isEdit && !gameIdFromState) return navigate("/records/game");
-    if (gameIdFromState) {
-      setForm(prev => ({ ...prev, game_id: gameIdFromState }));
-      fetchRegisteredUserIds(gameIdFromState);
+    const gameIdFromState = location.state?.game_id; // location.state から game_id を取り出す
+    if (!isEdit && !gameIdFromState) return navigate("/records/game"); // 新規モードで game_id が無ければ試合一覧に戻す
+    if (gameIdFromState) { // game_id が渡されていればフォームにセットして登録済みリストを取得
+      setForm(prev => ({ ...prev, game_id: gameIdFromState })); // form に game_id をセット
+      fetchRegisteredUserIds(gameIdFromState); // その試合の登録済み打者を再取得
     }
   }, [location.state, navigate, isEdit]);
 
-  // 編集モード時：既存データを取得してフォームにセット
+  // 編集モード時は既存データを取得してフォームに反映する
   useEffect(() => {
-    if (!isEdit || !id) return;
+    if (!isEdit || !id) return; // 編集モードでない、または id がなければ無視
     axios.get(`/api/records/batting/${id}`)
-      .then(res => { setForm(res.data); fetchRegisteredUserIds(res.data.game_id); })
+      .then(res => { setForm(res.data); fetchRegisteredUserIds(res.data.game_id); }) // 成功時にフォームに値をセットし登録済みを取得
       .catch(err => { console.error(err); alert("データの取得に失敗しました"); });
   }, [id, isEdit]);
 
   const handleChange = e => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const validateForm = () => {
+  const validateForm = () => { // フォームのバリデーション関数（問題があればエラーメッセージを返す）
     const newErrors = {};
     if (!form.user_id) newErrors.user_id = "選手を選択してください";
     if (!form.position) newErrors.position = "守備位置を選択してください";
@@ -132,10 +134,10 @@ export default function BattingRecordForm() {
   // 登録・更新API呼び出し
   const submitForm = async () => {
     try {
-      if (isEdit) {
+      if (isEdit) { // 編集モードなら PUT で更新
         await axios.put(`/api/records/batting/${id}`, form);
-        navigate(`/games/${form.game_id}`);
-      } else {
+        navigate(`/games/${form.game_id}`); // 更新後は該当試合ページへ遷移
+      } else { // 新規モードなら POST で登録
         await axios.post("/api/records/batting", form);
       }
     } catch (err) {
@@ -144,26 +146,27 @@ export default function BattingRecordForm() {
     }
   };
 
-  // 続けて登録用にフォーム初期化
+  // 「続けて登録」用にフォームを初期化する関数
   const resetFormForContinue = () => {
+    // game_id だけ残して他は空に
     setForm(prev => ({ ...Object.fromEntries(Object.keys(prev).map(k => [k, ""])), game_id: prev.game_id }));
-    fetchRegisteredUserIds();
+    fetchRegisteredUserIds(); // 再度登録済みリストを取得して選択肢を更新
   };
 
-  // 送信ボタン押下時
+  // 送信ボタン押下時のメイン処理
   const handleSubmit = async (e, action) => {
-    e.preventDefault();
-    const validationErrors = validateForm();
+    e.preventDefault(); // フォームのデフォルト送信を防ぐ
+    const validationErrors = validateForm(); // バリデーションを実行
     if (Object.keys(validationErrors).length) {
-      setErrors(validationErrors);
+      setErrors(validationErrors); // エラーがあるなら state にセットして早期リターン
       return;
     }
-    setErrors({});
+    setErrors({}); // エラーなしなのでエラー表示をクリア
     try {
       await submitForm();
-      if (!isEdit) {
-        if (action === "continue") resetFormForContinue();
-        else if (action === "pitching") navigate("/records/pitching", { state: { game_id: form.game_id } });
+      if (!isEdit) { // 新規登録時のみアクション分岐
+        if (action === "continue") resetFormForContinue(); // 続けて登録するならフォームリセット
+        else if (action === "pitching") navigate("/records/pitching", { state: { game_id: form.game_id } }); // 投手登録画面へ遷移
       }
     } catch {
       setErrors({ general: "通信エラーが発生しました" });
@@ -171,10 +174,10 @@ export default function BattingRecordForm() {
   };
 
 
-  // 登録済みの選手を除外して選択肢に出す
+  // 選択可能な選手リストを計算してメモ化（再計算を最小化）
   const selectableUsers = useMemo(() => {
-    return users.filter(u => isEdit ? u.id === form.user_id || !registeredBatters.includes(u.id) : !registeredBatters.includes(u.id));
-  }, [users, registeredBatters, form.user_id, isEdit]);
+    return users.filter(u => isEdit ? u.id === form.user_id || !registeredBatters.includes(u.id) : !registeredBatters.includes(u.id)); // 編集時は自分は選べる、既登録者は除外
+  }, [users, registeredBatters, form.user_id, isEdit]); // 新規時は既登録者を除外
 
   // 残り1人だけなら「続けて登録」ボタンを非表示にする
   const MINIMUM_SELECTABLE_USERS = 1;
