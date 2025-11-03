@@ -1,53 +1,48 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
-const AuthContext = createContext(); // 認証情報を共有するためのコンテキストを作成
+const AuthContext = createContext(); // 認証情報を共有するためのコンテキスト
 
-// この中に入れた情報を子コンポーネントに渡す
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null); // 現在ログインしているユーザー情報を管理
+  const [loading, setLoading] = useState(true);  // ユーザー情報取得中かどうかの状態を管理
 
-  // この中の処理はコンポーネント初回表示時に実行される
+  // 初回読み込み時に token チェック
   useEffect(() => {
-    const token = localStorage.getItem('access_token'); // ローカルストレージに保存しているトークンを取り出す
-    if (token) { // トークンがあれば「ログイン済み」と判断
-
-      // axiosのリクエストに自動でトークンをつける
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-      // サーバーからユーザー情報を取得
-      axios.get('/api/user')
-        .then(res => setUser(res.data)) // 成功したらuserに入れる
-        .catch(() => logout()) // 失敗したらログアウト
-        .finally(() => setLoading(false)); // 終わったら読み込み完了
+    const token = sessionStorage.getItem('access_token'); // sessionStorage からトークンを取得
+    if (token) { // トークンが存在する場合
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`; // axios に自動で Authorization ヘッダを設定
+      axios.get('/api/user') // サーバーからユーザー情報を取得
+        .then(res => setUser(res.data)) // 成功したら user に保存
+        .catch(() => logout()) // 失敗したらログアウト処理
+        .finally(() => setLoading(false)); // 処理が終わったら loading を false に
     } else {
-      setLoading(false); // トークンがなければ読み込み完了
+      setLoading(false); // 読み込み完了
     }
   }, []);
 
-  // ログイン処理用関数。トークンとユーザー情報をセット
+  // ログイン処理
   const login = (token, userData = null) => {
-    localStorage.setItem('access_token', token); // トークンをブラウザに保存
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`; // axiosに自動で認証情報をつける
+    sessionStorage.setItem('access_token', token); // sessionStorage に保存
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`; // axios にヘッダを設定
 
-    if (userData) {
-      setUser(userData); // ユーザー情報があればstateに保存
+    if (userData) { // ユーザー情報が渡された場合
+      setUser(userData);  // user に保存
     } else {
-      axios.get('/api/user') // ユーザー情報がなければサーバーから取得
+      axios.get('/api/user') // サーバーからユーザー情報を取得
         .then(res => setUser(res.data)) // 成功したら保存
-        .catch(err => {  // 失敗したらログアウト
-          console.error(err);
-          logout();
+        .catch(err => { // 失敗したらログアウト
+          console.error(err); // エラーをコンソール表示
+          logout(); // ログアウト処理
         });
     }
   };
 
-
+  // ログアウト処理
   const logout = () => {
-    localStorage.removeItem('access_token'); // トークンをブラウザから消す
-    delete axios.defaults.headers.common['Authorization'];  // axiosの認証情報も削除
-    setUser(null); 
+    sessionStorage.removeItem('access_token'); // sessionStorage からトークンを削除
+    delete axios.defaults.headers.common['Authorization']; // axios のヘッダも削除
+    setUser(null); // user を null に
   };
 
   return (
