@@ -2,21 +2,20 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-import GameSummary from "../components/GameDetail/GameSummary";
-import BatterCard from "../components/GameDetail/BatterCard";
-import PitcherCard from "../components/GameDetail/PitcherCard";
-import DeleteModal from "../components/DeleteModal";
+import GameSummary from "../../features/GameDetail/GameSummary";
+import BatterCard from "../../features/GameDetail/BatterCard";
+import PitcherCard from "../../features/GameDetail/PitcherCard";
+import DeleteModal from "../../components/Modal/DeleteModal";
+import Button from "../../components/Button/Button";
 
+BatterCard
 // APIエンドポイント定義
 const API = {
   games: "/api/games",
   batting: "/api/users/batter",
   pitching: "/api/users/pitcher",
 };
-
-// 共通ボタンスタイル
-const buttonClass ="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow";
-
+GameSummary
 // GameDetailコンポーネント本体
 export default function GameDetail() {
   const { id } = useParams(); // URLパラメータのidを取得
@@ -45,13 +44,19 @@ export default function GameDetail() {
     fetchGame(); // データ取得を実行
   }, [id]); // idが変わったら再実行
 
-  // 詳細開閉トグル
-  const toggleDetails = useCallback((id, openList, setOpenList) => {
-    // クリックしたidが既に開かれているか判定して追加/削除
-    setOpenList((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+  // 野手詳細開閉トグル
+  const toggleBatter = (id) => {
+    setOpenBatters(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
-  }, []);
+  };
+
+  // 投手詳細開閉トグル
+  const togglePitcher = (id) => {
+    setOpenPitchers(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
 
   // 削除対象を設定してモーダル表示
   const confirmDelete = useCallback((type, recordId = null) => {
@@ -127,18 +132,13 @@ export default function GameDetail() {
           ← 戻る
         </button>
         <div className="space-x-2">
-          <button
-            onClick={() => navigate(`/records/game/${game.id}/edit`)}
-            className={buttonClass}
-          >
+          <Button className="bg-blue-500" onClick={() => navigate(`/records/game/${game.id}/edit`)}>
             試合を編集
-          </button>
-          <button
-            onClick={() => confirmDelete("game")}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow"
-          >
+          </Button>
+
+          <Button className="bg-red-500" onClick={() => confirmDelete("game")}>
             削除
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -157,23 +157,16 @@ export default function GameDetail() {
             key={batter.id}
             batter={batter}
             open={openBatters.includes(batter.id)}
-            toggleOpen={() =>
-              toggleDetails(batter.id, openBatters, setOpenBatters)
-            }
+            toggleOpen={() => toggleBatter(batter.id)}
             onDelete={() => confirmDelete("batting", batter.id)}
             navigate={navigate}
           />
         ))}
       </div>
       <div className="block text-right">
-        <button
-          onClick={() =>
-            navigate("/records/batting", { state: { game_id: game.id } })
-          }
-          className={`${buttonClass} mt-5`}
-        >
+        <Button className="bg-blue-500" onClick={() => navigate("/records/batting", { state: { game_id: game.id } })}>
           + 野手を追加
-        </button>
+        </Button>
       </div>
 
       {/* 投手成績 */}
@@ -184,21 +177,16 @@ export default function GameDetail() {
             key={pitcher.id}
             pitcher={pitcher}
             open={openPitchers.includes(pitcher.id)}
-            toggleOpen={() => toggleDetails(pitcher.id, openPitchers, setOpenPitchers)}
+            toggleOpen={() => togglePitcher(pitcher.id)}
             onDelete={() => confirmDelete("pitching", pitcher.id)}
             navigate={navigate}
           />
         ))}
       </div>
       <div className="block text-right">
-        <button
-          onClick={() =>
-            navigate("/records/pitching", { state: { game_id: game.id } })
-          }
-          className={`${buttonClass} mt-5`}
-        >
+        <Button className="bg-blue-500" onClick={() => navigate("/records/pitching", { state: { game_id: game.id } })}>
           + 投手を追加
-        </button>
+        </Button>
       </div>
 
       {/* 削除確認モーダル */}

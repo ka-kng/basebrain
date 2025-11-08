@@ -1,30 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-
-// 子コンポーネント: NumberInput 数値入力フォームをまとめて共通化したもの
-const NumberInput = ({ label, name, value, onChange, unit, note, error }) => (
-  <div className="flex flex-col gap-1">
-    <div className="flex items-center justify-between">
-      <label htmlFor={name} className="">{label}</label>
-      <div className="flex items-center gap-2">
-        <input
-          id={name}
-          name={name}
-          type="number"
-          min={0}
-          value={value}
-          onChange={onChange}
-          className={`w-20 border p-2 rounded text-center ${error ? "border-red-500" : ""}`}
-          aria-invalid={!!error}
-        />
-        <span className="text-gray-600">{unit}</span>
-      </div>
-    </div>
-    {note && <p className="text-left text-gray-500 text-xs">{note}</p>}
-    {error && <p className="text-left text-red-500 text-sm mt-1">{error}</p>}
-  </div>
-);
+import NumberInput from "../../features/Record/NumberInput";
+import { BatterNumberFields } from "../../lib/numberFields";
 
 export default function BattingRecordForm() {
   const navigate = useNavigate(); // ページ遷移用
@@ -56,23 +34,6 @@ export default function BattingRecordForm() {
   const [users, setUsers] = useState([]); // チーム内の打者一覧
   const [registeredBatters, setRegisteredBatters] = useState([]); // すでに成績登録された選手のIDリスト
   const [errors, setErrors] = useState({}); // 入力エラー情報
-
-
-  // 数値入力項目の設定（ラベル・単位など）
-  const numberFields = [
-    { key: "at_bats", label: "打数", unit: "打数", note: "※打数には四死球を含みません" },
-    { key: "hits", label: "一塁打", unit: "本" },
-    { key: "doubles", label: "二塁打", unit: "本" },
-    { key: "triples", label: "三塁打", unit: "本" },
-    { key: "home_runs", label: "本塁打", unit: "本" },
-    { key: "rbis", label: "打点", unit: "点" },
-    { key: "runs", label: "得点", unit: "点" },
-    { key: "walks", label: "四死球", unit: "回" },
-    { key: "strikeouts", label: "三振", unit: "回" },
-    { key: "steals", label: "盗塁数", unit: "回" },
-    { key: "caught_stealing", label: "盗塁成功", unit: "回" },
-    { key: "errors", label: "失策", unit: "回" },
-  ];
 
   // チーム内の打者一覧を取得（初回のみ）
   const fetchUsers = async () => {
@@ -125,7 +86,7 @@ export default function BattingRecordForm() {
     if (!form.user_id) newErrors.user_id = "選手を選択してください";
     if (!form.position) newErrors.position = "守備位置を選択してください";
     if (!form.order_no) newErrors.order_no = "打順を選択してください";
-    numberFields.forEach(f => {
+    BatterNumberFields.forEach(f => {
       if (form[f.key] === "" || isNaN(form[f.key])) newErrors[f.key] = "数字を入力してください";
     });
     return newErrors;
@@ -233,7 +194,7 @@ export default function BattingRecordForm() {
           {/* 数値フィールド */}
           <div className="flex justify-center">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
-              {numberFields.map(f => (
+              {BatterNumberFields.map(f => (
                 <NumberInput
                   key={f.key}
                   label={f.label}

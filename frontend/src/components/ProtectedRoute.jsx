@@ -1,12 +1,12 @@
 // ProtectedRoute.jsx
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../Auth/AuthContext";
 
-export default function ProtectedRoute({ allowedRoles, children }) {
+export default function ProtectedRoute({ allowedRoles }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    // ユーザー情報を取得中は画面を動かさない
+    // ユーザー情報を取得中
     return <div className="text-center mt-10">Loading...</div>;
   }
 
@@ -20,5 +20,5 @@ export default function ProtectedRoute({ allowedRoles, children }) {
     return <Navigate to="/" replace />;
   }
 
-  return children;
+  return <Outlet />;
 }

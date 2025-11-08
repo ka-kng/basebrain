@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import InputField from '../components/InputField';
-import RadioWithInput from '../components/RadioWithInput'; // ラジオボタンと入力欄をまとめたコンポーネント
+import InputField from '../components/Form/InputField';
+import RadioWithInput from '../components/Form/RadioWithInput'; // ラジオボタンと入力欄をまとめたコンポーネント
 import BackgroundLayout from '../layout/Background';
 
 export default function RegisterForm() {

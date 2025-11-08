@@ -1,5 +1,3 @@
-import React from 'react';
-
 const InputField = ({ label, inputName, type='text', value, onChange, error, placeholder, disabled }) => (
   <div className='flex flex-col'>
     <label htmlFor={inputName} className='mb-1 text-sm font-medium text-gray-700'>{label}</label>

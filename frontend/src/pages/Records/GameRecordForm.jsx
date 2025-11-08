@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast"; // トースト通知ライブラリをインポート
-import InputField from "../components/InputField";
-
+import InputField from "../../components/Form/InputField";
+import Button from "../../components/Button/Button";
 // GameRecordForm コンポーネント
 export default function GameRecordForm() {
   const navigate = useNavigate(); // ページ遷移用
@@ -205,12 +205,9 @@ export default function GameRecordForm() {
 
           {/* 送信ボタン */}
           <div className="text-center">
-            <button
-              type="submit"
-              className="w-40 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition-all"
-            >
+            <Button type="submit" className="bg-blue-500">
               {id ? "更新する" : "打撃登録へ"}
-            </button>
+            </Button>
           </div>
 
         </form>

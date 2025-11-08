@@ -1,53 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-
-// 子コンポーネント: NumberInput 数値入力フォームをまとめて共通化したもの
-const NumberInput = ({ label, name, value, onChange, unit, error }) => (
-  <div className="flex flex-col gap-1">
-    <div className="flex items-center justify-between">
-      <label htmlFor={name} className="">{label}</label>
-      <div className="flex items-center gap-2">
-        <input
-          id={name}
-          name={name}
-          type="number"
-          min={0}
-          value={value}
-          onChange={onChange}
-          className={`w-20 border p-2 rounded text-center ${error ? "border-red-500" : ""}`}
-          aria-invalid={!!error}
-        />
-        <span className="text-gray-600">{unit}</span>
-      </div>
-    </div>
-    {error && <p className="text-left text-red-500 text-sm mt-1">{error}</p>}
-  </div>
-);
-
-// 子コンポーネント: 投球回数セレクト
-const InningsSelect = ({ value, onChange, error }) => (
-  <>
-    <select
-      id="pitching_innings_outs"
-      name="pitching_innings_outs"
-      value={value}
-      onChange={onChange}
-      className={`border p-2 rounded w-full ${error ? "border-red-500" : ""}`}
-      aria-invalid={!!error}
-    >
-      <option value="">選択</option>
-      {Array.from({ length: 36 }, (_, i) => {
-        const full = Math.floor(i / 3);
-        const third = (i % 3) + 1;
-        const label = third === 3 ? `${full + 1}` : `${full} ${third}/3`;
-        return <option key={i} value={i + 1}>{label}</option>;
-      })}
-    </select>
-    {error && <p className="text-left text-red-500 text-sm mt-1">{error}</p>}
-  </>
-);
-
+import NumberInput from "../../features/Record/NumberInput";
+import { PitcherNumberFields } from "../../lib/numberFields";
+import { InningsSelect } from "../../features/Record/InningsSelect";
 
 export default function PitchingRecordForm() {
   const navigate = useNavigate(); // ページ遷移用
@@ -73,17 +29,6 @@ export default function PitchingRecordForm() {
   const [users, setUsers] = useState([]);
   const [registeredPitchers, setRegisteredPitchers] = useState([]);
   const [errors, setErrors] = useState({});
-
-  // 数値入力フィールド定義
-  const numberFields = [
-    { key: "pitches", label: "投球数", unit: "球" },
-    { key: "strikeouts", label: "奪三振", unit: "回" },
-    { key: "hits_allowed", label: "被安打", unit: "本" },
-    { key: "hr_allowed", label: "被本塁打", unit: "本" },
-    { key: "walks_given", label: "四死球", unit: "回" },
-    { key: "runs_allowed", label: "失点", unit: "点" },
-    { key: "earned_runs", label: "自責点", unit: "点" },
-  ];
 
   // 選手一覧取得
   const fetchUsers = async () => {
@@ -135,7 +80,7 @@ export default function PitchingRecordForm() {
     if (!form.user_id) newErrors.user_id = "選手を選択してください";
     if (!form.result) newErrors.result = "勝敗を選択してください";
     if (!form.pitching_innings_outs) newErrors.pitching_innings_outs = "投球回数を選択してください";
-    numberFields.forEach(f => {
+    PitcherNumberFields.forEach(f => {
       if (form[f.key] === "" || isNaN(form[f.key])) newErrors[f.key] = "数字を入力してください";
     });
     return newErrors;
@@ -277,7 +222,7 @@ export default function PitchingRecordForm() {
           {/* 数値フィールド */}
           <div className="flex justify-center">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
-              {numberFields.map(f => (
+              {PitcherNumberFields.map(f => (
                 <NumberInput
                   key={f.key}
                   label={f.label}

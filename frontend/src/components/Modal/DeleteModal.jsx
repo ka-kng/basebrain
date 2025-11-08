@@ -1,6 +1,4 @@
-import React from "react";
-
-export default function DeleteModal({ type, onCancel, onConfirm }) {
+export default function DeleteModal({ onCancel, onConfirm }) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">

@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import InputField from "../components/InputField"; // フォーム用モーダルコンポーネント
-import DeleteModal from "../components/DeleteModal"; // アカウント削除用モーダルコンポーネント
+import { useNavigate } from "react-router-dom";
+import InputField from "../../components/Form/InputField"; // フォーム用モーダルコンポーネント
+import DeleteModal from "../../components/Modal/DeleteModal"; // アカウント削除用モーダルコンポーネント
+import Button from "../../components/Button/Button";
 
 // MyPageコンポーネント本体
 export default function MyPage() {
@@ -12,6 +14,7 @@ export default function MyPage() {
   const [email, setEmail] = useState(""); // メールアドレス
   const [errors, setErrors] = useState({}); // 入力エラーを管理
   const [showModal, setShowModal] = useState(false); // アカウント削除モーダル表示フラグ
+  const navigate = useNavigate();
 
   // コンポーネントマウント時にユーザー情報を取得
   useEffect(() => {
@@ -63,7 +66,7 @@ export default function MyPage() {
     try {
       await axios.delete(`/api/mypage`); // APIでアカウント削除
       alert("アカウントを削除しました");
-      window.location.href = "/"; // トップページに遷移
+      navigate("/"); // トップページに遷移
     } catch (err) {
       console.error(err);
       alert("削除に失敗しました");
@@ -126,33 +129,24 @@ export default function MyPage() {
               disabled
             />
 
-            <button
-              type="button"
-              onClick={handleCopyInviteLink}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg mt-2"
-            >
+            <Button type="button" className="bg-green-600" onClick={handleCopyInviteLink}>
               招待リンクをコピー
-            </button>
+            </Button>
 
           </>
         )}
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white text-lg font-bold py-3 rounded-lg mt-2"
-        >
+        <Button type="submit" className="bg-blue-600">
           更新
-        </button>
+        </Button>
+
       </form>
 
       {user.role !== "coach" && (
         <>
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-red-600 text-white text-lg font-bold py-3 rounded-lg w-full"
-          >
+          <Button type="button" className="bg-red-600 w-full" onClick={() => setShowModal(true)}>
             アカウント削除
-          </button>
+          </Button>
 
           {showModal && (
             <DeleteModal

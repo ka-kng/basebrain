@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion"; // アニメーション用の motion コンポーネントを読み込み
-import InputField from '../components/InputField'; // 独自の入力フォームコンポーネントを読み込み
+import InputField from '../components/Form/InputField'; // 独自の入力フォームコンポーネントを読み込み
 
 export default function ForgetPassword() { // パスワードリセット画面のコンポーネント定義
   const [email, setEmail] = useState(''); // 入力されたメールアドレスを管理

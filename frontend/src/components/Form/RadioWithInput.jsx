@@ -1,4 +1,3 @@
-import React from "react";
 import InputField from "./InputField";
 
 // RadioWithInputコンポーネントを定義（親からpropsを受け取る）

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useAuth } from "../Auth/AuthContext";
+import { useAuth } from "../../Auth/AuthContext";
+import StatCard from "../../features/Dashboard/StatCard";
 
 // PlayerDashboardコンポーネント本体
 export default function PlayerDashboard() {
@@ -29,13 +30,6 @@ export default function PlayerDashboard() {
 
   // ダッシュボードデータを分割代入
   const { games, batting, pitching } = dashboard;
-
-  const StatCard = ({ label, value, color }) => (
-    <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
-      <span className={`font-semibold ${color || "text-gray-700"}`}>{label}</span>
-      <span className={`font-bold text-lg ${color || "text-gray-800"}`}>{value}</span>
-    </div>
-  );
 
   return (
     <div className="max-w-xl mx-auto space-y-10">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import StatCard from "../../features/Dashboard/StatCard";
 
 // ManagerDashboardコンポーネント本体
 export default function ManagerDashboard() {
@@ -17,14 +18,6 @@ export default function ManagerDashboard() {
   if (!data) return <p className="text-center mt-10">データがありません</p>;
 
   const { teamInfo, battingTotals, pitchingTotals } = data;
-
-  // スタットカードコンポーネント（ラベルと値を表示）
-  const StatCard = ({ label, value, color }) => (
-    <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
-      <span className={`font-semibold ${color || "text-gray-700"}`}>{label}</span>
-      <span className={`font-bold text-lg ${color || "text-gray-800"}`}>{value}</span>
-    </div>
-  );
 
   return (
     <div className="max-w-xl mx-auto space-y-10">

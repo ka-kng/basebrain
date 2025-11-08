@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Button from "../../components/Button/Button";
 
 // GameListコンポーネント本体
 export default function GameList() {
@@ -18,13 +19,9 @@ export default function GameList() {
     <div className="max-w-screen-sm mx-auto xl:max-w-screen-md">
       {/* 新規登録ボタン */}
       <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={() => navigate('/records/game')}
-          className="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-lg shadow-md transition"
-        >
-          ＋ 新規登録
-        </button>
+        <Button type="button" className="bg-green-600" onClick={() => navigate('/records/game')}>
+          +新規登録
+        </Button>
       </div>
 
       {/* タイトル */}
@@ -54,12 +51,12 @@ export default function GameList() {
             {/* スコア */}
             <div className="flex justify-between bg-gray-50 rounded-lg p-3 mb-3 flex-1">
               <div className="flex-1 text-center flex flex-col justify-center">
-                <p className="font-bold break-words">{game.team?.name}</p>
+                <p className="font-bold break-all">{game.team?.name}</p>
                 <p className="text-2xl font-bold text-green-600">{game.team_score}</p>
               </div>
               <span className="text-lg font-bold text-gray-500 self-center">vs</span>
               <div className="flex-1 text-center flex flex-col justify-center">
-                <p className="font-bold break-words">{game.opponent}</p>
+                <p className="font-bold break-all">{game.opponent}</p>
                 <p className="text-2xl font-bold text-red-600">{game.opponent_score}</p>
               </div>
             </div>
@@ -68,12 +65,10 @@ export default function GameList() {
             <p className="text-sm text-left text-gray-600 mb-4">{game.memo}</p>
 
             {/* 詳細ボタン */}
-            <button
-              onClick={() => navigate(`/games/${game.id}`)}
-              className="mt-auto w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg shadow-sm transition"
-            >
+            <Button type="button" className="bg-blue-500" onClick={() => navigate(`/games/${game.id}`)}>
               詳細を見る
-            </button>
+            </Button>
+
           </div>
         ))}
       </div>

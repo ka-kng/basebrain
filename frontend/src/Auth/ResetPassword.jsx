@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import InputField from '../components/InputField';
+import InputField from '../components/Form/InputField';
 import { motion } from "framer-motion";
 
 // パスワード再設定ページのメイン関数

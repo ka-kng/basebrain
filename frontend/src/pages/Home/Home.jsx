@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../Auth/AuthContext";
-import CenteredLayout from "../layout/Background";
+import { useAuth } from "../../Auth/AuthContext";
+import CenteredLayout from "../../layout/Background";
 
 export default function Home() {
   const { user, loading } = useAuth();

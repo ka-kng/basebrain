@@ -8,20 +8,20 @@ import ForgetPassword from './Auth/ForgetPassword';
 import ResetPassword from './Auth/ResetPassword';
 
 import SidebarLayout from './layout/SidebarLayout';
-import ManagerDashboard from './pages/ManagerDashboard';
-import PlayerDashboard from './pages/PlayerDashboard';
+import ManagerDashboard from './pages/Dashboard/ManagerDashboard';
+import PlayerDashboard from './pages/Dashboard/PlayerDashboard';
 
-import GameRecordForm from './Records/GameRecordForm';
-import BattingRecordForm from './Records/BattingRecordForm';
-import PitchingRecordForm from './Records/PitchingRecordForm';
-import SummaryRecord from './Records/SummaryRecord';
+import GameRecordForm from './pages/Records/GameRecordForm';
+import BattingRecordForm from './pages/Records/BattingRecordForm';
+import PitchingRecordForm from './pages/Records/PitchingRecordForm';
+import SummaryRecord from './pages/Records/SummaryRecord';
 
-import GameList from './pages/GameList';
-import GameDetail from './pages/GameDetail';
-import PlayerRanking from './pages/PlayerRanking';
-import Schedule from './pages/Schedule';
-import Mypage from './pages/Mypage';
-import Home from './pages/Home';
+import GameList from './pages/Game/GameList';
+import GameDetail from './pages/Game/GameDetail';
+import PlayerRanking from './pages/Ranking/PlayerRanking';
+import Schedule from './pages/Schedule/Schedule';
+import Mypage from './pages/Mypage/Mypage';
+import Home from './pages/Home/Home';
 import Header from './components/Header';
 
 function App() {
@@ -40,126 +40,37 @@ function App() {
         <Route path="password/forget" element={<ForgetPassword />} />
         <Route path="password/reset" element={<ResetPassword />} />
 
-        {/* ログイン後のレイアウト */}
+        {/* ログイン後の共通レイアウト */}
         <Route path="/" element={<SidebarLayout />}>
 
-          {/* コーチ専用 */}
-          <Route
-            path="dashboard/manager"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['coach']}>
-                <ManagerDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="records/game"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['coach']}>
-                <GameRecordForm />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="records/game/:id/edit"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['coach']}>
-                <GameRecordForm />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="records/batting"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['coach']}>
-                <BattingRecordForm />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="records/batting/:id/edit"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['coach']}>
-                <BattingRecordForm />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="records/pitching"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['coach']}>
-                <PitchingRecordForm />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="records/pitching/:id/edit"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['coach']}>
-                <PitchingRecordForm />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="records/summary"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['coach']}>
-                <SummaryRecord />
-              </ProtectedRoute>
-            }
-          />
+          {/* コーチ専用ルートまとめ */}
+          <Route element={<ProtectedRoute user={user} allowedRoles={['coach']} />}>
+            <Route path="dashboard/manager" element={<ManagerDashboard />} />
 
-          {/* プレイヤー専用 */}
-          <Route
-            path="dashboard/player"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['player']}>
-                <PlayerDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="ranking"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['player', 'coach']}>
-                <PlayerRanking />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="schedule"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['player', 'coach']}>
-                <Schedule />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="mypage"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['player', 'coach']}>
-                <Mypage />
-              </ProtectedRoute>
-            }
-          />
+            {/* 試合・成績管理 */}
+            <Route path="records/game" element={<GameRecordForm />} />
+            <Route path="records/game/:id/edit" element={<GameRecordForm />} />
+            <Route path="records/batting" element={<BattingRecordForm />} />
+            <Route path="records/batting/:id/edit" element={<BattingRecordForm />} />
+            <Route path="records/pitching" element={<PitchingRecordForm />} />
+            <Route path="records/pitching/:id/edit" element={<PitchingRecordForm />} />
+            <Route path="records/summary" element={<SummaryRecord />} />
+          </Route>
 
-          {/* 共通ページ */}
-          <Route
-            path="games/list"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['player', 'coach']}>
-                <GameList />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="games/:id"
-            element={
-              <ProtectedRoute user={user} allowedRoles={['player', 'coach']}>
-                <GameDetail />
-              </ProtectedRoute>
-            }
-          />
+          {/* プレイヤー専用ルートまとめ */}
+          <Route element={<ProtectedRoute user={user} allowedRoles={['player']} />}>
+            <Route path="dashboard/player" element={<PlayerDashboard />} />
+          </Route>
+
+          {/* コーチ・プレイヤー共通 */}
+          <Route element={<ProtectedRoute user={user} allowedRoles={['coach', 'player']} />}>
+            <Route path="ranking" element={<PlayerRanking />} />
+            <Route path="schedule" element={<Schedule />} />
+            <Route path="mypage" element={<Mypage />} />
+            <Route path="games/list" element={<GameList />} />
+            <Route path="games/:id" element={<GameDetail />} />
+          </Route>
+
         </Route>
       </Routes>
     </>

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // ページ遷移やリンク用の機能
 import { useAuth } from './AuthContext'; // 認証状態を管理しているコンテキストを読み込み
-import InputField from '../components/InputField'; // 入力欄コンポーネントを読み込み
+import InputField from '../components/Form/InputField'; // 入力欄コンポーネントを読み込み
 import BackgroundLayout from '../layout/Background'; // 背景色を読み込み
 
 export default function LoginForm() { // ログインフォームのメインコンポーネント
